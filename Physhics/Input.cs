@@ -1,5 +1,4 @@
 ﻿using ImGuiNET;
-using nkast.Aether.Physics2D.Common;
 using nkast.Aether.Physics2D.Dynamics;
 using nkast.Aether.Physics2D.Dynamics.Joints;
 using Physhicsh.Extensions;
@@ -18,11 +17,11 @@ public class Input(World world, List<PhysicsObject> objs)
     private readonly World _world = world;
     private readonly List<PhysicsObject> _physicsObjects = objs;
     public bool ShowDebugWindow { get; set; } = false;
-    public Vector2 MousePosWorld { get; private set; } = new();
+    public AethVec2 MousePosWorld { get; private set; } = new();
     public FixedMouseJoint? MouseJoint { get; private set; }
     private Body? _kinematicDragBody;
     private BodyType _prevKinematicBodyType;
-    private Vector2 _prevKinematicLinearVelocity;
+    private AethVec2 _prevKinematicLinearVelocity;
     private bool _isKinematicDragging;
     private bool _angularWasResetOnce = false;
     public void UpdateMouse()
@@ -41,7 +40,7 @@ public class Input(World world, List<PhysicsObject> objs)
         if (Raylib.IsKeyPressedRepeat(KeyboardKey.C) || Raylib.IsKeyPressed(KeyboardKey.C)) Spawn.SpawnCircle(_world, MousePosWorld, _physicsObjects);
         if (Raylib.IsKeyPressed(KeyboardKey.Tab))
         {
-            Vector2 mousePos = MousePosWorld;
+            AethVec2 mousePos = MousePosWorld;
             ui.ShowPopup("##quick_spawn", Raylib.GetMousePosition(), () => ImGuiStaticPopups.DrawQuickSpawnMenu(_world, mousePos, new(), _physicsObjects));
         }
 
@@ -174,7 +173,7 @@ public class Input(World world, List<PhysicsObject> objs)
             const float stiffness = 10.0f;
             const float maxSpeed = 50.0f;
 
-            Vector2 desiredVelocity = (MousePosWorld - _kinematicDragBody.Position) * stiffness;
+            AethVec2 desiredVelocity = (MousePosWorld - _kinematicDragBody.Position) * stiffness;
             if (desiredVelocity.LengthSquared() > maxSpeed * maxSpeed)
                 (desiredVelocity *= maxSpeed).Normalize();
 

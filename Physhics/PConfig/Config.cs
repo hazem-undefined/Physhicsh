@@ -1,5 +1,4 @@
-﻿using nkast.Aether.Physics2D.Common;
-using PicoToml;
+﻿using PicoToml;
 using System;
 using System.IO;
 using System.Threading;
@@ -13,7 +12,7 @@ namespace Physhicsh.PConfig
         public PhysicsConfig Physics { get; set; } = new();
         public ControlsConfig Controls { get; set; } = new();
 
-        public static Vector2 ScreenCenter => new(Instance.Screen.SCREEN_WIDTH / 2,
+        public static AethVec2 ScreenCenter => new(Instance.Screen.SCREEN_WIDTH / 2,
                                                   Instance.Screen.SCREEN_HEIGHT / 2);
         private static Config? _instance;
         private static readonly Lock _lock = new();

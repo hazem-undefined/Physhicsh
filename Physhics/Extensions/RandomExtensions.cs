@@ -1,5 +1,4 @@
-﻿using Raylib_cs;
-using System;
+﻿using System;
 using System.Numerics;
 
 namespace Physhicsh.Extensions;
@@ -13,7 +12,7 @@ public static class RandomExtensions
         return min + (float)random.NextDouble() * (max - min);
     }
 
-    public static Color RandomColor(this Random rng)
+    public static RayColor RandomColor(this Random rng)
     {
         return new(
         (byte)rng.Next(0, 254),

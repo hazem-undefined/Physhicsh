@@ -9,11 +9,11 @@ namespace Physhicsh.PhysicsObjects;
 public class PhysicsObject(float x, float y, Color color, BodyType bodyType = BodyType.Dynamic, bool locked = false)
 {
     public Body Body = null!;
-    public Color Color = color;
+    public RayColor Color = color;
     public Fixture? Fixture { get; set; }
     public Texture2D? Texture;
     private bool _hasPropCachedColor;
-    private System.Numerics.Vector3 _cachedPropColor;
+    private SysVec3 _cachedPropColor;
     public bool Locked = locked;
     private readonly TextureLoader _texLoader = new();
     public virtual void Start(World world)
@@ -42,7 +42,7 @@ public class PhysicsObject(float x, float y, Color color, BodyType bodyType = Bo
 
     public virtual void Properties(ImGuiUI ui)
     {
-        Color currentColor = Color;
+        RayColor currentColor = Color;
 
         if (!_hasPropCachedColor || currentColor != _cachedPropColor.ToAetherVector3().ToColor())
         {

@@ -1,5 +1,4 @@
 ﻿using ImGuiNET;
-using nkast.Aether.Physics2D.Common;
 using nkast.Aether.Physics2D.Dynamics;
 using Physhicsh.Extensions;
 using Physhicsh.PConfig;
@@ -27,7 +26,7 @@ public class MainWindow
     private PhysicsObject? _propertiesObject;
     private TextureLoader _textureLoader = new();
     private ImGuiUI _ui = null!;
-    private Color _currentBgColor = Color.Black;
+    private RayColor _currentBgColor = Color.Black;
     private List<Action> _imGuiWindows = [];
     private Input _input;
     private SolverIterations _solver = new();
@@ -42,8 +41,8 @@ public class MainWindow
         _sw = Stopwatch.StartNew();
         _imGuiWindows = [DrawPropertiesWindow, DrawSettingsWindow];
 
+        Raylib.SetConfigFlags(ConfigFlags.VSyncHint | ConfigFlags.Msaa4xHint);
         Raylib.InitWindow(Config.Instance.Screen.SCREEN_WIDTH, Config.Instance.Screen.SCREEN_HEIGHT, "Physhicsh");
-        Raylib.SetConfigFlags(ConfigFlags.VSyncHint);
         Raylib.SetWindowFocused();
         Raylib.SetTargetFPS(Config.Instance.Screen.MAX_FPS);
 
@@ -51,7 +50,7 @@ public class MainWindow
 
         rlImGui.Setup(true);
 
-        _world = new World(new Vector2(0, -9.81f * _gravityScale));
+        _world = new World(new AethVec2(0, -9.81f * _gravityScale));
 
         _world.ContactManager.VelocityConstraintsMultithreadThreshold = 128;
         _world.ContactManager.PositionConstraintsMultithreadThreshold = 128;
@@ -143,7 +142,7 @@ public class MainWindow
 
         if (Raylib.IsMouseButtonPressed(MouseButton.Right))
         {
-            Vector2 worldPos = _input.MousePosWorld;
+            AethVec2 worldPos = _input.MousePosWorld;
 
             _ui.ShowPopup("##world_context", Raylib.GetMousePosition(), mb =>
             {
@@ -206,7 +205,7 @@ public class MainWindow
                 return;
             }
 
-            System.Numerics.Vector3 currentBgColor = _currentBgColor.ToSysVector3();
+            ImColor currentBgColor = _currentBgColor.ToSysVector3();
 
             if (ImGui.ColorEdit3("Background Color", ref currentBgColor))
             {
@@ -223,10 +222,10 @@ public class MainWindow
 
             if (ImGui.CollapsingHeader("Spawn Settings"))
             {
-                System.Numerics.Vector2 circlesRadiusRefSlider = SpawnRules.Instance.CirclesRadius;
-                System.Numerics.Vector2 rectanglesSizeRefSlider = SpawnRules.Instance.RectSize;
+                SysVec2 circlesRadiusRefSlider = SpawnRules.Instance.CirclesRadius;
+                SysVec2 rectanglesSizeRefSlider = SpawnRules.Instance.RectSize;
                 bool useRandomColorsRefBool = SpawnRules.Instance.UseRandomColors;
-                System.Numerics.Vector3 spawnColorRefColor = SpawnRules.Instance.SpawnColor.ToSysVector3();
+                ImColor spawnColorRefColor = SpawnRules.Instance.SpawnColor.ToSysVector3();
 
                 if (ImGui.SliderFloat2("Circles radius", ref circlesRadiusRefSlider, 0.01f, 2f))
                 {
@@ -255,6 +254,10 @@ public class MainWindow
                 ImGui.TextColored(new(255, 0, 0, 255), "All buttons here doesn't have confirmation.");
                 if (ImGui.Button("Clear All"))
                 {
+                    foreach (PhysicsObject item in _physicsObjects)
+                    {
+                        DeletePhysicsObject(item);
+                    }
                     _physicsObjects.Clear();
                 }
             }
@@ -266,10 +269,10 @@ public class MainWindow
         obj.Delete();
         _physicsObjects.Remove(obj);
 
-        if (_pickedObject == _propertiesObject)
+        if (ReferenceEquals(_propertiesObject, obj))
             _propertiesObject = null;
         if (ReferenceEquals(_pickedObject, obj))
-            _pickedObject = null!;
+            _pickedObject = null;
     }
 
 

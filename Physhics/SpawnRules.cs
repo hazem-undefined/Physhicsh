@@ -1,6 +1,4 @@
-﻿using Raylib_cs;
-using System;
-using SysVec2 = System.Numerics.Vector2;
+﻿using System;
 
 namespace Physhicsh;
 
@@ -16,7 +14,7 @@ public sealed class SpawnRules
     }
     public SysVec2 RectSize { get; set; } = new(1f, 1f);
     public bool UseRandomColors = true;
-    public Color SpawnColor = Color.White;
+    public RayColor SpawnColor = RayColor.White;
     private static SysVec2 MinMax(SysVec2 value)
     {
         return new(MathF.Min(value.X, value.Y), MathF.Max(value.X, value.Y));

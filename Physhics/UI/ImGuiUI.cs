@@ -1,8 +1,6 @@
 ﻿using ImGuiNET;
 using System;
 using System.Collections.Generic;
-using System.Numerics;
-
 namespace Physhicsh.UI;
 
 public sealed class ImGuiUI(ImFontPtr font)
@@ -12,7 +10,7 @@ public sealed class ImGuiUI(ImFontPtr font)
     private sealed class PopupState
     {
         public string Id = "";
-        public Vector2 ScreenPos = new();
+        public SysVec2 ScreenPos = new();
         public Action? Body = null;
         public bool PendingOpen;
         public bool ShouldClose;
@@ -26,7 +24,7 @@ public sealed class ImGuiUI(ImFontPtr font)
     {
         ImGuiIOPtr io = ImGui.GetIO();
 
-        ImGui.SetNextWindowPos(Vector2.Zero);
+        ImGui.SetNextWindowPos(SysVec2.Zero);
         ImGui.SetNextWindowSize(io.DisplaySize);
         ImGui.Begin("##ui_host",
             ImGuiWindowFlags.NoDecoration | ImGuiWindowFlags.NoBackground |
@@ -40,7 +38,7 @@ public sealed class ImGuiUI(ImFontPtr font)
         ImGui.End();
     }
 
-    public void ShowPopup(string id, Vector2 screenPos, Action body)
+    public void ShowPopup(string id, SysVec2 screenPos, Action body)
     {
         if (!_popups.TryGetValue(id, out PopupState? p))
             _popups[id] = p = new PopupState { Id = id };
@@ -51,7 +49,7 @@ public sealed class ImGuiUI(ImFontPtr font)
         p.ShouldClose = false;
     }
 
-    public void ShowPopup(string id, Vector2 screenPos, Action<MenuBuilder> build)
+    public void ShowPopup(string id, SysVec2 screenPos, Action<MenuBuilder> build)
         => ShowPopup(id, screenPos, () => build(new MenuBuilder()));
 
     public void ClosePopup(string id)

@@ -1,12 +1,11 @@
-﻿using nkast.Aether.Physics2D.Common;
-using nkast.Aether.Physics2D.Dynamics;
+﻿using nkast.Aether.Physics2D.Dynamics;
 using Physhicsh.PhysicsObjects;
 
 namespace Physhicsh.Utils;
 
 public static class AetherUtils
 {
-    public static Fixture? PickFixture(World world, Vector2 mouseWorld, ref PhysicsObject? pickedObject)
+    public static Fixture? PickFixture(World world, AethVec2 mouseWorld, ref PhysicsObject? pickedObject)
     {
         Fixture fixture = world.TestPoint(mouseWorld);
 

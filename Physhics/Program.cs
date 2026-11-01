@@ -6,6 +6,9 @@ public static class Program
     {
         MainWindow window = new();
         window.Start();
+
+
+
     }
 
 }

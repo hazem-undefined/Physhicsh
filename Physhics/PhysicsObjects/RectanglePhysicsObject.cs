@@ -1,6 +1,5 @@
 ﻿using ImGuiNET;
 using nkast.Aether.Physics2D.Collision.Shapes;
-using nkast.Aether.Physics2D.Common;
 using nkast.Aether.Physics2D.Dynamics;
 using Physhicsh.Extensions;
 using Physhicsh.PConfig;
@@ -10,9 +9,9 @@ using System;
 
 namespace Physhicsh.PhysicsObjects
 {
-    public class RectanglePhysicsObject(float x, float y, float width, float height, Color color, float density = 1f, BodyType bodyType = BodyType.Dynamic) : PhysicsObject(x, y, color, bodyType)
+    public class RectanglePhysicsObject(float x, float y, float width, float height, RayColor color, float density = 1f, BodyType bodyType = BodyType.Dynamic) : PhysicsObject(x, y, color, bodyType)
     {
-        public Vector2 Size = new(width, height);
+        public AethVec2 Size = new(width, height);
         private float _widthPx;
         private float _heightPx;
         public override void Start(World world)
@@ -26,7 +25,7 @@ namespace Physhicsh.PhysicsObjects
             base.Draw();
 
             (_widthPx, _heightPx) = MeasurePolygon(Fixture.Shape as PolygonShape);
-            Vector2 screenPos = Body.Position.WorldToScreen();
+            AethVec2 screenPos = Body.Position.WorldToScreen();
 
             if (Texture is Texture2D texture)
             {
@@ -34,24 +33,24 @@ namespace Physhicsh.PhysicsObjects
                 Rectangle source = new(0, 0, texture.Width, texture.Height);
                 // Drawn rect
                 Rectangle dist = new(screenPos.X, screenPos.Y, _widthPx, _heightPx);
-                Vector2 origin = new(_widthPx / 2f, _heightPx / 2f);
+                AethVec2 origin = new(_widthPx / 2f, _heightPx / 2f);
                 float rotationDegrees = -Body.Rotation * (180f / MathF.PI);
 
-                Raylib.DrawTexturePro(texture, source, dist, origin.ToNumericsVector2(), rotationDegrees, Color.White);
+                Raylib.DrawTexturePro(texture, source, dist, origin.ToNumericsVector2(), rotationDegrees, RayColor.White);
             }
             else
             {
                 Rectangle rec = new(screenPos.X, screenPos.Y, _widthPx, _heightPx);
-                Vector2 origin = new(_widthPx / 2f, _heightPx / 2f);
+                AethVec2 origin = new(_widthPx / 2f, _heightPx / 2f);
                 float rotationDegrees = -Body.Rotation * (180f / MathF.PI);
 
                 Raylib.DrawRectanglePro(rec, origin.ToNumericsVector2(), rotationDegrees, Color);
             }
         }
 
-        public void Resize(Vector2 newSize)
+        public void Resize(AethVec2 newSize)
         {
-            if (newSize == Vector2.Zero) return;
+            if (newSize == AethVec2.Zero) return;
             if (newSize == Size) return;
 
             Size = newSize;
@@ -72,7 +71,7 @@ namespace Physhicsh.PhysicsObjects
 
         private void BuildFixture()
         {
-            Fixture = Body.CreateRectangle(Size.X, Size.Y, 10f, Vector2.Zero);
+            Fixture = Body.CreateRectangle(Size.X, Size.Y, 10f, AethVec2.Zero);
             Fixture.Restitution = 0.3f;
             Fixture.Friction = 0.5f;
             Fixture.Tag = this;
@@ -84,7 +83,7 @@ namespace Physhicsh.PhysicsObjects
             float minX = float.MaxValue, maxX = float.MinValue;
             float minY = float.MaxValue, maxY = float.MinValue;
 
-            foreach (Vector2 v in polygon.Vertices)
+            foreach (AethVec2 v in polygon.Vertices)
             {
                 minX = MathF.Min(minX, v.X);
                 maxX = MathF.Max(maxX, v.X);
@@ -98,7 +97,7 @@ namespace Physhicsh.PhysicsObjects
         {
             base.Properties(ui);
 
-            System.Numerics.Vector2 sizeRefSlider = Size.ToNumericsVector2();
+            SysVec2 sizeRefSlider = Size.ToNumericsVector2();
             if (ImGui.SliderFloat2("Size", ref sizeRefSlider, 0.001f, 20f))
             {
                 Resize(sizeRefSlider.ToAetherVector2());
