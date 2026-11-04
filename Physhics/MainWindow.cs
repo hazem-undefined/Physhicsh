@@ -1,4 +1,5 @@
 ﻿using ImGuiNET;
+using NativeFileDialogSharp;
 using nkast.Aether.Physics2D.Dynamics;
 using Physhicsh.Extensions;
 using Physhicsh.PConfig;
@@ -22,12 +23,10 @@ public class MainWindow
     private readonly ImGuiVault _imgVault = new();
     private World _world = null!;
     private float _accumulator;
-    private float _gravityScale = 5f;
     private PhysicsObject _pickedObject = null!;
     private PhysicsObject? _propertiesObject;
     private TextureLoader _textureLoader = new();
     private ImGuiUI _ui = null!;
-    private RayColor _currentBgColor = Color.Black;
     private List<Action> _imGuiWindows = [];
     private Input _input;
     private SolverIterations _solver = new();
@@ -37,6 +36,8 @@ public class MainWindow
     private double _inputTime;
     private double _updateObjTime;
     private SceneManager _scmgr = new();
+    private SceneSettings _scettings = new();
+    private string _settingsImportExportMsg = string.Empty;
 
     public void Start()
     {
@@ -52,7 +53,7 @@ public class MainWindow
 
         rlImGui.Setup(true);
 
-        _world = new World(new AethVec2(0, -9.81f * _gravityScale));
+        _world = new World(new AethVec2(0, -9.81f * _scettings.GravityScale));
 
         _world.ContactManager.VelocityConstraintsMultithreadThreshold = 128;
         _world.ContactManager.PositionConstraintsMultithreadThreshold = 128;
@@ -185,7 +186,7 @@ public class MainWindow
     private void GraphicsUpdate()
     {
         Raylib.BeginDrawing();
-        Raylib.ClearBackground(_currentBgColor);
+        Raylib.ClearBackground(_scettings.CurrentBgColor);
 
         rlImGui.Begin();
 
@@ -220,19 +221,35 @@ public class MainWindow
                 return;
             }
 
-            ImColor currentBgColor = _currentBgColor.ToSysVector3();
+            if (ImGui.Button("Import"))
+            {
+
+            }
+            ImGui.SameLine();
+            if (ImGui.Button("Export"))
+            {
+                DialogResult res = Dialog.FileSave(".pcf", AppContext.BaseDirectory);
+                if (!string.IsNullOrEmpty(res.Path))
+                {
+                    using FileStream _ = File.Create(res.Path);
+                }
+
+            }
+            ImGui.SameLine();
+            ImGui.TextColored(Color.Green.ToVector4(), $"{_settingsImportExportMsg}");
+            ImColor currentBgColor = _scettings.CurrentBgColor.ToSysVector3();
 
             if (ImGui.ColorEdit3("Background Color", ref currentBgColor))
             {
-                _currentBgColor = currentBgColor.ToColor();
+                _scettings.CurrentBgColor = currentBgColor.ToColor();
             }
 
-            int gravityRefSlider = (int)_gravityScale;
+            int gravityRefSlider = (int)_scettings.GravityScale;
 
             if (ImGui.SliderInt("Gravity scale", ref gravityRefSlider, -10, 10))
             {
-                _gravityScale = gravityRefSlider;
-                _world.Gravity = new(0, -9.81f * _gravityScale);
+                _scettings.GravityScale = gravityRefSlider;
+                _world.Gravity = new(0, -9.81f * _scettings.GravityScale);
             }
 
             if (ImGui.CollapsingHeader("Spawn Settings"))

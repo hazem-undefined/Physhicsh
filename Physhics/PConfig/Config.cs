@@ -13,6 +13,7 @@ namespace Physhicsh.PConfig
         public ControlsConfig Controls { get; set; } = new();
         public PathConfig Paths { get; set; } = new();
         public const string PHYSHICSH_SCENE_FILE = ".psf";
+        public const string PHYSHICSH_SETTINGS_FILE = ".ptf";
         public static AethVec2 ScreenCenter => new(Instance.Screen.SCREEN_WIDTH / 2,
                                                   Instance.Screen.SCREEN_HEIGHT / 2);
         private static Config? _instance;

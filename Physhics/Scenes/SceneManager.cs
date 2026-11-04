@@ -2,6 +2,7 @@
 using Physhicsh.Json;
 using Physhicsh.PConfig;
 using Physhicsh.PhysicsObjects;
+using Physhicsh.Utils;
 using System;
 using System.IO;
 
@@ -18,10 +19,10 @@ public class SceneManager
 
     public Scene? LoadSceneFromFile(string path)
     {
-        if (!File.Exists(FormatPath(path)))
+        if (!File.Exists(Format(path)))
             return null;
 
-        string json = File.ReadAllText(FormatPath(path));
+        string json = File.ReadAllText(Format(path));
 
         CurrentScene = JsonConvert.DeserializeObject<Scene>(json, JsonSerializerConfig.Settings);
 
@@ -37,20 +38,12 @@ public class SceneManager
 
         string json = JsonConvert.SerializeObject(CurrentScene, JsonSerializerConfig.Settings);
 
-        File.WriteAllText(FormatPath(path), json);
+        File.WriteAllText(Format(path), json);
     }
 
-    public static string FormatPath(string path)
+    private static string Format(string path)
     {
-        const string ext = Config.PHYSHICSH_SCENE_FILE;
-        string scenes = Config.Instance.Paths.SCENES_PATH;
-
-        if (Path.IsPathRooted(path) && path.EndsWith(ext, StringComparison.OrdinalIgnoreCase))
-            return path;
-
-        if (!path.EndsWith(ext, StringComparison.OrdinalIgnoreCase))
-            path += ext;
-
-        return Path.Combine(scenes, path);
+        return FormatUtils.FormatPath(path, Config.PHYSHICSH_SCENE_FILE, Config.Instance.Paths.SCENES_PATH);
     }
+
 }
