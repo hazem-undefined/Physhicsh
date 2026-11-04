@@ -1,9 +1,9 @@
 ﻿using nkast.Aether.Physics2D.Collision.Shapes;
 using System.Collections.Generic;
 
-namespace Physhicsh.Json;
+namespace Physhicsh.Json.DTO;
 
-public sealed class ShapeData
+public sealed class ShapeSaveDTO
 {
     public ShapeType Kind { get; set; }
     public float Density { get; set; }
@@ -13,14 +13,14 @@ public sealed class ShapeData
     public AethVec2 Vertex1 { get; set; }
     public AethVec2 Vertex2 { get; set; }
 
-    public static ShapeData ToData(Shape s) => s switch
+    public static ShapeSaveDTO ToData(Shape s) => s switch
     {
         CircleShape c => new() { Kind = c.ShapeType, Radius = c.Radius, Density = c.Density, Position = new(c.Position.X, c.Position.Y) },
         PolygonShape p => new() { Kind = p.ShapeType, Vertices = p.Vertices, Density = p.Density },
         _ => throw new KeyNotFoundException($"Invalid shape {s.ShapeType}"),
     };
 
-    public static Shape FromData(ShapeData d) => d.Kind switch
+    public static Shape FromData(ShapeSaveDTO d) => d.Kind switch
     {
         ShapeType.Circle => new CircleShape(d.Radius!.Value, d.Density) { Density = d.Density, Position = new(d.Position.X, d.Position.Y) },
         ShapeType.Polygon => new PolygonShape(new(d.Vertices), d.Density),

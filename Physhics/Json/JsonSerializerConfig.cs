@@ -1,6 +1,7 @@
 ﻿using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
 using nkast.Aether.Physics2D.Dynamics;
+using Physhicsh.Debug;
 using Physhicsh.PhysicsObjects;
 using System;
 using System.Collections.Generic;
@@ -25,6 +26,12 @@ public static class JsonSerializerConfig
 
         ConstructorHandling = ConstructorHandling.AllowNonPublicDefaultConstructor, // for internal fucking constructs
         ReferenceLoopHandling = ReferenceLoopHandling.Ignore, // because fixture references body and references body references fixture, manyaka
+        Error = (_, args) =>
+        {
+            Log.Error(
+                $"Deserializing {args.ErrorContext.Path}: {args.ErrorContext.Error.Message}");
+            args.ErrorContext.Handled = true;
+        }
     };
 
     private class AllowList : DefaultContractResolver

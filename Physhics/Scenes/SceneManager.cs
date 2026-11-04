@@ -1,6 +1,7 @@
 ﻿using Newtonsoft.Json;
 using Physhicsh.Json;
 using Physhicsh.PConfig;
+using Physhicsh.PhysicsObjects;
 using System;
 using System.IO;
 
@@ -30,6 +31,9 @@ public class SceneManager
     public void SaveSceneToFile(string path)
     {
         ArgumentNullException.ThrowIfNull(CurrentScene);
+
+        foreach (PhysicsObject obj in CurrentScene.Objects)
+            obj.CaptureForSave();
 
         string json = JsonConvert.SerializeObject(CurrentScene, JsonSerializerConfig.Settings);
 

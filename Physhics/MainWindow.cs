@@ -63,6 +63,7 @@ public class MainWindow
             VelocityIterations = 8,
             PositionIterations = 16,
         };
+
         SpawnDemoObjects();
 
         while (!Raylib.WindowShouldClose())
@@ -115,17 +116,18 @@ public class MainWindow
         //_physicsObjects.Add(new CirclePhysicsObject(0, 10, 0.5f, Color.Green));
         //_physicsObjects.Add(new RectanglePhysicsObject(0, 0, 1, 1, Color.DarkGray, 1));
         //_physicsObjects.Add(new RectanglePhysicsObject(5, 0, 1, 1, Color.DarkGray, 1));
-        _physicsObjects.Add(new RectanglePhysicsObject(0, -5, 10, 2, Color.SkyBlue, bodyType: BodyType.Static));
+        //_physicsObjects.Add(new RectanglePhysicsObject(0, -5, 10, 2, Color.SkyBlue, bodyType: BodyType.Static));
         //_physicsObjects.Add(new RectanglePhysicsObject(0, -10, 100, 2, Color.SkyBlue, bodyType: BodyType.Static));
         //_physicsObjects.Add(new RectanglePhysicsObject(20, -10, 1, 100, Color.SkyBlue, bodyType: BodyType.Static));
         //_physicsObjects.Add(new RectanglePhysicsObject(-20, -10, 1, 100, Color.SkyBlue, bodyType: BodyType.Static));
 
         _scmgr.LoadSceneFromFile("demo");
-        _physicsObjects.Clear();
+        ClearAllPhysObjects();
         _physicsObjects.AddRange(_scmgr.CurrentScene.Objects);
 
         foreach (PhysicsObject obj in _physicsObjects)
             obj.Start(_world);
+
     }
 
 
@@ -267,14 +269,19 @@ public class MainWindow
                 ImGui.TextColored(new(255, 0, 0, 255), "All buttons here doesn't have confirmation.");
                 if (ImGui.Button("Clear All"))
                 {
-                    foreach (PhysicsObject item in _physicsObjects)
-                    {
-                        DeletePhysicsObject(item);
-                    }
-                    _physicsObjects.Clear();
+                    ClearAllPhysObjects();
                 }
             }
         });
+    }
+
+    private void ClearAllPhysObjects()
+    {
+        foreach (PhysicsObject item in _physicsObjects)
+        {
+            DeletePhysicsObject(item);
+        }
+        _physicsObjects.Clear();
     }
 
     private void DeletePhysicsObject(PhysicsObject obj)

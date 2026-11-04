@@ -1,4 +1,5 @@
 ﻿using nkast.Aether.Physics2D.Collision.Shapes;
+using Physhicsh.Json.DTO;
 using Physhicsh.PConfig;
 using Physhicsh.PhysicsObjects;
 using Physhicsh.Scenes;
@@ -17,5 +18,5 @@ namespace Physhicsh.Json;
 [JsonSerializable(typeof(PolygonShape))]
 [JsonSerializable(typeof(EdgeShape))]
 [JsonSerializable(typeof(ChainShape))]
-[JsonSerializable(typeof(ShapeData))]
+[JsonSerializable(typeof(ShapeSaveDTO))]
 public partial class SceneJsonContx : JsonSerializerContext;

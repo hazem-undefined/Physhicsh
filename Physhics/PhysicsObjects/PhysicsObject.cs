@@ -1,31 +1,40 @@
 ﻿using ImGuiNET;
+using Newtonsoft.Json;
 using nkast.Aether.Physics2D.Dynamics;
 using Physhicsh.Extensions;
+using Physhicsh.Json.DTO;
 using Physhicsh.UI;
 using Raylib_cs;
-using System.Text.Json.Serialization;
 
 namespace Physhicsh.PhysicsObjects;
 
 public class PhysicsObject
 {
-    [JsonInclude]
+    [JsonIgnore]
     public Body Body = null!;
-    [JsonInclude]
+    public BodySaveDTO BodyData { get; set; } = null!;
     public RayColor Color = Color.White;
-    [JsonInclude]
     public Fixture? Fixture { get; set; }
-    [JsonInclude]
     public Texture2D? Texture;
-    [JsonInclude]
     public bool Locked = false;
     private readonly TextureLoader _texLoader = new();
     private AethVec2 _startPosition = new();
     private BodyType _bodyType;
     public virtual void Start(World world)
     {
-        Body = world.CreateBody(_startPosition, 0, _bodyType);
+        if (BodyData != null)
+            Body = BodyData.Create(world);
+        else
+            Body = world.CreateBody(_startPosition, 0, _bodyType);
+
         Body.Tag = this;
+
+        if (Fixture?.Shape is { } shape)
+        {
+            Fixture f = Body.CreateFixture(shape);
+            f.Friction = Fixture.Friction;
+            f.Restitution = Fixture.Restitution;
+        }
     }
 
 
@@ -40,7 +49,8 @@ public class PhysicsObject
     }
     public virtual void Delete()
     {
-        Body.Remove(Fixture);
+        if (Body != null && Fixture != null) Body.Remove(Fixture);
+
         Body.Tag = null;
         Body = null!;
     }
@@ -99,10 +109,7 @@ public class PhysicsObject
         this.Locked = locked;
         this.Fixture = fixture;
 
-        if (fixture?.Shape is { } shape)
-        {
-            body.CreateFixture(shape);
-        }
+        _startPosition = body.Position;
     }
 
     public PhysicsObject(float x, float y, RayColor color, BodyType bodyType = BodyType.Dynamic, bool locked = false)
@@ -111,5 +118,10 @@ public class PhysicsObject
         this.Locked = locked;
         this._startPosition = new(x, y);
         this._bodyType = bodyType;
+    }
+
+    public void CaptureForSave()
+    {
+        BodyData = BodySaveDTO.ToData(Body);
     }
 }
