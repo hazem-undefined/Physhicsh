@@ -3,23 +3,28 @@ using nkast.Aether.Physics2D.Dynamics;
 using Physhicsh.Extensions;
 using Physhicsh.UI;
 using Raylib_cs;
+using System.Text.Json.Serialization;
 
 namespace Physhicsh.PhysicsObjects;
 
-public class PhysicsObject(float x, float y, Color color, BodyType bodyType = BodyType.Dynamic, bool locked = false)
+public class PhysicsObject
 {
+    [JsonInclude]
     public Body Body = null!;
-    public RayColor Color = color;
+    [JsonInclude]
+    public RayColor Color = Color.White;
+    [JsonInclude]
     public Fixture? Fixture { get; set; }
+    [JsonInclude]
     public Texture2D? Texture;
-    private bool _hasPropCachedColor;
-    private SysVec3 _cachedPropColor;
-    public bool Locked = locked;
+    [JsonInclude]
+    public bool Locked = false;
     private readonly TextureLoader _texLoader = new();
+    private AethVec2 _startPosition = new();
+    private BodyType _bodyType;
     public virtual void Start(World world)
     {
-        Body = world.CreateBody(new(x, y), 0, bodyType);
-        //Body.IsBullet = true;
+        Body = world.CreateBody(_startPosition, 0, _bodyType);
         Body.Tag = this;
     }
 
@@ -42,17 +47,11 @@ public class PhysicsObject(float x, float y, Color color, BodyType bodyType = Bo
 
     public virtual void Properties(ImGuiUI ui)
     {
-        RayColor currentColor = Color;
+        SysVec3 currentColor = Color.ToSysVector3();
 
-        if (!_hasPropCachedColor || currentColor != _cachedPropColor.ToAetherVector3().ToColor())
+        if (ImGui.ColorEdit3("Color", ref currentColor))
         {
-            _cachedPropColor = currentColor.ToVector3().ToNumericsVector3() / 255f;
-            _hasPropCachedColor = true;
-        }
-
-        if (ImGui.ColorEdit3("Color", ref _cachedPropColor))
-        {
-            Color = _cachedPropColor.ToAetherVector3().ToColor();
+            Color = currentColor.ToAetherVector3().ToColor();
         }
 
         float massRefSlider = Body.Mass;
@@ -90,5 +89,27 @@ public class PhysicsObject(float x, float y, Color color, BodyType bodyType = Bo
         //}
         ImGui.Separator();
         //ImGui.Text($"{Texture}");
+    }
+
+    [JsonConstructor]
+    public PhysicsObject(Body body, RayColor color, bool locked, Fixture fixture)
+    {
+        this.Body = body;
+        this.Color = color;
+        this.Locked = locked;
+        this.Fixture = fixture;
+
+        if (fixture?.Shape is { } shape)
+        {
+            body.CreateFixture(shape);
+        }
+    }
+
+    public PhysicsObject(float x, float y, RayColor color, BodyType bodyType = BodyType.Dynamic, bool locked = false)
+    {
+        this.Color = color;
+        this.Locked = locked;
+        this._startPosition = new(x, y);
+        this._bodyType = bodyType;
     }
 }

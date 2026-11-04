@@ -36,6 +36,7 @@ public class Input(World world, List<PhysicsObject> objs)
 
         float dt = Raylib.GetFrameTime();
 
+
         if (Raylib.IsKeyPressedRepeat(KeyboardKey.R) || Raylib.IsKeyPressed(KeyboardKey.R)) Spawn.SpawnRectangle(_world, MousePosWorld, _physicsObjects);
         if (Raylib.IsKeyPressedRepeat(KeyboardKey.C) || Raylib.IsKeyPressed(KeyboardKey.C)) Spawn.SpawnCircle(_world, MousePosWorld, _physicsObjects);
         if (Raylib.IsKeyPressed(KeyboardKey.Tab))

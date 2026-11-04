@@ -3,6 +3,7 @@ using nkast.Aether.Physics2D.Dynamics;
 using Physhicsh.Extensions;
 using Physhicsh.PConfig;
 using Physhicsh.PhysicsObjects;
+using Physhicsh.Scenes;
 using Physhicsh.UI;
 using Raylib_cs;
 using rlImGui_cs;
@@ -16,7 +17,7 @@ namespace Physhicsh;
 
 public class MainWindow
 {
-    private readonly List<PhysicsObject> _physicsObjects = [];
+    private List<PhysicsObject> _physicsObjects = [];
     private readonly Random _rng = new();
     private readonly ImGuiVault _imgVault = new();
     private World _world = null!;
@@ -35,6 +36,7 @@ public class MainWindow
     private double _physicsTime;
     private double _inputTime;
     private double _updateObjTime;
+    private SceneManager _scmgr = new();
 
     public void Start()
     {
@@ -110,13 +112,17 @@ public class MainWindow
     // Scene -> SpawnObjects
     private void SpawnDemoObjects()
     {
-        _physicsObjects.Add(new CirclePhysicsObject(0, 10, 0.5f, Color.Green));
-        _physicsObjects.Add(new RectanglePhysicsObject(0, 0, 1, 1, Color.DarkGray, 1));
-        _physicsObjects.Add(new RectanglePhysicsObject(5, 0, 1, 1, Color.DarkGray, 1));
+        //_physicsObjects.Add(new CirclePhysicsObject(0, 10, 0.5f, Color.Green));
+        //_physicsObjects.Add(new RectanglePhysicsObject(0, 0, 1, 1, Color.DarkGray, 1));
+        //_physicsObjects.Add(new RectanglePhysicsObject(5, 0, 1, 1, Color.DarkGray, 1));
         _physicsObjects.Add(new RectanglePhysicsObject(0, -5, 10, 2, Color.SkyBlue, bodyType: BodyType.Static));
-        _physicsObjects.Add(new RectanglePhysicsObject(0, -10, 100, 2, Color.SkyBlue, bodyType: BodyType.Static));
-        _physicsObjects.Add(new RectanglePhysicsObject(20, -10, 1, 100, Color.SkyBlue, bodyType: BodyType.Static));
-        _physicsObjects.Add(new RectanglePhysicsObject(-20, -10, 1, 100, Color.SkyBlue, bodyType: BodyType.Static));
+        //_physicsObjects.Add(new RectanglePhysicsObject(0, -10, 100, 2, Color.SkyBlue, bodyType: BodyType.Static));
+        //_physicsObjects.Add(new RectanglePhysicsObject(20, -10, 1, 100, Color.SkyBlue, bodyType: BodyType.Static));
+        //_physicsObjects.Add(new RectanglePhysicsObject(-20, -10, 1, 100, Color.SkyBlue, bodyType: BodyType.Static));
+
+        _scmgr.LoadSceneFromFile("demo");
+        _physicsObjects.Clear();
+        _physicsObjects.AddRange(_scmgr.CurrentScene.Objects);
 
         foreach (PhysicsObject obj in _physicsObjects)
             obj.Start(_world);
@@ -133,6 +139,13 @@ public class MainWindow
         _input.UpdateMouse();
         _input.HandleMouseInput(_ui, _world, ref _pickedObject);
         _input.HandleShortcuts(_ui, ref _pickedObject, DeletePhysicsObject);
+
+        if (Raylib.IsKeyPressed(KeyboardKey.S))
+        {
+            _scmgr.CurrentScene.Objects = _physicsObjects;
+            _scmgr.SaveSceneToFile("demo");
+        }
+
         _inputTime = _sw.Elapsed.TotalMilliseconds;
 
         _sw.Restart();
@@ -344,6 +357,11 @@ public class MainWindow
             ImGui.Text($"Accumulator: {_accumulator}");
             ImGui.Text($"Count: {_physicsObjects.Count}");
             ImGui.Text($"Physics: {_physicsTime}ms, Update: {_updateObjTime}ms, Input: {_inputTime}ms");
+            foreach (PhysicsObject item in _physicsObjects)
+            {
+                ImGui.Text($"{item.Body} Position: {item.Body.Position}");
+
+            }
             ImGui.Separator();
 
             if (_pickedObject is not null)

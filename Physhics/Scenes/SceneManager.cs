@@ -1,27 +1,52 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using Physhicsh.Json;
+using Physhicsh.PConfig;
+using System;
 using System.IO;
-using System.Text.Json;
 
 namespace Physhicsh.Scenes;
 
-public static class SceneManager
+public class SceneManager
 {
-    public static Scene? LoadSceneFromFile(string path)
+    public Scene? CurrentScene { get; private set; }
+
+    public SceneManager()
     {
-        if (!File.Exists(path))
-            return null;
-
-        string json = File.ReadAllText(path);
-
-        return JsonSerializer.Deserialize<Scene>(json, SceneJsonContx.Default.Scene);
+        CurrentScene = new();
     }
 
-    public static void SaveSceneToFile(string path, Scene scene)
+    public Scene? LoadSceneFromFile(string path)
     {
-        ArgumentNullException.ThrowIfNull(scene);
+        if (!File.Exists(FormatPath(path)))
+            return null;
 
-        string json = JsonSerializer.Serialize(scene, SceneJsonContx.Default.Scene);
+        string json = File.ReadAllText(FormatPath(path));
 
-        File.WriteAllText(path, json);
+        CurrentScene = JsonConvert.DeserializeObject<Scene>(json, JsonSerializerConfig.Settings);
+
+        return CurrentScene;
+    }
+
+    public void SaveSceneToFile(string path)
+    {
+        ArgumentNullException.ThrowIfNull(CurrentScene);
+
+        string json = JsonConvert.SerializeObject(CurrentScene, JsonSerializerConfig.Settings);
+
+        File.WriteAllText(FormatPath(path), json);
+    }
+
+    public static string FormatPath(string path)
+    {
+        const string ext = Config.PHYSHICSH_SCENE_FILE;
+        string scenes = Config.Instance.Paths.SCENES_PATH;
+
+        if (Path.IsPathRooted(path) && path.EndsWith(ext, StringComparison.OrdinalIgnoreCase))
+            return path;
+
+        if (!path.EndsWith(ext, StringComparison.OrdinalIgnoreCase))
+            path += ext;
+
+        return Path.Combine(scenes, path);
     }
 }
