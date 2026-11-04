@@ -5,10 +5,14 @@
     <TargetFramework>net10.0</TargetFramework>
     <ImplicitUsings>disable</ImplicitUsings>
     <Nullable>enable</Nullable>
-    <PublishAot>true</PublishAot>
     <InvariantGlobalization>true</InvariantGlobalization>
 	<OutputType>WinExe</OutputType>
 	<ApplicationIcon>res\icon.ico</ApplicationIcon>
+
+    <PublishAot>false</PublishAot>
+	<PublishReadyToRun>false</PublishReadyToRun>
+	<TieredCompilation>false</TieredCompilation>
+	<PublishTrimmed>true</PublishTrimmed>
   </PropertyGroup>
 
   <ItemGroup>
