@@ -1,5 +1,5 @@
 ﻿using Newtonsoft.Json;
-using Physhicsh.Json;
+using Physhicsh.Data;
 using Physhicsh.PhysicsObjects;
 using Physhicsh.Utils;
 using System;
@@ -18,14 +18,38 @@ public class SceneManager
 
     public Scene? LoadSceneFromFile(string path)
     {
-        if (!File.Exists(Format(path)))
+        string resolved = Format(path);
+        if (!File.Exists(resolved))
             return null;
 
-        string json = File.ReadAllText(Format(path));
+        string json = File.ReadAllText(resolved);
 
-        CurrentScene = JsonConvert.DeserializeObject<Scene>(json, JsonSerializerConfig.Settings);
+        Scene? loadedScene;
+        try
+        {
+            loadedScene = JsonConvert.DeserializeObject<Scene>(json, JsonSerializerConfig.Settings);
+        }
+        catch (JsonException ex)
+        {
+            throw new FileLoadException($"{path} is not a valid scene file.", ex);
+        }
 
-        return CurrentScene;
+        Validate(loadedScene, path);
+        return loadedScene;
+    }
+
+    private static void Validate(Scene? scene, string path)
+    {
+        if (scene is null) throw new FileLoadException($"{path}: not a scene file.");
+        if (scene.Objects is null) throw new FileLoadException($"{path}: missing Objects.");
+
+        for (int i = 0; i < scene.Objects.Count; i++)
+        {
+            if (scene.Objects[i] is null)
+            {
+                throw new FileLoadException($"{path}: null object at index {i}.");
+            }
+        }
     }
 
     public void SaveSceneToFile(string path)

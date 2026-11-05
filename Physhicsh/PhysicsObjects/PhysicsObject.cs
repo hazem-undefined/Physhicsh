@@ -53,7 +53,7 @@ public class PhysicsObject
     }
     public virtual void Delete()
     {
-        if (Body != null && Fixture != null) Body.Remove(Fixture);
+        if (Body != null && Fixture != null && Body.FixtureList.Contains(Fixture)) Body.Remove(Fixture);
 
         Body.Tag = null;
         Body = null!;

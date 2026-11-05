@@ -8,7 +8,7 @@ using System.Collections.Generic;
 using System.Linq;
 
 
-namespace Physhicsh.Json;
+namespace Physhicsh.Data;
 
 public static class JsonSerializerConfig
 {
@@ -23,9 +23,11 @@ public static class JsonSerializerConfig
     {
         TypeNameHandling = TypeNameHandling.Auto, // solves polymorphic types
         ContractResolver = new AllowList(),
-
+        MissingMemberHandling = MissingMemberHandling.Error,
         ConstructorHandling = ConstructorHandling.AllowNonPublicDefaultConstructor, // for internal fucking constructs
         ReferenceLoopHandling = ReferenceLoopHandling.Ignore, // because fixture references body and references body references fixture, manyaka
+        NullValueHandling = NullValueHandling.Include,
+        ObjectCreationHandling = ObjectCreationHandling.Replace,
         Error = (_, args) =>
         {
             Log.Error(

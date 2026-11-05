@@ -2,6 +2,7 @@
 using NativeFileDialogSharp;
 using nkast.Aether.Physics2D.Dynamics;
 using Physhicsh.Config;
+using Physhicsh.Debug;
 using Physhicsh.Extensions;
 using Physhicsh.PhysicsObjects;
 using Physhicsh.Scenes;
@@ -203,13 +204,48 @@ public class MainWindow
 
     private void LoadScene(string path)
     {
-        _scmgr.LoadSceneFromFile(path);
-        _settingsImportExportMsg = $"Loaded {Path.GetFileName(path)}";
-        ClearAllPhysObjects();
-        _physicsObjects.AddRange(_scmgr.CurrentScene.Objects);
+        Scene? newScene;
+        try
+        {
+            newScene = _scmgr.LoadSceneFromFile(path);
+        }
+        catch (Exception ex)
+        {
+            _settingsImportExportMsg = $"Couldn't load {Path.GetFileName(path)}, check log.";
+            Log.Error(ex.Message);
+            return;
+        }
 
-        foreach (PhysicsObject obj in _physicsObjects)
-            obj.Start(_world);
+        if (newScene is null)
+        {
+            _settingsImportExportMsg = $"Couldn't load {Path.GetFileName(path)}, check log.";
+            return;
+        }
+
+        List<PhysicsObject> started = [];
+        try
+        {
+            foreach (PhysicsObject obj in newScene.Objects)
+            {
+                obj.Start(_world);
+                started.Add(obj);
+            }
+        }
+        catch (Exception ex)
+        {
+            foreach (PhysicsObject obj in started)
+                try { obj.Delete(); } catch (Exception sx) { Log.Error(sx.Message); }
+
+            _settingsImportExportMsg = $"Couldn't load {Path.GetFileName(path)}, check log.";
+            Log.Error(ex.Message);
+            return;
+        }
+
+        ClearAllPhysObjects();
+        _physicsObjects.Clear();
+        _physicsObjects.AddRange(started);
+        _scmgr.CurrentScene.Objects = newScene.Objects;
+        _settingsImportExportMsg = $"Loaded {Path.GetFileName(path)}";
     }
 
     private void SaveScene(string path)
