@@ -271,7 +271,7 @@ public class MainWindow
 
             if (ImGui.Button("Save Scene"))
             {
-                DialogResult savePath = Dialog.FileSave("psf", AppContext.BaseDirectory);
+                DialogResult savePath = Dialog.FileSave("psf", Path.Combine(AppContext.BaseDirectory, SystemConfig.Instance.Paths.ScenesPath));
                 if (savePath.Path != null)
                 {
                     SaveScene(savePath.Path);
@@ -280,7 +280,7 @@ public class MainWindow
             ImGui.SameLine();
             if (ImGui.Button("Select Scene"))
             {
-                DialogResult selected = Dialog.FileOpen("psf", AppContext.BaseDirectory);
+                DialogResult selected = Dialog.FileOpen("psf", Path.Combine(AppContext.BaseDirectory, SystemConfig.Instance.Paths.ScenesPath));
                 if (selected.Path != null)
                 {
                     LoadScene(selected.Path);
