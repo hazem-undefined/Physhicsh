@@ -1,7 +1,11 @@
 # <sub>![icon](/docs/ico.bmp)</sub> Physhicsh | ڤيچيكش
 
+// Simple Physics sandbox.
+
 > [!WARNING]  
 > Under development. Expect bugs.
+
+[![Latest release](https://img.shields.io/github/v/release/hazem-undefined/Physhicsh)](https://github.com/hazem-undefined/Physhicsh/releases)
 
 <details>
 <summary>Screenshots</summary>
@@ -12,7 +16,49 @@
 ![sc4](/docs/screenshot1.jpg)
 
 </details>
-  
+
+## Prerequisites
+
+- [.NET SDK **10.0** or later](https://dotnet.microsoft.com/en-us/download/dotnet/10.0). verify with:
+  ```bash
+  dotnet --version
+  ```
+
+## Build
+
+### Get the source
+
+I recommend using the [latest release](https://github.com/UndefiendUserNull/Physhicsh/releases) source code as it's the most stable.
+
+For the latest, unstable source code :
+
+```bash
+git clone https://github.com/UndefiendUserNull/Physhicsh.git
+cd Physhicsh
+```
+
+### Debug build
+
+From the repository root:
+
+```bash
+cd Physhicsh
+dotnet build Physhicsh.csproj
+```
+
+Lands at: `...\Physhics\Physhics\bin\Debug\net10.0`
+
+### Publish (release) build
+
+From the repository root:
+
+```bash
+cd Physhicsh
+dotnet publish /p:PublishProfile=FolderProfile
+```
+
+Lands at: `...\Physhics\Physhics\bin\Release\net10.0\publish\win-x64`
+
 # <sub>![icon](/docs/ico4.bmp)</sub> Controls
 
 ### Main:
@@ -44,3 +90,7 @@
 ### Other:
 
 **F3** : Toggle debug window
+
+## License
+
+MIT
