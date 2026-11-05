@@ -1,4 +1,4 @@
-﻿namespace Physhicsh.PConfig;
+﻿namespace Physhicsh.Config;
 
 public class PhysicsConfig
 {

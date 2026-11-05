@@ -1,7 +1,7 @@
 ﻿using System;
 using System.IO;
 
-namespace Physhicsh.PConfig;
+namespace Physhicsh.Config;
 
 public class PathConfig
 {

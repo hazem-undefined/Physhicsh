@@ -1,12 +1,13 @@
-﻿using PicoToml;
-using System;
+﻿using System;
 using System.IO;
 using System.Threading;
+using Tomlyn;
+using Tomlyn.Serialization;
 
-namespace Physhicsh.PConfig
+namespace Physhicsh.Config
 {
-    [PicoTomlSerializable]
-    public class Config
+    [TomlSerializable(typeof(SystemConfig))]
+    public class SystemConfig
     {
         public ScreenConfig Screen { get; set; } = new();
         public PhysicsConfig Physics { get; set; } = new();
@@ -16,10 +17,10 @@ namespace Physhicsh.PConfig
         public const string PHYSHICSH_SETTINGS_FILE = ".ptf";
         public static AethVec2 ScreenCenter => new(Instance.Screen.SCREEN_WIDTH / 2,
                                                   Instance.Screen.SCREEN_HEIGHT / 2);
-        private static Config? _instance;
+        private static SystemConfig? _instance;
         private static readonly Lock _lock = new();
 
-        public static Config Instance
+        public static SystemConfig Instance
         {
             get
             {
@@ -34,11 +35,11 @@ namespace Physhicsh.PConfig
             }
         }
 
-        private static Config LoadFromFile(string path)
+        private static SystemConfig LoadFromFile(string path)
         {
             if (!File.Exists(path))
             {
-                Config defaults = new Config();
+                SystemConfig defaults = new SystemConfig();
                 try
                 {
                     string toml = TomlSerializer.Serialize(defaults);
@@ -54,9 +55,9 @@ namespace Physhicsh.PConfig
 
             try
             {
-                ReadOnlySpan<byte> toml = File.ReadAllBytes(path).AsSpan();
+                string toml = File.ReadAllText(path);
 
-                Config config = TomlSerializer.Deserialize<Config>(toml);
+                SystemConfig config = TomlSerializer.Deserialize<SystemConfig>(toml);
 
                 return config ?? throw new InvalidOperationException(
                     $"Failed to deserialize configuration from '{path}'.");

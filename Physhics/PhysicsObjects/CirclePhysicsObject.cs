@@ -1,7 +1,7 @@
 ﻿using ImGuiNET;
 using nkast.Aether.Physics2D.Dynamics;
 using Physhicsh.Extensions;
-using Physhicsh.PConfig;
+using Physhicsh.Config;
 using Physhicsh.UI;
 using Raylib_cs;
 
@@ -26,7 +26,7 @@ public class CirclePhysicsObject(float x, float y, float radius, Color color, fl
     public override void Draw()
     {
         base.Draw();
-        float screenRadius = Radius * Config.Instance.Screen.PPM;
+        float screenRadius = Radius * Config.SystemConfig.Instance.Screen.PPM;
 
         Raylib.DrawCircleV(Body.Position.WorldToScreen().ToNumericsVector2(), screenRadius, Color);
     }

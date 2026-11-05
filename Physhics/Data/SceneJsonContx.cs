@@ -1,6 +1,5 @@
 ﻿using nkast.Aether.Physics2D.Collision.Shapes;
 using Physhicsh.Json.DTO;
-using Physhicsh.PConfig;
 using Physhicsh.PhysicsObjects;
 using Physhicsh.Scenes;
 using System.Collections.Generic;
@@ -12,7 +11,7 @@ namespace Physhicsh.Json;
 [JsonSerializable(typeof(SysVec2))]
 [JsonSerializable(typeof(Scene))]
 [JsonSerializable(typeof(List<PhysicsObject>))]
-[JsonSerializable(typeof(Config))]
+[JsonSerializable(typeof(Config.SystemConfig))]
 [JsonSerializable(typeof(Shape))]
 [JsonSerializable(typeof(CircleShape))]
 [JsonSerializable(typeof(PolygonShape))]

@@ -2,7 +2,6 @@
 using NativeFileDialogSharp;
 using nkast.Aether.Physics2D.Dynamics;
 using Physhicsh.Extensions;
-using Physhicsh.PConfig;
 using Physhicsh.PhysicsObjects;
 using Physhicsh.Scenes;
 using Physhicsh.UI;
@@ -45,9 +44,9 @@ public class MainWindow
         _imGuiWindows = [DrawPropertiesWindow, DrawSettingsWindow];
 
         Raylib.SetConfigFlags(ConfigFlags.VSyncHint | ConfigFlags.Msaa4xHint);
-        Raylib.InitWindow(Config.Instance.Screen.SCREEN_WIDTH, Config.Instance.Screen.SCREEN_HEIGHT, "Physhicsh");
+        Raylib.InitWindow(Config.SystemConfig.Instance.Screen.SCREEN_WIDTH, Config.SystemConfig.Instance.Screen.SCREEN_HEIGHT, "Physhicsh");
         Raylib.SetWindowFocused();
-        Raylib.SetTargetFPS(Config.Instance.Screen.MAX_FPS);
+        Raylib.SetTargetFPS(Config.SystemConfig.Instance.Screen.MAX_FPS);
 
         LoadFont();
 
@@ -347,20 +346,20 @@ public class MainWindow
 
     private void StepPhysics(float frameTime)
     {
-        frameTime = Math.Min(frameTime, Config.Instance.Physics.MAX_FRAME_TIME);
+        frameTime = Math.Min(frameTime, Config.SystemConfig.Instance.Physics.MAX_FRAME_TIME);
         _accumulator += frameTime;
 
         int stepCount = 0;
 
-        while (_accumulator >= Config.Instance.Physics.FIXED_DT && stepCount < Config.Instance.Physics.MAX_SUBSTEPS)
+        while (_accumulator >= Config.SystemConfig.Instance.Physics.FIXED_DT && stepCount < Config.SystemConfig.Instance.Physics.MAX_SUBSTEPS)
         {
-            _world.Step(Config.Instance.Physics.FIXED_DT, ref _solver);
-            _accumulator -= Config.Instance.Physics.FIXED_DT;
+            _world.Step(Config.SystemConfig.Instance.Physics.FIXED_DT, ref _solver);
+            _accumulator -= Config.SystemConfig.Instance.Physics.FIXED_DT;
             stepCount++;
         }
 
         // if while loop blocked
-        if (_accumulator >= Config.Instance.Physics.FIXED_DT)
+        if (_accumulator >= Config.SystemConfig.Instance.Physics.FIXED_DT)
         {
             _accumulator = 0f;
         }

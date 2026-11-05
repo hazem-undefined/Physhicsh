@@ -1,5 +1,4 @@
-﻿using Physhicsh.PConfig;
-using Physhicsh.Utils;
+﻿using Physhicsh.Utils;
 
 namespace Physhicsh.Extensions;
 
@@ -9,12 +8,12 @@ public static class AetherVectorsExtension
     public static AethVec2 ToAetherVector2(this SysVec2 v) => new(v.X, v.Y);
 
     public static AethVec2 WorldToScreen(this AethVec2 world) => new(
-        Config.ScreenCenter.X + (world.X * Config.Instance.Screen.PPM),
-        Config.ScreenCenter.Y - (world.Y * Config.Instance.Screen.PPM));
+        Config.SystemConfig.ScreenCenter.X + (world.X * Config.SystemConfig.Instance.Screen.PPM),
+        Config.SystemConfig.ScreenCenter.Y - (world.Y * Config.SystemConfig.Instance.Screen.PPM));
 
     public static AethVec2 ScreenToWorld(this AethVec2 screen) => new(
-        (screen.X - Config.ScreenCenter.X) / Config.Instance.Screen.PPM,
-        (Config.ScreenCenter.Y - screen.Y) / Config.Instance.Screen.PPM);
+        (screen.X - Config.SystemConfig.ScreenCenter.X) / Config.SystemConfig.Instance.Screen.PPM,
+        (Config.SystemConfig.ScreenCenter.Y - screen.Y) / Config.SystemConfig.Instance.Screen.PPM);
 
     public static AethVec3 ToVector3(this RayColor c) =>
         new(c.R / 255f, c.G / 255f, c.B / 255f);

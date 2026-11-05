@@ -11,5 +11,5 @@ fixed_dt = 0.016666668
 max_frame_time = 0.06
 
 [Controls]
-rotation_speed = 5.0
+rotation_speed = 150.0
 textures_path = "textures"

@@ -1,8 +1,11 @@
-﻿namespace Physhicsh.Scenes;
+﻿using Tomlyn.Serialization;
 
+namespace Physhicsh.Scenes;
+
+[TomlSerializable(typeof(SceneSettings))]
 public class SceneSettings
 {
-    public RayColor CurrentBgColor = RayColor.Black;
-    public float GravityScale = 1;
-    public SpawnRules SpawnRules;
+    public RayColor CurrentBgColor { get; set; } = RayColor.Black;
+    public float GravityScale { get; set; } = 3;
+    public SpawnRules SpawnRules { get; set; }
 }

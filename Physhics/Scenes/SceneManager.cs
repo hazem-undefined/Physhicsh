@@ -1,6 +1,5 @@
 ﻿using Newtonsoft.Json;
 using Physhicsh.Json;
-using Physhicsh.PConfig;
 using Physhicsh.PhysicsObjects;
 using Physhicsh.Utils;
 using System;
@@ -43,7 +42,7 @@ public class SceneManager
 
     private static string Format(string path)
     {
-        return FormatUtils.FormatPath(path, Config.PHYSHICSH_SCENE_FILE, Config.Instance.Paths.SCENES_PATH);
+        return FormatUtils.FormatPath(path, Config.SystemConfig.PHYSHICSH_SCENE_FILE, Config.SystemConfig.Instance.Paths.SCENES_PATH);
     }
 
 }

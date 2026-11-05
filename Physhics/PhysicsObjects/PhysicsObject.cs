@@ -35,6 +35,10 @@ public class PhysicsObject
             f.Friction = Fixture.Friction;
             f.Restitution = Fixture.Restitution;
         }
+
+        Body.Awake = true;
+        Body.Enabled = true;
+        Body.ResetDynamics();
     }
 
 
