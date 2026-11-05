@@ -65,7 +65,7 @@ public class MainWindow
             PositionIterations = 16,
         };
 
-        SpawnDemoObjects();
+        LoadScene("demo");
 
         while (!Raylib.WindowShouldClose())
         {
@@ -111,7 +111,7 @@ public class MainWindow
         };
     }
 
-    // Scene -> SpawnObjects
+    // :)
     private void SpawnDemoObjects()
     {
         //_physicsObjects.Add(new CirclePhysicsObject(0, 10, 0.5f, Color.Green));
@@ -121,14 +121,6 @@ public class MainWindow
         //_physicsObjects.Add(new RectanglePhysicsObject(0, -10, 100, 2, Color.SkyBlue, bodyType: BodyType.Static));
         //_physicsObjects.Add(new RectanglePhysicsObject(20, -10, 1, 100, Color.SkyBlue, bodyType: BodyType.Static));
         //_physicsObjects.Add(new RectanglePhysicsObject(-20, -10, 1, 100, Color.SkyBlue, bodyType: BodyType.Static));
-
-        _scmgr.LoadSceneFromFile("demo");
-        ClearAllPhysObjects();
-        _physicsObjects.AddRange(_scmgr.CurrentScene.Objects);
-
-        foreach (PhysicsObject obj in _physicsObjects)
-            obj.Start(_world);
-
     }
 
 
@@ -209,6 +201,26 @@ public class MainWindow
         Raylib.EndDrawing();
     }
 
+    private void LoadScene(string path)
+    {
+        _scmgr.LoadSceneFromFile(path);
+        _settingsImportExportMsg = $"Loaded {Path.GetFileName(path)}";
+        ClearAllPhysObjects();
+        _physicsObjects.AddRange(_scmgr.CurrentScene.Objects);
+
+        foreach (PhysicsObject obj in _physicsObjects)
+            obj.Start(_world);
+    }
+
+    private void SaveScene(string path)
+    {
+        _scmgr.CurrentScene?.Objects.Clear();
+        _scmgr.CurrentScene?.Objects.AddRange(_physicsObjects);
+        _scmgr.SaveSceneToFile(path);
+        _settingsImportExportMsg = $"Saved to {path + ".psf"}";
+    }
+
+
     private void DrawSettingsWindow()
     {
         if (!_imgVault.IsOpen(ImGuiWindow.Settings)) return;
@@ -221,22 +233,27 @@ public class MainWindow
                 return;
             }
 
-            if (ImGui.Button("Import"))
+            if (ImGui.Button("Save Scene"))
             {
-
+                DialogResult savePath = Dialog.FileSave("psf", AppContext.BaseDirectory);
+                if (savePath.Path != null)
+                {
+                    SaveScene(savePath.Path);
+                }
             }
             ImGui.SameLine();
-            if (ImGui.Button("Export"))
+            if (ImGui.Button("Select Scene"))
             {
-                DialogResult res = Dialog.FileSave(".pcf", AppContext.BaseDirectory);
-                if (!string.IsNullOrEmpty(res.Path))
+                DialogResult selected = Dialog.FileOpen("psf", AppContext.BaseDirectory);
+                if (selected.Path != null)
                 {
-                    using FileStream _ = File.Create(res.Path);
+                    LoadScene(selected.Path);
                 }
-
             }
             ImGui.SameLine();
             ImGui.TextColored(Color.Green.ToVector4(), $"{_settingsImportExportMsg}");
+
+
             ImColor currentBgColor = _scettings.CurrentBgColor.ToSysVector3();
 
             if (ImGui.ColorEdit3("Background Color", ref currentBgColor))

@@ -25,12 +25,17 @@ namespace Physhicsh.Config
             {
                 if (_instance is null)
                 {
-                    lock (_lock)
-                    {
-                        _instance ??= LoadFromFile("config.toml");
-                    }
+                    Reload();
                 }
                 return _instance;
+            }
+        }
+
+        public static void Reload()
+        {
+            lock (_lock)
+            {
+                _instance ??= LoadFromFile("config.toml");
             }
         }
 

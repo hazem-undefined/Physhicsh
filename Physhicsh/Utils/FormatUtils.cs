@@ -5,7 +5,7 @@ namespace Physhicsh.Utils;
 
 public static class FormatUtils
 {
-    public static string FormatPath(string path, string ext, string combine)
+    public static string FormatPath(string path, string ext, string? combine = null)
     {
         if (Path.IsPathRooted(path) && path.EndsWith(ext, StringComparison.OrdinalIgnoreCase))
             return path;
@@ -13,6 +13,8 @@ public static class FormatUtils
         if (!path.EndsWith(ext, StringComparison.OrdinalIgnoreCase))
             path += ext;
 
-        return Path.Combine(combine, path);
+        if (combine != null) return Path.Combine(combine, path);
+
+        return path;
     }
 }

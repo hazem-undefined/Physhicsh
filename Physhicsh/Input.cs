@@ -1,8 +1,8 @@
 ﻿using ImGuiNET;
 using nkast.Aether.Physics2D.Dynamics;
 using nkast.Aether.Physics2D.Dynamics.Joints;
-using Physhicsh.Extensions;
 using Physhicsh.Config;
+using Physhicsh.Extensions;
 using Physhicsh.PhysicsObjects;
 using Physhicsh.UI;
 using Physhicsh.Utils;
@@ -39,6 +39,8 @@ public class Input(World world, List<PhysicsObject> objs)
 
         if (Raylib.IsKeyPressedRepeat(KeyboardKey.R) || Raylib.IsKeyPressed(KeyboardKey.R)) Spawn.SpawnRectangle(_world, MousePosWorld, _physicsObjects);
         if (Raylib.IsKeyPressedRepeat(KeyboardKey.C) || Raylib.IsKeyPressed(KeyboardKey.C)) Spawn.SpawnCircle(_world, MousePosWorld, _physicsObjects);
+        if (Raylib.IsKeyPressed(KeyboardKey.F2)) SystemConfig.Reload();
+
         if (Raylib.IsKeyPressed(KeyboardKey.Tab))
         {
             AethVec2 mousePos = MousePosWorld;
