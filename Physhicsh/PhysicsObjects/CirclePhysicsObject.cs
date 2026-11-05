@@ -1,7 +1,7 @@
 ﻿using ImGuiNET;
 using nkast.Aether.Physics2D.Dynamics;
-using Physhicsh.Extensions;
 using Physhicsh.Config;
+using Physhicsh.Extensions;
 using Physhicsh.UI;
 using Raylib_cs;
 
@@ -36,9 +36,11 @@ public class CirclePhysicsObject(float x, float y, float radius, Color color, fl
         base.Properties(ui);
 
         float r = Radius;
-        if (ImGui.SliderFloat("Radius", ref r, 0f, 3f))
+        SysVec2 limit = SystemConfig.Instance.Limits.CircleSpawnRadiusLimit;
+        if (ImGui.SliderFloat("Radius", ref r, limit.X, limit.Y))
         {
             Radius = r;
         }
     }
 }
+

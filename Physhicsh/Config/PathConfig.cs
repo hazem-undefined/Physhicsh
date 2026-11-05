@@ -7,12 +7,12 @@ public class PathConfig
 {
     public PathConfig()
     {
-        CreateIfNotExist(SCENES_PATH);
-        CreateIfNotExist(TEXTURES_PATH);
+        CreateIfNotExist(ScenesPath);
+        CreateIfNotExist(TexturesPath);
     }
 
-    public string SCENES_PATH { get; set; } = "scenes";
-    public string TEXTURES_PATH { get; set; } = "textures";
+    public string ScenesPath { get; set; } = "scenes";
+    public string TexturesPath { get; set; } = "textures";
 
     public static void CreateIfNotExist(string path)
     {

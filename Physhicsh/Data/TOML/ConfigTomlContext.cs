@@ -10,4 +10,4 @@ using Tomlyn.Serialization;
     WriteIndented = true,
     IndentSize = 2,
     DefaultIgnoreCondition = TomlIgnoreCondition.WhenWritingNull)]
-internal partial class ConfigTomlContext : TomlSerializerContext { }
+internal sealed partial class ConfigTomlContext : TomlSerializerContext;

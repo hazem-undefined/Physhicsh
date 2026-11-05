@@ -13,8 +13,8 @@ namespace Physhicsh.PhysicsObjects
 
         public Texture2D LoadTexture(string path)
         {
-            string combinedPath = Path.Combine(Config.SystemConfig.Instance.Paths.TEXTURES_PATH, path);
-            if (!Directory.Exists(Config.SystemConfig.Instance.Paths.TEXTURES_PATH)) Directory.CreateDirectory(Config.SystemConfig.Instance.Paths.TEXTURES_PATH);
+            string combinedPath = Path.Combine(Config.SystemConfig.Instance.Paths.TexturesPath, path);
+            if (!Directory.Exists(Config.SystemConfig.Instance.Paths.TexturesPath)) Directory.CreateDirectory(Config.SystemConfig.Instance.Paths.TexturesPath);
             if (File.Exists(combinedPath))
             {
                 return Raylib.LoadTexture(combinedPath);

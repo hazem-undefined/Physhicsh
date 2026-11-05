@@ -42,7 +42,7 @@ public class SceneManager
 
     private static string Format(string path)
     {
-        return FormatUtils.FormatPath(path, Config.SystemConfig.PHYSHICSH_SCENE_FILE, Config.SystemConfig.Instance.Paths.SCENES_PATH);
+        return FormatUtils.FormatPath(path, Config.SystemConfig.PHYSHICSH_SCENE_FILE, Config.SystemConfig.Instance.Paths.ScenesPath);
     }
 
 }

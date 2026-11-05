@@ -2,5 +2,5 @@
 
 public class ControlsConfig
 {
-    public float ROTATION_SPEED { get; set; } = 10f;
+    public float RotationSpeed { get; set; } = 10f;
 }

@@ -16,14 +16,10 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <None Remove="config.toml" />
     <None Remove="fonts\arial.ttf" />
   </ItemGroup>
 
   <ItemGroup>
-    <Content Include="config.toml">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
     <Content Include="fonts\arial.ttf">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>

@@ -1,8 +1,8 @@
 ﻿using ImGuiNET;
 using nkast.Aether.Physics2D.Collision.Shapes;
 using nkast.Aether.Physics2D.Dynamics;
-using Physhicsh.Extensions;
 using Physhicsh.Config;
+using Physhicsh.Extensions;
 using Physhicsh.UI;
 using Raylib_cs;
 using System;
@@ -91,14 +91,15 @@ namespace Physhicsh.PhysicsObjects
                 maxY = MathF.Max(maxY, v.Y);
             }
 
-            return ((maxX - minX) * Config.SystemConfig.Instance.Screen.PPM, (maxY - minY) * Config.SystemConfig.Instance.Screen.PPM);
+            return ((maxX - minX) * SystemConfig.Instance.Screen.PPM, (maxY - minY) * Config.SystemConfig.Instance.Screen.PPM);
         }
         public override void Properties(ImGuiUI ui)
         {
             base.Properties(ui);
 
             SysVec2 sizeRefSlider = Size.ToNumericsVector2();
-            if (ImGui.SliderFloat2("Size", ref sizeRefSlider, 0.001f, 20f))
+            SysVec2 limit = SystemConfig.Instance.Limits.RectangleSpawnSizeLimit;
+            if (ImGui.SliderFloat2("Size", ref sizeRefSlider, limit.X, limit.Y))
             {
                 Resize(sizeRefSlider.ToAetherVector2());
             }

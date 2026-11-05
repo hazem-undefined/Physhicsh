@@ -1,6 +1,7 @@
 ﻿using ImGuiNET;
 using NativeFileDialogSharp;
 using nkast.Aether.Physics2D.Dynamics;
+using Physhicsh.Config;
 using Physhicsh.Extensions;
 using Physhicsh.PhysicsObjects;
 using Physhicsh.Scenes;
@@ -44,9 +45,9 @@ public class MainWindow
         _imGuiWindows = [DrawPropertiesWindow, DrawSettingsWindow];
 
         Raylib.SetConfigFlags(ConfigFlags.VSyncHint | ConfigFlags.Msaa4xHint);
-        Raylib.InitWindow(Config.SystemConfig.Instance.Screen.SCREEN_WIDTH, Config.SystemConfig.Instance.Screen.SCREEN_HEIGHT, "Physhicsh");
+        Raylib.InitWindow(Config.SystemConfig.Instance.Screen.ScreenWidth, Config.SystemConfig.Instance.Screen.ScreenHeight, "Physhicsh");
         Raylib.SetWindowFocused();
-        Raylib.SetTargetFPS(Config.SystemConfig.Instance.Screen.MAX_FPS);
+        Raylib.SetTargetFPS(Config.SystemConfig.Instance.Screen.MaxFPS);
 
         LoadFont();
 
@@ -245,7 +246,7 @@ public class MainWindow
 
             int gravityRefSlider = (int)_scettings.GravityScale;
 
-            if (ImGui.SliderInt("Gravity scale", ref gravityRefSlider, -10, 10))
+            if (ImGui.SliderInt("Gravity scale", ref gravityRefSlider, -SystemConfig.Instance.Limits.GravityScaleLimit, SystemConfig.Instance.Limits.GravityScaleLimit))
             {
                 _scettings.GravityScale = gravityRefSlider;
                 _world.Gravity = new(0, -9.81f * _scettings.GravityScale);
@@ -257,13 +258,15 @@ public class MainWindow
                 SysVec2 rectanglesSizeRefSlider = SpawnRules.Instance.RectSize;
                 bool useRandomColorsRefBool = SpawnRules.Instance.UseRandomColors;
                 ImColor spawnColorRefColor = SpawnRules.Instance.SpawnColor.ToSysVector3();
+                SysVec2 circleLimit = SystemConfig.Instance.Limits.CircleSpawnRadiusLimit;
+                SysVec2 rectLimit = SystemConfig.Instance.Limits.RectangleSpawnSizeLimit;
 
-                if (ImGui.SliderFloat2("Circles radius", ref circlesRadiusRefSlider, 0.01f, 2f))
+                if (ImGui.SliderFloat2("Circles radius", ref circlesRadiusRefSlider, circleLimit.X, circleLimit.Y))
                 {
                     SpawnRules.Instance.CirclesRadius = circlesRadiusRefSlider;
                 }
 
-                if (ImGui.SliderFloat2("Rectangles size", ref rectanglesSizeRefSlider, 0.1f, 5f))
+                if (ImGui.SliderFloat2("Rectangles size", ref rectanglesSizeRefSlider, rectLimit.X, rectLimit.Y))
                 {
                     SpawnRules.Instance.RectSize = rectanglesSizeRefSlider;
                 }
@@ -293,7 +296,7 @@ public class MainWindow
 
     private void ClearAllPhysObjects()
     {
-        foreach (PhysicsObject item in _physicsObjects)
+        foreach (PhysicsObject item in _physicsObjects.ToArray())
         {
             DeletePhysicsObject(item);
         }
@@ -346,20 +349,20 @@ public class MainWindow
 
     private void StepPhysics(float frameTime)
     {
-        frameTime = Math.Min(frameTime, Config.SystemConfig.Instance.Physics.MAX_FRAME_TIME);
+        frameTime = Math.Min(frameTime, Config.SystemConfig.Instance.Physics.MaxFrameTime);
         _accumulator += frameTime;
 
         int stepCount = 0;
 
-        while (_accumulator >= Config.SystemConfig.Instance.Physics.FIXED_DT && stepCount < Config.SystemConfig.Instance.Physics.MAX_SUBSTEPS)
+        while (_accumulator >= Config.SystemConfig.Instance.Physics.FixedDt && stepCount < Config.SystemConfig.Instance.Physics.MaxSubSteps)
         {
-            _world.Step(Config.SystemConfig.Instance.Physics.FIXED_DT, ref _solver);
-            _accumulator -= Config.SystemConfig.Instance.Physics.FIXED_DT;
+            _world.Step(Config.SystemConfig.Instance.Physics.FixedDt, ref _solver);
+            _accumulator -= Config.SystemConfig.Instance.Physics.FixedDt;
             stepCount++;
         }
 
         // if while loop blocked
-        if (_accumulator >= Config.SystemConfig.Instance.Physics.FIXED_DT)
+        if (_accumulator >= Config.SystemConfig.Instance.Physics.FixedDt)
         {
             _accumulator = 0f;
         }

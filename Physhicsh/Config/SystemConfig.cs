@@ -2,21 +2,20 @@
 using System.IO;
 using System.Threading;
 using Tomlyn;
-using Tomlyn.Serialization;
 
 namespace Physhicsh.Config
 {
-    [TomlSerializable(typeof(SystemConfig))]
     public class SystemConfig
     {
         public ScreenConfig Screen { get; set; } = new();
         public PhysicsConfig Physics { get; set; } = new();
         public ControlsConfig Controls { get; set; } = new();
         public PathConfig Paths { get; set; } = new();
+        public LimitsConfig Limits { get; set; } = new();
         public const string PHYSHICSH_SCENE_FILE = ".psf";
         public const string PHYSHICSH_SETTINGS_FILE = ".ptf";
-        public static AethVec2 ScreenCenter => new(Instance.Screen.SCREEN_WIDTH / 2,
-                                                  Instance.Screen.SCREEN_HEIGHT / 2);
+        public static AethVec2 ScreenCenter => new(Instance.Screen.ScreenWidth / 2,
+                                                  Instance.Screen.ScreenHeight / 2);
         private static SystemConfig? _instance;
         private static readonly Lock _lock = new();
 
@@ -42,7 +41,7 @@ namespace Physhicsh.Config
                 SystemConfig defaults = new SystemConfig();
                 try
                 {
-                    string toml = TomlSerializer.Serialize(defaults);
+                    string toml = TomlSerializer.Serialize(defaults, ConfigTomlContext.Default.SystemConfig);
                     File.WriteAllText(path, toml);
                 }
                 catch (Exception ex) when (ex is IOException or UnauthorizedAccessException)
@@ -57,7 +56,7 @@ namespace Physhicsh.Config
             {
                 string toml = File.ReadAllText(path);
 
-                SystemConfig config = TomlSerializer.Deserialize<SystemConfig>(toml);
+                SystemConfig config = TomlSerializer.Deserialize<SystemConfig>(toml, ConfigTomlContext.Default.SystemConfig);
 
                 return config ?? throw new InvalidOperationException(
                     $"Failed to deserialize configuration from '{path}'.");
