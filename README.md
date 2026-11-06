@@ -28,12 +28,12 @@
 
 ### Get the source
 
-I recommend using the [latest release](https://github.com/UndefiendUserNull/Physhicsh/releases) source code as it's the most stable.
+I recommend using the [latest release](https://github.com/hazem-undefined/Physhicsh/releases) source code as it's the most stable.
 
 For the latest, unstable source code :
 
 ```bash
-git clone https://github.com/UndefiendUserNull/Physhicsh.git
+git clone https://github.com/hazem-undefined/Physhicsh.git
 cd Physhicsh
 ```
 
