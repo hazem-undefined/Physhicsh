@@ -5,7 +5,7 @@
 > [!WARNING]  
 > Under development. Expect bugs.
 
-[![Latest release](https://img.shields.io/github/v/release/hazem-undefined/Physhicsh)](https://github.com/hazem-undefined/Physhicsh/releases)
+[![Latest release](https://img.shields.io/github/v/release/hazem-undefined/Physhicsh?include_prereleases)](https://github.com/hazem-undefined/Physhicsh/releases)
 
 <details>
 <summary>Screenshots</summary>
@@ -28,12 +28,12 @@
 
 ### Get the source
 
-I recommend using the [latest release](https://github.com/UndefiendUserNull/Physhicsh/releases) source code as it's the most stable.
+I recommend using the [latest release](https://github.com/hazem-undefined/Physhicsh/releases) source code as it's the most stable.
 
 For the latest, unstable source code :
 
 ```bash
-git clone https://github.com/UndefiendUserNull/Physhicsh.git
+git clone https://github.com/hazem-undefined/Physhicsh.git
 cd Physhicsh
 ```
 
@@ -46,7 +46,7 @@ cd Physhicsh
 dotnet build Physhicsh.csproj
 ```
 
-Lands at: `...\Physhics\Physhics\bin\Debug\net10.0`
+Lands at: `...\Physhicsh\Physhicsh\bin\Debug\net10.0`
 
 ### Publish (release) build
 
@@ -57,7 +57,7 @@ cd Physhicsh
 dotnet publish /p:PublishProfile=FolderProfile
 ```
 
-Lands at: `...\Physhics\Physhics\bin\Release\net10.0\publish\win-x64`
+Lands at: `...\Physhicsh\Physhicsh\bin\Release\net10.0\publish\win-x64`
 
 # <sub>![icon](/docs/ico4.bmp)</sub> Controls
 
