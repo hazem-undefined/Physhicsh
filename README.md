@@ -46,7 +46,7 @@ cd Physhicsh
 dotnet build Physhicsh.csproj
 ```
 
-Lands at: `...\Physhics\Physhics\bin\Debug\net10.0`
+Lands at: `...\Physhicsh\Physhicsh\bin\Debug\net10.0`
 
 ### Publish (release) build
 
@@ -57,7 +57,7 @@ cd Physhicsh
 dotnet publish /p:PublishProfile=FolderProfile
 ```
 
-Lands at: `...\Physhics\Physhics\bin\Release\net10.0\publish\win-x64`
+Lands at: `...\Physhicsh\Physhicsh\bin\Release\net10.0\publish\win-x64`
 
 # <sub>![icon](/docs/ico4.bmp)</sub> Controls
 
