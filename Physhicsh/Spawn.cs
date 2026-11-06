@@ -9,7 +9,7 @@ namespace Physhicsh;
 
 public static class Spawn
 {
-    public static void SpawnRectangle(World world, Vector2 pos, List<PhysicsObject>? list = null)
+    public static RectanglePhysicsObject SpawnRectangle(World world, Vector2 pos, List<PhysicsObject>? list = null)
     {
         RectanglePhysicsObject newRect = new(
             pos.X, pos.Y, SpawnRules.Instance.RectSize.X, SpawnRules.Instance.RectSize.Y,
@@ -17,9 +17,11 @@ public static class Spawn
 
         list?.Add(newRect);
         newRect.Start(world);
+
+        return newRect;
     }
 
-    public static void SpawnCircle(World world, Vector2 pos, List<PhysicsObject>? list = null)
+    public static CirclePhysicsObject SpawnCircle(World world, Vector2 pos, List<PhysicsObject>? list = null)
     {
         CirclePhysicsObject newBall = new(
             pos.X, pos.Y, Random.Shared.NextFloat(SpawnRules.Instance.CirclesRadius.X, SpawnRules.Instance.CirclesRadius.Y),
@@ -27,6 +29,8 @@ public static class Spawn
 
         list?.Add(newBall);
         newBall.Start(world);
+
+        return newBall;
     }
 
 }

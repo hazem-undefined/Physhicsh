@@ -132,9 +132,9 @@ public class MainWindow
         _physicsTime = _sw.Elapsed.TotalMilliseconds;
 
         _sw.Restart();
-        _input.UpdateMouse();
-        _input.HandleMouseInput(_ui, _world, ref _pickedObject);
-        _input.HandleShortcuts(_ui, ref _pickedObject, DeletePhysicsObject);
+        _input.Update(ref _pickedObject);
+        _input.HandleMouseInput(_ui, _world);
+        _input.HandleShortcuts(_ui, DeletePhysicsObject);
 
         if (Raylib.IsKeyPressed(KeyboardKey.S))
         {
@@ -242,7 +242,6 @@ public class MainWindow
         }
 
         ClearAllPhysObjects();
-        _physicsObjects.Clear();
         _physicsObjects.AddRange(started);
         _scmgr.CurrentScene.Objects = newScene.Objects;
         _settingsImportExportMsg = $"Loaded {Path.GetFileName(path)}";
@@ -372,6 +371,7 @@ public class MainWindow
     private void DrawPropertiesWindow()
     {
         if (!_imgVault.IsOpen(ImGuiWindow.Properties)) return;
+        _propertiesObject = _pickedObject;
 
         using (_ui.UseFont())
         {
