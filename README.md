@@ -5,7 +5,7 @@
 > [!WARNING]  
 > Under development. Expect bugs.
 
-[![Latest release](https://img.shields.io/github/v/release/hazem-undefined/Physhicsh)](https://github.com/hazem-undefined/Physhicsh/releases)
+[![Latest release](https://img.shields.io/github/v/release/hazem-undefined/Physhicsh?include_prereleases)](https://github.com/hazem-undefined/Physhicsh/releases)
 
 <details>
 <summary>Screenshots</summary>
