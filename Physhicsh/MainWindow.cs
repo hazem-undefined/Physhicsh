@@ -174,6 +174,19 @@ public class MainWindow
 
             });
         }
+
+        foreach (PhysicsObject item in _physicsObjects.ToArray())
+        {
+            if (IsOutOfBounds(item))
+            {
+                DeletePhysicsObject(item);
+            }
+        }
+    }
+
+    private static bool IsOutOfBounds(PhysicsObject item)
+    {
+        return MathF.Abs(item.Body.Position.X) > SystemConfig.Instance.Limits.BoundsLimit.X || MathF.Abs(item.Body.Position.Y) > SystemConfig.Instance.Limits.BoundsLimit.Y;
     }
 
     private void GraphicsUpdate()
