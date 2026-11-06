@@ -191,6 +191,29 @@ public class Input(World world, List<PhysicsObject> objs)
         }
     }
 
+    public void EndDrag(World world)
+    {
+        if (MouseJoint is not null)
+        {
+            world.Remove(MouseJoint);
+            MouseJoint = null;
+        }
+
+        if (_isKinematicDragging && _kinematicDragBody != null)
+        {
+            _kinematicDragBody.LinearVelocity = _prevKinematicLinearVelocity;
+            _kinematicDragBody.BodyType = _prevKinematicBodyType;
+            _kinematicDragBody = null;
+            _isKinematicDragging = false;
+        }
+    }
+
+    // TODO: Clear objects outside bounds
+    // TODO: Add more logs
+    // TODO: Store bg color in scenes
+    // TODO: Fix clipping
+    // TODO: Camera (Long term)
+
     private static bool IsKeyPressedOrRepeated(KeyboardKey key) =>
     Raylib.IsKeyPressed(key) || Raylib.IsKeyPressedRepeat(key);
 
