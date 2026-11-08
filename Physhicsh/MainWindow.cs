@@ -39,6 +39,7 @@ public class MainWindow
     private SceneManager _scmgr = new();
     private SceneSettings _scettings = new();
     private string _settingsImportExportMsg = string.Empty;
+    private bool _vulture = true;
 
     public void Start()
     {
@@ -363,7 +364,8 @@ public class MainWindow
     {
         foreach (PhysicsObject item in _physicsObjects.ToArray())
         {
-            DeletePhysicsObject(item);
+            if (_pickedObject != item)
+                DeletePhysicsObject(item);
         }
         _physicsObjects.Clear();
     }
