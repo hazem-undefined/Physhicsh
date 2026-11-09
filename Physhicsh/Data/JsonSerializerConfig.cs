@@ -2,7 +2,7 @@
 using Newtonsoft.Json.Serialization;
 using nkast.Aether.Physics2D.Dynamics;
 using Physhicsh.Debug;
-using Physhicsh.PhysicsObjects;
+using Physhicsh.Physics.PhysicsObjects;
 using System;
 using System.Collections.Generic;
 using System.Linq;

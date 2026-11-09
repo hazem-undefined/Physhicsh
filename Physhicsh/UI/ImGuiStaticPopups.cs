@@ -1,6 +1,6 @@
 ﻿using nkast.Aether.Physics2D.Common;
 using nkast.Aether.Physics2D.Dynamics;
-using Physhicsh.PhysicsObjects;
+using Physhicsh.Physics.PhysicsObjects;
 using System.Collections.Generic;
 
 namespace Physhicsh.UI

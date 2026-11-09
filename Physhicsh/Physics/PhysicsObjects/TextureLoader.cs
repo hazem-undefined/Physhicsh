@@ -4,7 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 
-namespace Physhicsh.PhysicsObjects
+namespace Physhicsh.Physics.PhysicsObjects
 {
     public class TextureLoader : IDisposable
     {

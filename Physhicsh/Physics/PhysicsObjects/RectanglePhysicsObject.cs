@@ -7,13 +7,21 @@ using Physhicsh.UI;
 using Raylib_cs;
 using System;
 
-namespace Physhicsh.PhysicsObjects
+namespace Physhicsh.Physics.PhysicsObjects
 {
-    public class RectanglePhysicsObject(float x, float y, float width, float height, RayColor color, float density = 1f, BodyType bodyType = BodyType.Dynamic) : PhysicsObject(x, y, color, bodyType)
+    public class RectanglePhysicsObject : PhysicsObject, ICloneable
     {
-        public AethVec2 Size = new(width, height);
+        public AethVec2 Size;
         private float _widthPx;
         private float _heightPx;
+
+        public RectanglePhysicsObject(float x, float y, float width, float height, RayColor color, float density = 1f, BodyType bodyType = BodyType.Dynamic)
+            : base(x, y, color, bodyType)
+        {
+            Size = new AethVec2(width, height);
+        }
+
+
         public override void Start(World world)
         {
             base.Start(world);
@@ -103,6 +111,11 @@ namespace Physhicsh.PhysicsObjects
             {
                 Resize(sizeRefSlider.ToAetherVector2());
             }
+        }
+
+        object ICloneable.Clone()
+        {
+            return new RectanglePhysicsObject(Body.Position.X, Body.Position.Y, Size.X, Size.Y, Color, bodyType: Body.BodyType);
         }
     }
 }

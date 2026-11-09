@@ -1,5 +1,5 @@
 ﻿using nkast.Aether.Physics2D.Dynamics;
-using Physhicsh.PhysicsObjects;
+using Physhicsh.Physics.PhysicsObjects;
 
 namespace Physhicsh.Utils;
 

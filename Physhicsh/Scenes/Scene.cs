@@ -1,5 +1,5 @@
 ﻿using Newtonsoft.Json;
-using Physhicsh.PhysicsObjects;
+using Physhicsh.Physics.PhysicsObjects;
 using System.Collections.Generic;
 
 namespace Physhicsh.Scenes;

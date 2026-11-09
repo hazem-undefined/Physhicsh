@@ -4,7 +4,7 @@ using nkast.Aether.Physics2D.Dynamics;
 using Physhicsh.Config;
 using Physhicsh.Debug;
 using Physhicsh.Extensions;
-using Physhicsh.PhysicsObjects;
+using Physhicsh.Physics.PhysicsObjects;
 using Physhicsh.Scenes;
 using Physhicsh.UI;
 using Raylib_cs;
@@ -116,13 +116,13 @@ public class MainWindow
     // :)
     private void SpawnDemoObjects()
     {
-        //_physicsObjects.Add(new CirclePhysicsObject(0, 10, 0.5f, Color.Green));
-        //_physicsObjects.Add(new RectanglePhysicsObject(0, 0, 1, 1, Color.DarkGray, 1));
-        //_physicsObjects.Add(new RectanglePhysicsObject(5, 0, 1, 1, Color.DarkGray, 1));
-        //_physicsObjects.Add(new RectanglePhysicsObject(0, -5, 10, 2, Color.SkyBlue, bodyType: BodyType.Static));
-        //_physicsObjects.Add(new RectanglePhysicsObject(0, -10, 100, 2, Color.SkyBlue, bodyType: BodyType.Static));
-        //_physicsObjects.Add(new RectanglePhysicsObject(20, -10, 1, 100, Color.SkyBlue, bodyType: BodyType.Static));
-        //_physicsObjects.Add(new RectanglePhysicsObject(-20, -10, 1, 100, Color.SkyBlue, bodyType: BodyType.Static));
+        _physicsObjects.Add(new CirclePhysicsObject(0, 10, 0.5f, Color.Green));
+        _physicsObjects.Add(new RectanglePhysicsObject(0, 0, 1, 1, Color.DarkGray, 1));
+        _physicsObjects.Add(new RectanglePhysicsObject(5, 0, 1, 1, Color.DarkGray, 1));
+        _physicsObjects.Add(new RectanglePhysicsObject(0, -5, 10, 2, Color.SkyBlue, bodyType: BodyType.Static));
+        _physicsObjects.Add(new RectanglePhysicsObject(0, -10, 100, 2, Color.SkyBlue, bodyType: BodyType.Static));
+        _physicsObjects.Add(new RectanglePhysicsObject(20, -10, 1, 100, Color.SkyBlue, bodyType: BodyType.Static));
+        _physicsObjects.Add(new RectanglePhysicsObject(-20, -10, 1, 100, Color.SkyBlue, bodyType: BodyType.Static));
     }
 
 
@@ -453,7 +453,7 @@ public class MainWindow
             ImGui.Text($"Physics: {_physicsTime}ms, Update: {_updateObjTime}ms, Input: {_inputTime}ms");
             foreach (PhysicsObject item in _physicsObjects)
             {
-                ImGui.Text($"{item.Body} Position: {item.Body.Position}");
+                ImGui.Text($"{item} Position: {item.Body.Position}");
 
             }
             ImGui.Separator();

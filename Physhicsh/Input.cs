@@ -3,7 +3,7 @@ using nkast.Aether.Physics2D.Dynamics;
 using nkast.Aether.Physics2D.Dynamics.Joints;
 using Physhicsh.Config;
 using Physhicsh.Extensions;
-using Physhicsh.PhysicsObjects;
+using Physhicsh.Physics.PhysicsObjects;
 using Physhicsh.UI;
 using Physhicsh.Utils;
 using Raylib_cs;
@@ -40,6 +40,14 @@ public class Input(World world, List<PhysicsObject> objs)
 
         TrySpawnOnKey(KeyboardKey.R, p => Spawn.SpawnRectangle(_world, p, _physicsObjects));
         TrySpawnOnKey(KeyboardKey.C, p => Spawn.SpawnCircle(_world, p, _physicsObjects));
+        if (_pickedObject != null)
+        {
+            if (Raylib.IsKeyPressed(KeyboardKey.D))
+            {
+                if (_pickedObject is ICloneable r)
+                    Spawn.SpawnPhysicsObject(r.Clone() as PhysicsObject, _world, _physicsObjects, MousePosWorld);
+            }
+        }
 
         if (Raylib.IsKeyPressed(KeyboardKey.F2)) SystemConfig.Reload();
 
@@ -48,6 +56,7 @@ public class Input(World world, List<PhysicsObject> objs)
             AethVec2 mousePos = MousePosWorld;
             ui.ShowPopup("##quick_spawn", Raylib.GetMousePosition(), () => ImGuiStaticPopups.DrawQuickSpawnMenu(_world, mousePos, new(), _physicsObjects));
         }
+
 
         bool isRotating = _pickedObject is not null &&
                           (Raylib.IsKeyDown(KeyboardKey.Q) || Raylib.IsKeyDown(KeyboardKey.E));

@@ -4,10 +4,11 @@ using Physhicsh.Config;
 using Physhicsh.Extensions;
 using Physhicsh.UI;
 using Raylib_cs;
+using System;
 
-namespace Physhicsh.PhysicsObjects;
+namespace Physhicsh.Physics.PhysicsObjects;
 
-public class CirclePhysicsObject(float x, float y, float radius, Color color, float density = 0f, BodyType bodyType = BodyType.Dynamic) : PhysicsObject(x, y, color, bodyType)
+public class CirclePhysicsObject(float x, float y, float radius, Color color, float density = 0f, BodyType bodyType = BodyType.Dynamic) : PhysicsObject(x, y, color, bodyType), ICloneable
 {
     public float Radius { get { return Fixture.Shape.Radius; } set { Fixture.Shape.Radius = value; } }
     public override void Start(World world)
@@ -41,6 +42,11 @@ public class CirclePhysicsObject(float x, float y, float radius, Color color, fl
         {
             Radius = r;
         }
+    }
+
+    public object Clone()
+    {
+        return new CirclePhysicsObject(Body.Position.X, Body.Position.Y, Radius, Color, bodyType: Body.BodyType);
     }
 }
 

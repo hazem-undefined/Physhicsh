@@ -6,7 +6,7 @@ using Physhicsh.Json.DTO;
 using Physhicsh.UI;
 using Raylib_cs;
 
-namespace Physhicsh.PhysicsObjects;
+namespace Physhicsh.Physics.PhysicsObjects;
 
 public class PhysicsObject
 {
@@ -122,6 +122,14 @@ public class PhysicsObject
         this.Locked = locked;
         this._startPosition = new(x, y);
         this._bodyType = bodyType;
+    }
+
+    public PhysicsObject(PhysicsObject obj)
+    {
+        this.Color = obj.Color;
+        this.Locked = obj.Locked;
+        this._startPosition = obj.Body.Position;
+        this._bodyType = obj._bodyType;
     }
 
     public void CaptureForSave()
