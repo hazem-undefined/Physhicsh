@@ -25,6 +25,7 @@ public class MainWindow
     private World _world = null!;
     private float _accumulator;
     private PhysicsObject _pickedObject = null!;
+    private PhysicsObject? _clonedObject = null!;
     private PhysicsObject? _propertiesObject;
     private TextureLoader _textureLoader = new();
     private ImGuiUI _ui = null!;
@@ -40,6 +41,7 @@ public class MainWindow
     private SceneSettings _scettings = new();
     private string _settingsImportExportMsg = string.Empty;
     private bool _vulture = true;
+    private LuaHost _host = new();
 
     public void Start()
     {
@@ -57,13 +59,10 @@ public class MainWindow
 
         _world = new World(new AethVec2(0, -9.81f * _scettings.GravityScale));
 
-        _world.ContactManager.VelocityConstraintsMultithreadThreshold = 128;
-        _world.ContactManager.PositionConstraintsMultithreadThreshold = 128;
-
         _input = new(_world, _physicsObjects);
         _solver = new()
         {
-            VelocityIterations = 8,
+            VelocityIterations = 16,
             PositionIterations = 16,
         };
 
@@ -152,28 +151,7 @@ public class MainWindow
 
         if (Raylib.IsMouseButtonPressed(MouseButton.Right))
         {
-            AethVec2 worldPos = _input.MousePosWorld;
-
-            _ui.ShowPopup("##world_context", Raylib.GetMousePosition(), mb =>
-            {
-                mb.Item("Settings", () => _imgVault.Open(ImGuiWindow.Settings));
-
-                mb.Separator();
-
-                mb.SubMenu("Quick spawn", (x) => ImGuiStaticPopups.DrawQuickSpawnMenu(_world, worldPos, x, _physicsObjects));
-
-                if (_pickedObject is not null)
-                {
-                    mb.Separator();
-                    mb.Item("Delete", () => DeletePhysicsObject(_pickedObject));
-                    mb.Item("Properties", () =>
-                    {
-                        _propertiesObject = _pickedObject;
-                        _imgVault.Open(ImGuiWindow.Properties);
-                    });
-                }
-
-            });
+            DrawContextWindow();
         }
 
         foreach (PhysicsObject item in _physicsObjects.ToArray())
@@ -183,6 +161,39 @@ public class MainWindow
                 DeletePhysicsObject(item);
             }
         }
+    }
+
+    private void DrawContextWindow()
+    {
+        AethVec2 worldPos = _input.MousePosWorld;
+
+        _ui.ShowPopup("##world_context", Raylib.GetMousePosition(), mb =>
+        {
+            mb.Item("Settings", () => _imgVault.Open(ImGuiWindow.Settings));
+
+            mb.Separator();
+
+            if (_clonedObject is not null)
+            {
+                mb.Item("Paste", () => DeletePhysicsObject(_pickedObject));
+            }
+
+            mb.Separator();
+
+            mb.SubMenu("Quick spawn", (x) => ImGuiStaticPopups.DrawQuickSpawnMenu(_world, worldPos, x, _physicsObjects));
+
+            if (_pickedObject is not null)
+            {
+                mb.Separator();
+                mb.Item("Delete", () => DeletePhysicsObject(_pickedObject));
+                mb.Item("Properties", () =>
+                {
+                    _propertiesObject = _pickedObject;
+                    _imgVault.Open(ImGuiWindow.Properties);
+                });
+            }
+
+        });
     }
 
     private static bool IsOutOfBounds(PhysicsObject item)
@@ -199,13 +210,15 @@ public class MainWindow
 
         _ui.BeginFrame();
 
-        foreach (Action window in _imGuiWindows)
-        {
-            window();
-        }
+        //foreach (Action window in _imGuiWindows)
+        //{
+        //    window();
+        //}
 
-        if (_input.ShowDebugWindow)
-            DrawDebugWindow();
+        //if (_input.ShowDebugWindow)
+        //    DrawDebugWindow();
+
+        _host.Draw();
 
         _ui.EndFrame();
 

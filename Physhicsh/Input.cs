@@ -25,6 +25,7 @@ public class Input(World world, List<PhysicsObject> objs)
     private bool _isKinematicDragging;
     private bool _angularWasResetOnce = false;
     private PhysicsObject? _pickedObject;
+    private PhysicsObject? _cloned;
     public void Update(ref PhysicsObject pickedObject)
     {
         MousePosWorld = Raylib.GetMousePosition().ToAetherVector2().ScreenToWorld();
@@ -40,14 +41,7 @@ public class Input(World world, List<PhysicsObject> objs)
 
         TrySpawnOnKey(KeyboardKey.R, p => Spawn.SpawnRectangle(_world, p, _physicsObjects));
         TrySpawnOnKey(KeyboardKey.C, p => Spawn.SpawnCircle(_world, p, _physicsObjects));
-        if (_pickedObject != null)
-        {
-            if (Raylib.IsKeyPressed(KeyboardKey.D))
-            {
-                if (_pickedObject is ICloneable r)
-                    Spawn.SpawnPhysicsObject(r.Clone() as PhysicsObject, _world, _physicsObjects, MousePosWorld);
-            }
-        }
+        ClonePickedObject(true);
 
         if (Raylib.IsKeyPressed(KeyboardKey.F2)) SystemConfig.Reload();
 
@@ -121,6 +115,21 @@ public class Input(World world, List<PhysicsObject> objs)
                 circle.Radius += 0.01f;
             if (Raylib.IsKeyDown(KeyboardKey.J))
                 circle.Radius -= 0.01f;
+        }
+    }
+
+    private void ClonePickedObject(bool copy)
+    {
+        if (_pickedObject != null && _pickedObject is ICloneable r && r.Clone() is PhysicsObject clone)
+        {
+            bool isCtrlDown = Raylib.IsKeyDown(KeyboardKey.LeftControl) ||
+                              Raylib.IsKeyDown(KeyboardKey.RightControl);
+
+            if (isCtrlDown && Raylib.IsKeyPressed(KeyboardKey.F))
+                _cloned = clone;
+
+            if (isCtrlDown && Raylib.IsKeyPressed(KeyboardKey.D))
+                Spawn.SpawnPhysicsObject(clone, _world, _physicsObjects, MousePosWorld);
         }
     }
 
@@ -230,6 +239,10 @@ public class Input(World world, List<PhysicsObject> objs)
         if (!IsKeyPressedOrRepeated(key)) return;
         if (SystemConfig.Instance.Controls.AutoSelectSpawnedObject) _pickedObject = spawn(MousePosWorld);
         else spawn(MousePosWorld);
+    }
 
+    private static void TrySpawnOnKey(KeyboardKey key, Action spawn)
+    {
+        if (IsKeyPressedOrRepeated(key)) spawn();
     }
 }
