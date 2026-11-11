@@ -41,7 +41,7 @@ public class MainWindow
     private SceneSettings _scettings = new();
     private string _settingsImportExportMsg = string.Empty;
     private bool _vulture = true;
-    private LuaHost _host = new();
+    private LuaHost _host;
 
     public void Start()
     {
@@ -67,6 +67,8 @@ public class MainWindow
         };
 
         LoadScene("demo");
+
+        _host = new(_imgVault, _scmgr);
 
         while (!Raylib.WindowShouldClose())
         {

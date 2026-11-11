@@ -6,7 +6,6 @@ namespace Physhicsh.UI;
 public sealed class ImGuiUI(ImFontPtr font)
 {
     private readonly ImFontPtr _font = font;
-
     private sealed class PopupState
     {
         public string Id = "";
