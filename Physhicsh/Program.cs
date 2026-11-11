@@ -1,4 +1,6 @@
-﻿namespace Physhicsh;
+﻿using Physhicsh.Core;
+
+namespace Physhicsh;
 
 public static class Program
 {

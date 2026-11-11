@@ -5,8 +5,10 @@ using Physhicsh.Config;
 using Physhicsh.Debug;
 using Physhicsh.Extensions;
 using Physhicsh.Physics.PhysicsObjects;
+using Physhicsh.Physics.Spawning;
 using Physhicsh.Scenes;
 using Physhicsh.UI;
+using Physhicsh.Utils;
 using Raylib_cs;
 using rlImGui_cs;
 using System;
@@ -15,7 +17,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 
-namespace Physhicsh;
+namespace Physhicsh.Core;
 
 public class MainWindow
 {

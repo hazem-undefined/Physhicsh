@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Physhicsh;
+namespace Physhicsh.Physics.Spawning;
 
 public sealed class SpawnRules
 {

@@ -4,13 +4,14 @@ using nkast.Aether.Physics2D.Dynamics.Joints;
 using Physhicsh.Config;
 using Physhicsh.Extensions;
 using Physhicsh.Physics.PhysicsObjects;
+using Physhicsh.Physics.Spawning;
 using Physhicsh.UI;
 using Physhicsh.Utils;
 using Raylib_cs;
 using System;
 using System.Collections.Generic;
 
-namespace Physhicsh;
+namespace Physhicsh.Core;
 
 public class Input(World world, List<PhysicsObject> objs)
 {

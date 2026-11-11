@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Physhicsh;
+namespace Physhicsh.Utils;
 
 public class Timer(float interval, Action? OnEnd, bool loop = false)
 {

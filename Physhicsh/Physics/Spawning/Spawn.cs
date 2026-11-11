@@ -5,7 +5,7 @@ using Physhicsh.Physics.PhysicsObjects;
 using System;
 using System.Collections.Generic;
 
-namespace Physhicsh;
+namespace Physhicsh.Physics.Spawning;
 
 public static class Spawn
 {
