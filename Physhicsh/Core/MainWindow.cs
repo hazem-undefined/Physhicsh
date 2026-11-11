@@ -25,15 +25,13 @@ public class MainWindow
     private List<PhysicsObject> _physicsObjects = [];
     private readonly Random _rng = new();
     private readonly ImGuiVault _imgVault = new();
-    private World _world = null!;
-    private float _accumulator;
+
     private PhysicsObject? _pickedObject = null!;
     private PhysicsObject? _propertiesObject;
     private TextureLoader _textureLoader = new();
     private ImGuiUI _ui = null!;
     private List<Action> _imGuiWindows = [];
     private InputController _input;
-    private SolverIterations _solver = new();
     private readonly HashSet<Timer> _timers = [];
     private Stopwatch _sw;
     private double _physicsTime;
@@ -43,32 +41,24 @@ public class MainWindow
     private SceneSettings _scettings = new();
     private string _settingsImportExportMsg = string.Empty;
     private bool _vulture = true;
+    private PhysicsWorld _world = new();
 
     public void Start()
     {
         _sw = Stopwatch.StartNew();
         _imGuiWindows = [DrawPropertiesWindow, DrawSettingsWindow];
+        _world.Init(_scettings.GravityScale);
 
         Raylib.SetConfigFlags(ConfigFlags.VSyncHint | ConfigFlags.Msaa4xHint);
-        Raylib.InitWindow(Config.SystemConfig.Instance.Screen.ScreenWidth, Config.SystemConfig.Instance.Screen.ScreenHeight, "Physhicsh");
+        Raylib.InitWindow(SystemConfig.Instance.Screen.ScreenWidth, SystemConfig.Instance.Screen.ScreenHeight, "Physhicsh");
         Raylib.SetWindowFocused();
-        Raylib.SetTargetFPS(Config.SystemConfig.Instance.Screen.MaxFPS);
+        Raylib.SetTargetFPS(SystemConfig.Instance.Screen.MaxFPS);
 
         LoadFont();
 
         rlImGui.Setup(true);
 
-        _world = new World(new AethVec2(0, -9.81f * _scettings.GravityScale));
-
-        _world.ContactManager.VelocityConstraintsMultithreadThreshold = 128;
-        _world.ContactManager.PositionConstraintsMultithreadThreshold = 128;
-
-        _input = new(_world, _ui, _physicsObjects, DeletePhysicsObject);
-        _solver = new()
-        {
-            VelocityIterations = 8,
-            PositionIterations = 16,
-        };
+        _input = new(_world.CurrentWorld, _ui, _physicsObjects, DeletePhysicsObject);
 
         LoadScene("demo");
 
@@ -132,13 +122,14 @@ public class MainWindow
     private void Update()
     {
         _sw.Restart();
-        StepPhysics(Raylib.GetFrameTime());
+        _world.StepPhysics(Raylib.GetFrameTime());
         _physicsTime = _sw.Elapsed.TotalMilliseconds;
 
         _sw.Restart();
 
         _input.Tick();
         _input.TickMouse();
+        _pickedObject = _input.PickedObject;
 
         if (Raylib.IsKeyPressed(KeyboardKey.S))
         {
@@ -163,7 +154,7 @@ public class MainWindow
 
                 mb.Separator();
 
-                mb.SubMenu("Quick spawn", (x) => ImGuiStaticPopups.DrawQuickSpawnMenu(_world, worldPos, x, _physicsObjects));
+                mb.SubMenu("Quick spawn", (x) => ImGuiStaticPopups.DrawQuickSpawnMenu(_world.CurrentWorld, worldPos, x, _physicsObjects));
 
                 if (_pickedObject is not null)
                 {
@@ -244,7 +235,7 @@ public class MainWindow
         {
             foreach (PhysicsObject obj in newScene.Objects)
             {
-                obj.Start(_world);
+                obj.Start(_world.CurrentWorld);
                 started.Add(obj);
             }
         }
@@ -318,7 +309,7 @@ public class MainWindow
             if (ImGui.SliderInt("Gravity scale", ref gravityRefSlider, -SystemConfig.Instance.Limits.GravityScaleLimit, SystemConfig.Instance.Limits.GravityScaleLimit))
             {
                 _scettings.GravityScale = gravityRefSlider;
-                _world.Gravity = new(0, -9.81f * _scettings.GravityScale);
+                _world.CurrentWorld.Gravity = new(0, -9.81f * _scettings.GravityScale);
             }
 
             if (ImGui.CollapsingHeader("Spawn Settings"))
@@ -422,31 +413,12 @@ public class MainWindow
 
     }
 
-    private void StepPhysics(float frameTime)
-    {
-        frameTime = Math.Min(frameTime, Config.SystemConfig.Instance.Physics.MaxFrameTime);
-        _accumulator += frameTime;
 
-        int stepCount = 0;
-
-        while (_accumulator >= Config.SystemConfig.Instance.Physics.FixedDt && stepCount < Config.SystemConfig.Instance.Physics.MaxSubSteps)
-        {
-            _world.Step(Config.SystemConfig.Instance.Physics.FixedDt, ref _solver);
-            _accumulator -= Config.SystemConfig.Instance.Physics.FixedDt;
-            stepCount++;
-        }
-
-        // if while loop blocked
-        if (_accumulator >= Config.SystemConfig.Instance.Physics.FixedDt)
-        {
-            _accumulator = 0f;
-        }
-    }
 
     private void UpdatePhysicsObjects()
     {
         foreach (PhysicsObject item in _physicsObjects)
-            item.PhysicsUpdate(_world);
+            item.PhysicsUpdate(_world.CurrentWorld);
     }
 
     private void DrawDebugWindow()
@@ -455,7 +427,6 @@ public class MainWindow
         {
             ImGui.Text($"FPS: {Raylib.GetFPS().ToString()}");
             ImGui.Text($"Frametime: {Raylib.GetFrameTime().ToString()}");
-            ImGui.Text($"Accumulator: {_accumulator}");
             ImGui.Text($"Count: {_physicsObjects.Count}");
             ImGui.Text($"Physics: {_physicsTime}ms, Update: {_updateObjTime}ms, Input: {_inputTime}ms");
             foreach (PhysicsObject item in _physicsObjects)
