@@ -31,7 +31,7 @@ public class MainWindow
     private TextureLoader _textureLoader = new();
     private ImGuiUI _ui = null!;
     private List<Action> _imGuiWindows = [];
-    private Input _input;
+    private InputController _input;
     private SolverIterations _solver = new();
     private readonly HashSet<Timer> _timers = [];
     private Stopwatch _sw;
@@ -62,7 +62,7 @@ public class MainWindow
         _world.ContactManager.VelocityConstraintsMultithreadThreshold = 128;
         _world.ContactManager.PositionConstraintsMultithreadThreshold = 128;
 
-        _input = new(_world, _physicsObjects);
+        _input = new(_world, _ui, _physicsObjects, DeletePhysicsObject);
         _solver = new()
         {
             VelocityIterations = 8,
@@ -135,9 +135,9 @@ public class MainWindow
         _physicsTime = _sw.Elapsed.TotalMilliseconds;
 
         _sw.Restart();
-        _input.Update(ref _pickedObject);
-        _input.HandleMouseInput(_ui, _world);
-        _input.HandleShortcuts(_ui, DeletePhysicsObject);
+
+        _input.Tick();
+        _input.TickMouse();
 
         if (Raylib.IsKeyPressed(KeyboardKey.S))
         {
