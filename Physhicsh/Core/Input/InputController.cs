@@ -1,6 +1,5 @@
 ﻿using ImGuiNET;
 using nkast.Aether.Physics2D.Dynamics;
-using Physhicsh.Core.Input;
 using Physhicsh.Core.Input.Drag;
 using Physhicsh.Extensions;
 using Physhicsh.Physics.PhysicsObjects;
@@ -8,6 +7,8 @@ using Physhicsh.UI;
 using Raylib_cs;
 using System;
 using System.Collections.Generic;
+
+namespace Physhicsh.Core.Input;
 
 public sealed class InputController
 {

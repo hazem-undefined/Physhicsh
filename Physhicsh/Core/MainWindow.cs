@@ -2,6 +2,7 @@
 using NativeFileDialogSharp;
 using nkast.Aether.Physics2D.Dynamics;
 using Physhicsh.Config;
+using Physhicsh.Core.Input;
 using Physhicsh.Debug;
 using Physhicsh.Extensions;
 using Physhicsh.Physics.PhysicsObjects;
@@ -26,7 +27,7 @@ public class MainWindow
     private readonly ImGuiVault _imgVault = new();
     private World _world = null!;
     private float _accumulator;
-    private PhysicsObject _pickedObject = null!;
+    private PhysicsObject? _pickedObject = null!;
     private PhysicsObject? _propertiesObject;
     private TextureLoader _textureLoader = new();
     private ImGuiUI _ui = null!;
@@ -364,11 +365,15 @@ public class MainWindow
 
     private void ClearAllPhysObjects()
     {
+        if (_propertiesObject != null) _propertiesObject = null;
+        if (_pickedObject != null) _pickedObject = null;
+
         foreach (PhysicsObject item in _physicsObjects.ToArray())
         {
             if (_pickedObject != item)
                 DeletePhysicsObject(item);
         }
+
         _physicsObjects.Clear();
     }
 
