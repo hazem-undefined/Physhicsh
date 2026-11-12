@@ -12,6 +12,7 @@ public sealed class KinematicDragSession : IDragSession
     private readonly Body _body;
     private readonly BodyType _originalType;
     private readonly AethVec2 _originalVelocity;
+    private readonly AethVec2 _grabOffset;
     private bool _active = true;
 
     public bool IsActive => _active;
@@ -26,10 +27,11 @@ public sealed class KinematicDragSession : IDragSession
         _originalVelocity = body.LinearVelocity;
         EffectiveBodyType = body.BodyType;
 
+        _grabOffset = body.Position - target;
+
         body.BodyType = BodyType.Kinematic;
         body.Enabled = true;
         body.Awake = true;
-        Update(target);
     }
 
     public void SetEffectiveBodyType(BodyType type)
@@ -42,12 +44,15 @@ public sealed class KinematicDragSession : IDragSession
         float stiffness = SystemConfig.Instance.Controls.KinematicStiffness;
         float maxSpeed = SystemConfig.Instance.Controls.KinematicMaxSpeed;
 
-        AethVec2 desired = (target - _body.Position) * stiffness;
-        if (desired.LengthSquared() > maxSpeed * maxSpeed)
-        {
-            desired *= maxSpeed;
-            desired.Normalize();
-        }
+        AethVec2 desiredPos = target + _grabOffset;
+
+        AethVec2 desired = (desiredPos - _body.Position) * 25;
+        //if (desired.LengthSquared() > maxSpeed * maxSpeed)
+        //{
+        //    desired.Normalize();
+        //    desired *= maxSpeed;
+        //}
+
         _body.LinearVelocity = desired;
         _body.Awake = true;
     }
