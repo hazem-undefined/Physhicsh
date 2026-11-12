@@ -2,5 +2,5 @@
 
 public interface IImGuiWindow
 {
-    public void Draw(ImGuiUI ui);
+    public void Draw();
 }

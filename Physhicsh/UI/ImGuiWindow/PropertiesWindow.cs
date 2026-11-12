@@ -7,34 +7,28 @@ public class PropertiesWindow(Common c) : IImGuiWindow
 {
     private readonly Common _c = c;
 
-    public void Draw(ImGuiUI ui)
+    public void Draw()
     {
         if (!_c.ImgVault.IsOpen(ImGuiWindowState.Properties)) return;
         _c.PropertiesObject = _c.PickedObject;
 
-        using (ui.UseFont())
+        _c.UI.BeginWindow("Properties", ImGuiWindowFlags.NoCollapse | ImGuiWindowFlags.NoTitleBar, () =>
         {
-            if (ImGui.Begin("Properties", ImGuiWindowFlags.NoCollapse | ImGuiWindowFlags.NoTitleBar))
+            if (ImGui.SmallButton("X"))
             {
-                if (ImGui.SmallButton("X"))
-                {
-                    _c.ImgVault.Close(ImGuiWindowState.Properties);
-                    _c.PropertiesObject = null;
-                    ImGui.End();
-                    return;
-                }
-                if (_c.PropertiesObject is not null)
-                {
-                    _c.PropertiesObject.Properties(ui);
-                }
-                else
-                {
-                    ImGui.Text("No object.");
-                }
-
-                ImGui.End();
+                _c.ImgVault.Close(ImGuiWindowState.Properties);
+                _c.PropertiesObject = null;
+                return;
             }
+            if (_c.PropertiesObject is not null)
+            {
+                _c.PropertiesObject.Properties(_c.UI);
+            }
+            else
+            {
+                ImGui.Text("No object.");
+            }
+        });
 
-        }
     }
 }

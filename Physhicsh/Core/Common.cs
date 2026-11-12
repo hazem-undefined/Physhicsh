@@ -18,16 +18,17 @@ namespace Physhicsh.Core
         public PhysicsObject? PropertiesObject { get; set; }
         public string SettingsImportExportMsg { get; set; } = string.Empty;
 
-        public ImGuiUI _ui { get; set; } = null!;
+        public ImGuiUI UI { get; set; } = null!;
+        public bool ShowDebugWindow { get; set; } = false;
 
-        public Common(ImGuiUI ui)
+
+        public Common()
         {
+            ImgVault = new();
             PhysicsObjects = [];
             SceneSettings = new();
             World = new();
-            ImgVault = new();
             Profiler = new();
-            _ui = ui;
         }
 
         public void DeletePhysicsObject(PhysicsObject obj)

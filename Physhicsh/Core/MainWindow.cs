@@ -1,4 +1,5 @@
-﻿using nkast.Aether.Physics2D.Dynamics;
+﻿using ImGuiNET;
+using nkast.Aether.Physics2D.Dynamics;
 using Physhicsh.Config;
 using Physhicsh.Core.Input;
 using Physhicsh.Physics.PhysicsObjects;
@@ -16,19 +17,17 @@ namespace Physhicsh.Core;
 
 public class MainWindow
 {
-    private readonly Random _rng = new();
-    private ImGuiUI _ui = null!;
     private List<IImGuiWindow> _imGuiWindows = [];
-    private InputController _input;
-    private readonly bool _vulture = true; // Cause it will never be false
-    private PhysicsWorld _world = new();
-    private SceneController _sceneController;
+    private InputController? _input;
+    private SceneController? _sceneController;
     private Common _c;
     private readonly SceneSettings _sceneSettings = new();
+    private readonly bool _vulture = true; // Cause it will never be false
 
     public void Start()
     {
-        _c = new(_ui);
+        _c = new();
+
         _sceneController = new(_c);
 
         _imGuiWindows = [new DebugWindow(_c), new PropertiesWindow(_c), new SettingsWindow(_c)];
@@ -39,11 +38,9 @@ public class MainWindow
         Raylib.SetWindowFocused();
         Raylib.SetTargetFPS(SystemConfig.Instance.Screen.MaxFPS);
 
-        LoadFont();
+        InitializeImGui();
 
-        rlImGui.Setup(true);
-
-        _input = new(_c.World.CurrentWorld, _ui, _c.PhysicsObjects, _c.DeletePhysicsObject);
+        _input = new(_c);
 
         _sceneController.LoadScene("demo");
 
@@ -56,16 +53,19 @@ public class MainWindow
         Raylib.CloseWindow();
     }
 
-    private void LoadFont()
+    private void InitializeImGui()
     {
+        ImFontPtr font = null;
+
         // Try to load Arial, if doesn't exist, load whatever font in there
         rlImGui.SetupUserFonts += io =>
         {
+
             if (File.Exists(_c.ImgVault.IMGUI_FONT_PATH))
             {
-                _ui = new(io.Fonts.AddFontFromFileTTF(
-                _c.ImgVault.IMGUI_FONT_PATH,
-                18.0f));
+                font = io.Fonts.AddFontFromFileTTF(_c.ImgVault.IMGUI_FONT_PATH, 18.0f);
+
+                _c.UI = new(font);
             }
             else
             {
@@ -80,15 +80,18 @@ public class MainWindow
                     string foundFile = fontsDir.ElementAt(i);
                     if (foundFile.EndsWith(".ttf"))
                     {
-                        _ui = new(io.Fonts.AddFontFromFileTTF(
+                        _c.UI = new(io.Fonts.AddFontFromFileTTF(
                         foundFile,
                         18.0f));
                         break;
                     }
                 }
-            }
 
+
+            }
         };
+
+        rlImGui.Setup(true);
     }
 
     // :)
@@ -113,7 +116,7 @@ public class MainWindow
         {
             AethVec2 worldPos = _input.MousePosWorld;
 
-            _ui.ShowPopup("##world_context", Raylib.GetMousePosition(), mb =>
+            _c.UI.ShowPopup("##world_context", Raylib.GetMousePosition(), mb =>
             {
                 mb.Item("Settings", () => _c.ImgVault.Open(ImGuiWindowState.Settings));
 
@@ -145,8 +148,6 @@ public class MainWindow
 
         _input.Tick();
         _input.TickMouse();
-        _c.PickedObject = _input.PickedObject;
-
     }
 
     private static bool IsOutOfBounds(PhysicsObject item)
@@ -161,14 +162,14 @@ public class MainWindow
 
         rlImGui.Begin();
 
-        _ui.BeginFrame();
+        _c.UI.BeginFrame();
 
         foreach (IImGuiWindow window in _imGuiWindows)
         {
-            window.Draw(_ui);
+            window.Draw();
         }
 
-        if (_input.ShowDebugWindow)
+        if (_c.ShowDebugWindow)
         {
             _c.ImgVault.Open(ImGuiWindowState.Debug);
         }
@@ -177,7 +178,7 @@ public class MainWindow
             _c.ImgVault.Close(ImGuiWindowState.Debug);
         }
 
-        _ui.EndFrame();
+        _c.UI.EndFrame();
 
         DrawPhysicsObjects();
 

@@ -14,11 +14,11 @@ public class SettingsWindow(Common c) : IImGuiWindow
 {
     private readonly Common _c = c;
 
-    public void Draw(ImGuiUI ui)
+    public void Draw()
     {
         if (!_c.ImgVault.IsOpen(ImGuiWindowState.Settings)) return;
 
-        ui.BeginWindow("Settings", ImGuiWindowFlags.NoCollapse, () =>
+        _c.UI.BeginWindow("Settings", ImGuiWindowFlags.NoCollapse, () =>
         {
             if (ImGui.SmallButton("X"))
             {

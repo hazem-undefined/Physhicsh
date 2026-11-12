@@ -1,39 +1,27 @@
 ﻿using ImGuiNET;
-using nkast.Aether.Physics2D.Dynamics;
 using Physhicsh.Config;
 using Physhicsh.Core.Input.Drag;
 using Physhicsh.Extensions;
-using Physhicsh.Physics.PhysicsObjects;
 using Physhicsh.UI;
 using Raylib_cs;
-using System;
-using System.Collections.Generic;
 
 namespace Physhicsh.Core.Input;
 
 public sealed class InputController
 {
-    private readonly World _world;
-    private readonly ImGuiUI _ui;
     private readonly Selection _selection;
     private readonly DragController _drag;
     private readonly ShortcutHandler _shortcuts;
     private readonly RotationController _rotation;
-    private List<PhysicsObject> _objs;
     public AethVec2 MousePosWorld { get; private set; }
-    public PhysicsObject? PickedObject => _selection.Get();
-    public bool ShowDebugWindow { get; set; }
-
-    public InputController(World world, ImGuiUI ui, List<PhysicsObject> objs, Action<PhysicsObject> delete)
+    private Common _c;
+    public InputController(Common c)
     {
-        _world = world;
-        _ui = ui;
+        _c = c;
         _selection = new();
         _rotation = new();
-        _drag = new(world);
-        _objs = objs;
-        // Move ShowDebugWindow and it's look a likes into a global class
-        _shortcuts = new(world, objs, ui, delete, () => ShowDebugWindow = !ShowDebugWindow, pos => OpenQuickSpawnMenu(pos));
+        _drag = new(c.World.CurrentWorld);
+        _shortcuts = new(_c, pos => OpenQuickSpawnMenu(pos));
     }
 
     public void Tick()
@@ -50,14 +38,14 @@ public sealed class InputController
     }
     public void TickMouse()
     {
-        if (_ui.AnyPopupsOpen() || ImGui.GetIO().WantCaptureMouse)
+        if (_c.UI.AnyPopupsOpen() || ImGui.GetIO().WantCaptureMouse)
         {
             _drag.End();
             return;
         }
 
         if (SystemConfig.Instance.Controls.SelectOnHover || Raylib.IsMouseButtonPressed(MouseButton.Left) || Raylib.IsMouseButtonPressed(MouseButton.Right))
-            _selection.Pick(_world, MousePosWorld);
+            _selection.Pick(_c.World.CurrentWorld, MousePosWorld);
 
         if (Raylib.IsMouseButtonPressed(MouseButton.Left))
         {
@@ -73,5 +61,5 @@ public sealed class InputController
         }
     }
 
-    private void OpenQuickSpawnMenu(AethVec2 pos) => _ui.ShowPopup("##quick_spawn", Raylib.GetMousePosition(), () => ImGuiStaticPopups.DrawQuickSpawnMenu(_world, pos, new(), _objs));
+    private void OpenQuickSpawnMenu(AethVec2 pos) => _c.UI.ShowPopup("##quick_spawn", Raylib.GetMousePosition(), () => ImGuiStaticPopups.DrawQuickSpawnMenu(_c.World.CurrentWorld, pos, new(), _c.PhysicsObjects));
 }

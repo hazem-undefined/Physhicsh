@@ -1,30 +1,19 @@
-﻿using nkast.Aether.Physics2D.Dynamics;
-using Physhicsh.Config;
+﻿using Physhicsh.Config;
 using Physhicsh.Physics.PhysicsObjects;
 using Physhicsh.Physics.Spawning;
-using Physhicsh.UI;
 using Raylib_cs;
 using System;
-using System.Collections.Generic;
 
 namespace Physhicsh.Core.Input;
 
 public class ShortcutHandler
 {
-    private readonly World _world;
-    private readonly List<PhysicsObject> _objs;
-    private readonly ImGuiUI _ui;
-    private readonly Action<PhysicsObject> _delete;
-    private readonly Action _toggleDebug;
     private readonly Action<AethVec2> _openQuickSpawn;
+    private Common _c;
 
-    public ShortcutHandler(World world, List<PhysicsObject> objects, ImGuiUI ui, Action<PhysicsObject> delete, Action toggleDebug, Action<AethVec2> openQuickSpawn)
+    public ShortcutHandler(Common c, Action<AethVec2> openQuickSpawn)
     {
-        _world = world;
-        _objs = objects;
-        _ui = ui;
-        _delete = delete;
-        _toggleDebug = toggleDebug;
+        _c = c;
         _openQuickSpawn = openQuickSpawn;
     }
 
@@ -33,23 +22,23 @@ public class ShortcutHandler
         SpawnShortcuts(mousePos);
         if (IsKey(KeyboardKey.F2)) SystemConfig.Reload();
         if (IsKey(KeyboardKey.Tab)) _openQuickSpawn(mousePos);
-        if (IsKey(KeyboardKey.F3)) _toggleDebug();
+        if (IsKey(KeyboardKey.F3)) _c.ShowDebugWindow = !_c.ShowDebugWindow;
 
         if (picked is null) return;
 
         if (IsKey(KeyboardKey.D) && picked is ICloneable c)
-            Spawn.SpawnPhysicsObject((PhysicsObject)c.Clone(), _world, _objs, mousePos);
+            Spawn.SpawnPhysicsObject((PhysicsObject)c.Clone(), _c.World.CurrentWorld, _c.PhysicsObjects, mousePos);
 
-        if (IsKey(KeyboardKey.X)) _delete(picked);
+        if (IsKey(KeyboardKey.X)) _c.DeletePhysicsObject(picked);
     }
 
     private void SpawnShortcuts(AethVec2 mouse)
     {
         if (IsKey(KeyboardKey.R))
         {
-            Spawn.SpawnRectangle(_world, mouse, _objs);
+            Spawn.SpawnRectangle(_c.World.CurrentWorld, mouse, _c.PhysicsObjects);
         }
-        if (IsKey(KeyboardKey.C)) Spawn.SpawnCircle(_world, mouse, _objs);
+        if (IsKey(KeyboardKey.C)) Spawn.SpawnCircle(_c.World.CurrentWorld, mouse, _c.PhysicsObjects);
     }
 
     private static bool IsKey(KeyboardKey k) =>

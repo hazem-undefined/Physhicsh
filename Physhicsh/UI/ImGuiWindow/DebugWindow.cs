@@ -9,11 +9,11 @@ public class DebugWindow(Common c) : IImGuiWindow
 {
     private readonly Common _c = c;
 
-    public void Draw(ImGuiUI ui)
+    public void Draw()
     {
         if (!_c.ImgVault.IsOpen(ImGuiWindowState.Debug)) return;
 
-        ui.BeginWindow("##debug", ImGuiWindowFlags.NoTitleBar, () =>
+        _c.UI.BeginWindow("##debug", ImGuiWindowFlags.NoTitleBar, () =>
         {
             ImGui.Text($"FPS: {Raylib.GetFPS().ToString()}");
             ImGui.Text($"Frametime: {Raylib.GetFrameTime().ToString()}");
