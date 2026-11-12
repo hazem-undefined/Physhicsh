@@ -31,7 +31,7 @@ public sealed class InputController
         _rotation = new();
         _drag = new(world);
         _objs = objs;
-        // Move ShowDebugWindow and it's look alikes into a global class
+        // Move ShowDebugWindow and it's look a likes into a global class
         _shortcuts = new(world, objs, ui, delete, () => ShowDebugWindow = !ShowDebugWindow, pos => OpenQuickSpawnMenu(pos));
     }
 

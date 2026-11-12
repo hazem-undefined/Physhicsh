@@ -33,7 +33,8 @@ public class ShortcutHandler
         SpawnShortcuts(mousePos);
         if (IsKey(KeyboardKey.F2)) SystemConfig.Reload();
         if (IsKey(KeyboardKey.Tab)) _openQuickSpawn(mousePos);
-        if (IsKey(KeyboardKey.F3)) _toggleDebug();
+        if (IsKey(KeyboardKey.F3))
+            _toggleDebug();
 
         if (picked is null) return;
 
