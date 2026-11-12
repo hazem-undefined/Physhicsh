@@ -9,7 +9,7 @@ public static class AetherUtils
     {
         Fixture fixture = world.TestPoint(mouseWorld);
 
-        if (pickedObject != null)
+        if (pickedObject?.Body != null)
         {
             pickedObject.Body.IsBullet = false;
         }

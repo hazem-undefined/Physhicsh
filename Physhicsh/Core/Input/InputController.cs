@@ -1,5 +1,6 @@
 ﻿using ImGuiNET;
 using nkast.Aether.Physics2D.Dynamics;
+using Physhicsh.Config;
 using Physhicsh.Core.Input.Drag;
 using Physhicsh.Extensions;
 using Physhicsh.Physics.PhysicsObjects;
@@ -55,14 +56,12 @@ public sealed class InputController
             return;
         }
 
-        if (Raylib.IsMouseButtonPressed(MouseButton.Left) || Raylib.IsMouseButtonPressed(MouseButton.Right))
-        {
+        if (SystemConfig.Instance.Controls.SelectOnHover || Raylib.IsMouseButtonPressed(MouseButton.Left) || Raylib.IsMouseButtonPressed(MouseButton.Right))
             _selection.Pick(_world, MousePosWorld);
 
-            if (Raylib.IsMouseButtonPressed(MouseButton.Left))
-            {
-                _drag.TryBegin(_selection.Get(), MousePosWorld);
-            }
+        if (Raylib.IsMouseButtonPressed(MouseButton.Left))
+        {
+            _drag.TryBegin(_selection.Get(), MousePosWorld);
         }
         else if (_drag.IsActive && Raylib.IsMouseButtonDown(MouseButton.Left))
         {

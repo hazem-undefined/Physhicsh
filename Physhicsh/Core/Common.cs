@@ -22,6 +22,13 @@ namespace Physhicsh.Core
             SceneSettings = scettings;
             World = world;
         }
+        public Common()
+        {
+            PhysicsObjects = [];
+            ImgVault = new();
+            SceneSettings = new();
+            World = new();
+        }
 
         public void DeletePhysicsObject(PhysicsObject obj)
         {

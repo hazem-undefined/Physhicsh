@@ -5,7 +5,6 @@ using Physhicsh.Physics.PhysicsObjects;
 using Physhicsh.Scenes;
 using Physhicsh.UI;
 using Physhicsh.UI.ImGuiWindow;
-using Physhicsh.Utils;
 using Raylib_cs;
 using rlImGui_cs;
 using System;
@@ -18,15 +17,10 @@ namespace Physhicsh.Core;
 
 public class MainWindow
 {
-    private List<PhysicsObject> _physicsObjects = [];
     private readonly Random _rng = new();
-    private readonly ImGuiVault _imgVault = new();
-    private PhysicsObject? _pickedObject = null!;
-    private PhysicsObject? _propertiesObject;
     private ImGuiUI _ui = null!;
     private List<IImGuiWindow> _imGuiWindows = [];
     private InputController _input;
-    private readonly HashSet<Timer> _timers = [];
     private Stopwatch _sw;
     private double _physicsTime;
     private double _inputTime;
@@ -39,11 +33,11 @@ public class MainWindow
 
     public void Start()
     {
-        _c = new(ref _physicsObjects, ref _sceneSettings, ref _world, _imgVault);
+        _c = new();
         _sceneController = new(ref _c);
         _sw = Stopwatch.StartNew();
         _imGuiWindows = [new DebugWindow(ref _c), new PropertiesWindow(ref _c), new SettingsWindow(ref _c)];
-        _world.Init(_sceneSettings.GravityScale);
+        _c.World.Init(_sceneSettings.GravityScale);
 
         Raylib.SetConfigFlags(ConfigFlags.VSyncHint | ConfigFlags.Msaa4xHint);
         Raylib.InitWindow(SystemConfig.Instance.Screen.ScreenWidth, SystemConfig.Instance.Screen.ScreenHeight, "Physhicsh");
@@ -54,7 +48,7 @@ public class MainWindow
 
         rlImGui.Setup(true);
 
-        _input = new(_world.CurrentWorld, _ui, _physicsObjects, _c.DeletePhysicsObject);
+        _input = new(_c.World.CurrentWorld, _ui, _c.PhysicsObjects, _c.DeletePhysicsObject);
 
         _sceneController.LoadScene("demo");
 
@@ -72,10 +66,10 @@ public class MainWindow
         // Try to load Arial, if doesn't exist, load whatever font in there
         rlImGui.SetupUserFonts += io =>
         {
-            if (File.Exists(_imgVault.IMGUI_FONT_PATH))
+            if (File.Exists(_c.ImgVault.IMGUI_FONT_PATH))
             {
                 _ui = new(io.Fonts.AddFontFromFileTTF(
-                _imgVault.IMGUI_FONT_PATH,
+                _c.ImgVault.IMGUI_FONT_PATH,
                 18.0f));
             }
             else
@@ -105,20 +99,20 @@ public class MainWindow
     // :)
     private void SpawnDemoObjects()
     {
-        _physicsObjects.Add(new CirclePhysicsObject(0, 10, 0.5f, Color.Green));
-        _physicsObjects.Add(new RectanglePhysicsObject(0, 0, 1, 1, Color.DarkGray, 1));
-        _physicsObjects.Add(new RectanglePhysicsObject(5, 0, 1, 1, Color.DarkGray, 1));
-        _physicsObjects.Add(new RectanglePhysicsObject(0, -5, 10, 2, Color.SkyBlue, bodyType: BodyType.Static));
-        _physicsObjects.Add(new RectanglePhysicsObject(0, -10, 100, 2, Color.SkyBlue, bodyType: BodyType.Static));
-        _physicsObjects.Add(new RectanglePhysicsObject(20, -10, 1, 100, Color.SkyBlue, bodyType: BodyType.Static));
-        _physicsObjects.Add(new RectanglePhysicsObject(-20, -10, 1, 100, Color.SkyBlue, bodyType: BodyType.Static));
+        _c.PhysicsObjects.Add(new CirclePhysicsObject(0, 10, 0.5f, Color.Green));
+        _c.PhysicsObjects.Add(new RectanglePhysicsObject(0, 0, 1, 1, Color.DarkGray, 1));
+        _c.PhysicsObjects.Add(new RectanglePhysicsObject(5, 0, 1, 1, Color.DarkGray, 1));
+        _c.PhysicsObjects.Add(new RectanglePhysicsObject(0, -5, 10, 2, Color.SkyBlue, bodyType: BodyType.Static));
+        _c.PhysicsObjects.Add(new RectanglePhysicsObject(0, -10, 100, 2, Color.SkyBlue, bodyType: BodyType.Static));
+        _c.PhysicsObjects.Add(new RectanglePhysicsObject(20, -10, 1, 100, Color.SkyBlue, bodyType: BodyType.Static));
+        _c.PhysicsObjects.Add(new RectanglePhysicsObject(-20, -10, 1, 100, Color.SkyBlue, bodyType: BodyType.Static));
     }
 
 
     private void Update()
     {
         _sw.Restart();
-        _world.StepPhysics(Raylib.GetFrameTime());
+        _c.World.StepPhysics(Raylib.GetFrameTime());
         _physicsTime = _sw.Elapsed.TotalMilliseconds;
 
         _sw.Restart();
@@ -136,27 +130,27 @@ public class MainWindow
 
             _ui.ShowPopup("##world_context", Raylib.GetMousePosition(), mb =>
             {
-                mb.Item("Settings", () => _imgVault.Open(ImGuiWindowState.Settings));
+                mb.Item("Settings", () => _c.ImgVault.Open(ImGuiWindowState.Settings));
 
                 mb.Separator();
 
-                mb.SubMenu("Quick spawn", (x) => ImGuiStaticPopups.DrawQuickSpawnMenu(_world.CurrentWorld, worldPos, x, _physicsObjects));
+                mb.SubMenu("Quick spawn", (x) => ImGuiStaticPopups.DrawQuickSpawnMenu(_c.World.CurrentWorld, worldPos, x, _c.PhysicsObjects));
 
-                if (_pickedObject is not null)
+                if (_c.PickedObject is not null)
                 {
                     mb.Separator();
-                    mb.Item("Delete", () => _c.DeletePhysicsObject(_pickedObject));
+                    mb.Item("Delete", () => _c.DeletePhysicsObject(_c.PickedObject));
                     mb.Item("Properties", () =>
                     {
-                        _propertiesObject = _pickedObject;
-                        _imgVault.Open(ImGuiWindowState.Properties);
+                        _c.PropertiesObject = _c.PickedObject;
+                        _c.ImgVault.Open(ImGuiWindowState.Properties);
                     });
                 }
 
             });
         }
 
-        foreach (PhysicsObject item in _physicsObjects.ToArray())
+        foreach (PhysicsObject item in _c.PhysicsObjects.ToArray())
         {
             if (IsOutOfBounds(item))
             {
@@ -166,7 +160,7 @@ public class MainWindow
 
         _input.Tick();
         _input.TickMouse();
-        _pickedObject = _input.PickedObject;
+        _c.PickedObject = _input.PickedObject;
 
     }
 
@@ -208,13 +202,13 @@ public class MainWindow
 
     private void UpdatePhysicsObjects()
     {
-        foreach (PhysicsObject item in _physicsObjects)
-            item.PhysicsUpdate(_world.CurrentWorld);
+        foreach (PhysicsObject item in _c.PhysicsObjects)
+            item.PhysicsUpdate(_c.World.CurrentWorld);
     }
 
     private void DrawPhysicsObjects()
     {
-        foreach (PhysicsObject obj in _physicsObjects)
+        foreach (PhysicsObject obj in _c.PhysicsObjects)
         {
             obj.Draw();
         }
