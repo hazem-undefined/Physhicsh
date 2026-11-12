@@ -9,6 +9,13 @@ public static class AetherUtils
     {
         Fixture fixture = world.TestPoint(mouseWorld);
 
+        pickedObject = ApplyFixtureToPicked(ref pickedObject, fixture);
+
+        return fixture == null ? null : fixture;
+    }
+
+    public static PhysicsObject? ApplyFixtureToPicked(ref PhysicsObject? pickedObject, Fixture fixture)
+    {
         if (pickedObject?.Body != null)
         {
             pickedObject.Body.IsBullet = false;
@@ -18,6 +25,12 @@ public static class AetherUtils
             pickedObject = fixture.Tag as PhysicsObject;
         else
             pickedObject = null;
+        return pickedObject;
+    }
+
+    public static Fixture? PickFixture(World world, AethVec2 mouseWorld)
+    {
+        Fixture fixture = world.TestPoint(mouseWorld);
 
         return fixture == null ? null : fixture;
     }

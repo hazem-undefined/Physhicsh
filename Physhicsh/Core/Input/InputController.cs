@@ -4,6 +4,7 @@ using Physhicsh.Config;
 using Physhicsh.Core.Input.Drag;
 using Physhicsh.Extensions;
 using Physhicsh.UI;
+using Physhicsh.Utils;
 using Raylib_cs;
 
 namespace Physhicsh.Core.Input;
@@ -32,24 +33,14 @@ public sealed class InputController
         if (ImGui.GetIO().WantCaptureKeyboard)
             _rotation.SetTarget(null);
         else
-            _shortcuts.Handle(MousePosWorld, _selection.Current);
+            _shortcuts.Handle(MousePosWorld, _drag.CurrentDrag, _selection.Current);
 
         _rotation.SetTarget(_selection.Current?.Body);
         _rotation.Tick();
 
         _c.PickedObject = _selection.Current;
 
-        if (Raylib.IsKeyPressed(KeyboardKey.V))
-        {
-            if (_drag.CurrentDrag?.Body.BodyType == BodyType.Kinematic || _drag.CurrentDrag?.Body.BodyType == BodyType.Static)
-            {
-                _drag.CurrentDrag?.Body.BodyType = BodyType.Dynamic;
-            }
-            else
-            {
-                _drag.CurrentDrag?.Body.BodyType = BodyType.Static;
-            }
-        }
+
     }
     public void TickMouse()
     {
@@ -60,7 +51,17 @@ public sealed class InputController
         }
 
         if (SystemConfig.Instance.Controls.SelectOnHover || Raylib.IsMouseButtonPressed(MouseButton.Left) || Raylib.IsMouseButtonPressed(MouseButton.Right))
-            _selection.Pick(_c.World.CurrentWorld, MousePosWorld);
+        {
+            Fixture? pick = AetherUtils.PickFixture(_c.World.CurrentWorld, MousePosWorld);
+            if (pick != null)
+            {
+                AetherUtils.ApplyFixtureToPicked(ref _selection.Current, pick);
+            }
+            else if (pick == null && SystemConfig.Instance.Controls.DismissOnBlank)
+            {
+                _selection.Pick(_c.World.CurrentWorld, MousePosWorld);
+            }
+        }
 
         if (Raylib.IsMouseButtonPressed(MouseButton.Left))
         {

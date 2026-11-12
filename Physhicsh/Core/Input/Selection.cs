@@ -8,9 +8,9 @@ public sealed class Selection
 {
     public PhysicsObject? Current;
 
-    public void Pick(World world, AethVec2 at)
+    public Fixture? Pick(World world, AethVec2 at)
     {
-        AetherUtils.PickFixture(world, at, ref Current);
+        return AetherUtils.PickFixture(world, at, ref Current);
     }
 
     public void Set(PhysicsObject? obj) => Current = obj;
