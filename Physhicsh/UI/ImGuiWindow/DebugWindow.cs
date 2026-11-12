@@ -23,7 +23,7 @@ public class DebugWindow(Common c) : IImGuiWindow
 
             ImGui.Separator();
 
-            if (_c.PickedObject is not null)
+            if (_c.PickedObject is not null && _c.PickedObject.Body is not null)
             {
                 ImGui.Text($"Picked: {_c.PickedObject}");
                 ImGui.Text($"Holding Position: {_c.PickedObject.Body.Position}");

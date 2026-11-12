@@ -1,4 +1,5 @@
 ﻿using ImGuiNET;
+using nkast.Aether.Physics2D.Dynamics;
 using Physhicsh.Config;
 using Physhicsh.Core.Input.Drag;
 using Physhicsh.Extensions;
@@ -37,6 +38,18 @@ public sealed class InputController
         _rotation.Tick();
 
         _c.PickedObject = _selection.Current;
+
+        if (Raylib.IsKeyPressed(KeyboardKey.V))
+        {
+            if (_drag.CurrentDrag?.Body.BodyType == BodyType.Kinematic || _drag.CurrentDrag?.Body.BodyType == BodyType.Static)
+            {
+                _drag.CurrentDrag?.Body.BodyType = BodyType.Dynamic;
+            }
+            else
+            {
+                _drag.CurrentDrag?.Body.BodyType = BodyType.Static;
+            }
+        }
     }
     public void TickMouse()
     {

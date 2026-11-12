@@ -130,7 +130,8 @@ public class MainWindow
                     mb.Item("Delete", () => _c.DeletePhysicsObject(_c.PickedObject));
                     mb.Item("Properties", () =>
                     {
-                        _c.PropertiesObject = _c.PickedObject;
+                        if (_c.PickedObject != null)
+                            _c.PropertiesObject = _c.PickedObject;
                         _c.ImgVault.Open(ImGuiWindowState.Properties);
                     });
                 }

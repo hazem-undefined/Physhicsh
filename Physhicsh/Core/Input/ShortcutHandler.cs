@@ -1,4 +1,5 @@
-﻿using Physhicsh.Config;
+﻿using nkast.Aether.Physics2D.Dynamics;
+using Physhicsh.Config;
 using Physhicsh.Physics.PhysicsObjects;
 using Physhicsh.Physics.Spawning;
 using Raylib_cs;
@@ -30,6 +31,13 @@ public class ShortcutHandler
             Spawn.SpawnPhysicsObject((PhysicsObject)c.Clone(), _c.World.CurrentWorld, _c.PhysicsObjects, mousePos);
 
         if (IsKey(KeyboardKey.X)) _c.DeletePhysicsObject(picked);
+        if (IsKey(KeyboardKey.V))
+        {
+            if (picked.Body.BodyType == BodyType.Static || picked.Body.BodyType == BodyType.Kinematic)
+            {
+                picked.Body.BodyType = BodyType.Dynamic;
+            }
+        }
     }
 
     private void SpawnShortcuts(AethVec2 mouse)
