@@ -41,19 +41,9 @@ public sealed class KinematicDragSession : IDragSession
 
     public void Update(AethVec2 target)
     {
-        float stiffness = SystemConfig.Instance.Controls.KinematicStiffness;
-        float maxSpeed = SystemConfig.Instance.Controls.KinematicMaxSpeed;
-
         AethVec2 desiredPos = target + _grabOffset;
 
-        AethVec2 desired = (desiredPos - _body.Position) * 25;
-        //if (desired.LengthSquared() > maxSpeed * maxSpeed)
-        //{
-        //    desired.Normalize();
-        //    desired *= maxSpeed;
-        //}
-
-        _body.LinearVelocity = desired;
+        _body.LinearVelocity = (desiredPos - _body.Position) * SystemConfig.Instance.Controls.KinematicStiffness;
         _body.Awake = true;
     }
 
