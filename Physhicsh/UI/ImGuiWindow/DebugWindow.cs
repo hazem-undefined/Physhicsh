@@ -1,6 +1,5 @@
 ﻿using ImGuiNET;
 using Physhicsh.Core;
-using Physhicsh.Physics.PhysicsObjects;
 using Raylib_cs;
 
 namespace Physhicsh.UI.ImGuiWindow;
@@ -19,10 +18,9 @@ public class DebugWindow(Common c) : IImGuiWindow
             ImGui.Text($"Frametime: {Raylib.GetFrameTime().ToString()}");
             ImGui.Text($"Count: {_c.PhysicsObjects.Count}");
             ImGui.Text($"Physics: {_c.Profiler["PHYSICS"]}ms, Update: {_c.Profiler["UPDATE"]}ms");
-            foreach (PhysicsObject item in _c.PhysicsObjects)
-            {
-                ImGui.Text($"{item} Position: {item.Body.Position}");
-            }
+            ImGui.Text($"Picked: {_c.PickedObject}");
+            ImGui.Text($"Properties: {_c.PropertiesObject}");
+
             ImGui.Separator();
 
             if (_c.PickedObject is not null)

@@ -13,7 +13,7 @@ public sealed class DragController
 
     public DragController(World world) => _world = world;
 
-    public void TryBegin(PhysicsObject? picked, AethVec2 target)
+    public void TryBegin(ref PhysicsObject? picked, AethVec2 target)
     {
         if (picked is null || picked.Locked) return;
 

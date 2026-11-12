@@ -20,7 +20,7 @@ public class MainWindow
     private List<IImGuiWindow> _imGuiWindows = [];
     private InputController? _input;
     private SceneController? _sceneController;
-    private Common _c;
+    private Common _c = null!;
     private readonly SceneSettings _sceneSettings = new();
     private readonly bool _vulture = true; // Cause it will never be false
 

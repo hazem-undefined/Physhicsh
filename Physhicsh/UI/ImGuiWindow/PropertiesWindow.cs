@@ -10,6 +10,7 @@ public class PropertiesWindow(Common c) : IImGuiWindow
     public void Draw()
     {
         if (!_c.ImgVault.IsOpen(ImGuiWindowState.Properties)) return;
+
         _c.PropertiesObject = _c.PickedObject;
 
         _c.UI.BeginWindow("Properties", ImGuiWindowFlags.NoCollapse | ImGuiWindowFlags.NoTitleBar, () =>

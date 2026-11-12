@@ -6,13 +6,12 @@ namespace Physhicsh.Core.Input;
 
 public sealed class Selection
 {
-    private PhysicsObject? _current;
+    public PhysicsObject? Current;
 
     public void Pick(World world, AethVec2 at)
     {
-        AetherUtils.PickFixture(world, at, ref _current);
+        AetherUtils.PickFixture(world, at, ref Current);
     }
 
-    public void Set(PhysicsObject? obj) => _current = obj;
-    public PhysicsObject? Get() => _current;
+    public void Set(PhysicsObject? obj) => Current = obj;
 }

@@ -7,5 +7,5 @@ public class ControlsConfig
     public float JointMaxForcePerKg { get; set; } = 1000f;
     public float JointFrequency { get; set; } = 5f;
     public bool AutoSelectSpawnedObject { get; set; } = true;
-    public bool SelectOnHover { get; set; } = true;
+    public bool SelectOnHover { get; set; } = false;
 }

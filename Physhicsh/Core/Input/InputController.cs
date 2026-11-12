@@ -14,7 +14,7 @@ public sealed class InputController
     private readonly ShortcutHandler _shortcuts;
     private readonly RotationController _rotation;
     public AethVec2 MousePosWorld { get; private set; }
-    private Common _c;
+    private readonly Common _c;
     public InputController(Common c)
     {
         _c = c;
@@ -31,10 +31,12 @@ public sealed class InputController
         if (ImGui.GetIO().WantCaptureKeyboard)
             _rotation.SetTarget(null);
         else
-            _shortcuts.Handle(MousePosWorld, _selection.Get());
+            _shortcuts.Handle(MousePosWorld, _selection.Current);
 
-        _rotation.SetTarget(_selection.Get()?.Body);
+        _rotation.SetTarget(_selection.Current?.Body);
         _rotation.Tick();
+
+        _c.PickedObject = _selection.Current;
     }
     public void TickMouse()
     {
@@ -49,7 +51,7 @@ public sealed class InputController
 
         if (Raylib.IsMouseButtonPressed(MouseButton.Left))
         {
-            _drag.TryBegin(_selection.Get(), MousePosWorld);
+            _drag.TryBegin(ref _selection.Current, MousePosWorld);
         }
         else if (_drag.IsActive && Raylib.IsMouseButtonDown(MouseButton.Left))
         {
