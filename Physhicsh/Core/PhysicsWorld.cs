@@ -37,7 +37,6 @@ namespace Physhicsh.Core
                 stepCount++;
             }
 
-            // if while loop blocked
             if (_accumulator >= Config.SystemConfig.Instance.Physics.FixedDt)
             {
                 _accumulator = 0f;

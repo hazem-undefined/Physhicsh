@@ -9,7 +9,6 @@ using Raylib_cs;
 using rlImGui_cs;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
 using System.Linq;
 
@@ -21,21 +20,17 @@ public class MainWindow
     private ImGuiUI _ui = null!;
     private List<IImGuiWindow> _imGuiWindows = [];
     private InputController _input;
-    private Stopwatch _sw;
-    private double _physicsTime;
-    private double _inputTime;
-    private double _updateObjTime;
     private readonly bool _vulture = true; // Cause it will never be false
     private PhysicsWorld _world = new();
     private SceneController _sceneController;
     private Common _c;
-    private SceneSettings _sceneSettings = new();
+    private readonly SceneSettings _sceneSettings = new();
 
     public void Start()
     {
         _c = new(_ui);
         _sceneController = new(_c);
-        _sw = Stopwatch.StartNew();
+
         _imGuiWindows = [new DebugWindow(_c), new PropertiesWindow(_c), new SettingsWindow(_c)];
         _c.World.Init(_sceneSettings.GravityScale);
 
@@ -111,18 +106,8 @@ public class MainWindow
 
     private void Update()
     {
-        _sw.Restart();
-        _c.World.StepPhysics(Raylib.GetFrameTime());
-        _physicsTime = _sw.Elapsed.TotalMilliseconds;
-
-        _sw.Restart();
-
-        _inputTime = _sw.Elapsed.TotalMilliseconds;
-
-        _sw.Restart();
-        UpdatePhysicsObjects();
-        _updateObjTime = _sw.Elapsed.TotalMilliseconds;
-
+        _c.Profiler.Measure("PHYSICS", () => _c.World.StepPhysics(Raylib.GetFrameTime()));
+        _c.Profiler.Measure("UPDATE", () => UpdatePhysicsObjects());
 
         if (Raylib.IsMouseButtonPressed(MouseButton.Right))
         {

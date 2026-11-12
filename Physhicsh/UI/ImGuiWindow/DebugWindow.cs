@@ -18,7 +18,7 @@ public class DebugWindow(Common c) : IImGuiWindow
             ImGui.Text($"FPS: {Raylib.GetFPS().ToString()}");
             ImGui.Text($"Frametime: {Raylib.GetFrameTime().ToString()}");
             ImGui.Text($"Count: {_c.PhysicsObjects.Count}");
-            //ImGui.Text($"Physics: {_physicsTime}ms, Update: {_updateObjTime}ms, Input: {_inputTime}ms");
+            ImGui.Text($"Physics: {_c.Profiler["PHYSICS"]}ms, Update: {_c.Profiler["UPDATE"]}ms");
             foreach (PhysicsObject item in _c.PhysicsObjects)
             {
                 ImGui.Text($"{item} Position: {item.Body.Position}");

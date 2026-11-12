@@ -1,4 +1,5 @@
-﻿using Physhicsh.Physics.PhysicsObjects;
+﻿using Physhicsh.Debug;
+using Physhicsh.Physics.PhysicsObjects;
 using Physhicsh.Scenes;
 using Physhicsh.UI;
 using System.Collections.Generic;
@@ -11,6 +12,7 @@ namespace Physhicsh.Core
         public ImGuiVault ImgVault { get; }
         public SceneSettings SceneSettings { get; }
         public PhysicsWorld World { get; }
+        public Profiler Profiler { get; }
 
         public PhysicsObject? PickedObject { get; set; }
         public PhysicsObject? PropertiesObject { get; set; }
@@ -18,16 +20,15 @@ namespace Physhicsh.Core
 
         public ImGuiUI _ui { get; set; } = null!;
 
-        public Common(List<PhysicsObject> physicsObjects, SceneSettings scettings, PhysicsWorld world, ImGuiVault imgVault, ImGuiUI ui)
+        public Common(ImGuiUI ui)
         {
-            PhysicsObjects = physicsObjects;
-            ImgVault = imgVault;
-            SceneSettings = scettings;
-            World = world;
+            PhysicsObjects = [];
+            SceneSettings = new();
+            World = new();
+            ImgVault = new();
+            Profiler = new();
             _ui = ui;
         }
-        public Common(ImGuiUI ui) : this([], new SceneSettings(), new PhysicsWorld(), new ImGuiVault(), ui)
-        { }
 
         public void DeletePhysicsObject(PhysicsObject obj)
         {
