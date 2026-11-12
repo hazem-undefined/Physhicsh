@@ -7,28 +7,27 @@ namespace Physhicsh.Core
 {
     public class Common
     {
-        public List<PhysicsObject> PhysicsObjects;
-        public ImGuiVault ImgVault;
-        public SceneSettings SceneSettings;
-        public PhysicsWorld World;
-        public PhysicsObject? PickedObject;
-        public PhysicsObject? PropertiesObject;
-        public string SettingsImportExportMsg = string.Empty;
+        public List<PhysicsObject> PhysicsObjects { get; }
+        public ImGuiVault ImgVault { get; }
+        public SceneSettings SceneSettings { get; }
+        public PhysicsWorld World { get; }
 
-        public Common(ref List<PhysicsObject> physicsObjects, ref SceneSettings scettings, ref PhysicsWorld world, ImGuiVault imgVault)
+        public PhysicsObject? PickedObject { get; set; }
+        public PhysicsObject? PropertiesObject { get; set; }
+        public string SettingsImportExportMsg { get; set; } = string.Empty;
+
+        public ImGuiUI _ui { get; set; } = null!;
+
+        public Common(List<PhysicsObject> physicsObjects, SceneSettings scettings, PhysicsWorld world, ImGuiVault imgVault, ImGuiUI ui)
         {
             PhysicsObjects = physicsObjects;
             ImgVault = imgVault;
             SceneSettings = scettings;
             World = world;
+            _ui = ui;
         }
-        public Common()
-        {
-            PhysicsObjects = [];
-            ImgVault = new();
-            SceneSettings = new();
-            World = new();
-        }
+        public Common(ImGuiUI ui) : this([], new SceneSettings(), new PhysicsWorld(), new ImGuiVault(), ui)
+        { }
 
         public void DeletePhysicsObject(PhysicsObject obj)
         {
@@ -48,8 +47,7 @@ namespace Physhicsh.Core
 
             foreach (PhysicsObject item in PhysicsObjects.ToArray())
             {
-                if (PickedObject != item)
-                    DeletePhysicsObject(item);
+                DeletePhysicsObject(item);
             }
 
             PhysicsObjects.Clear();

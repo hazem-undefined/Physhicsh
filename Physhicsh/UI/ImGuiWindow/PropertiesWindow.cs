@@ -3,7 +3,7 @@ using Physhicsh.Core;
 
 namespace Physhicsh.UI.ImGuiWindow;
 
-public class PropertiesWindow(ref Common c) : IImGuiWindow
+public class PropertiesWindow(Common c) : IImGuiWindow
 {
     private readonly Common _c = c;
 

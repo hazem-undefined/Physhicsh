@@ -7,7 +7,7 @@ using System.IO;
 
 namespace Physhicsh.Scenes;
 
-public class SceneController(ref Common c)
+public class SceneController(Common c)
 {
     private readonly Common _c = c;
     public SceneManager SceneManager = new();

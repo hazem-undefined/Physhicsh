@@ -5,7 +5,7 @@ using Raylib_cs;
 
 namespace Physhicsh.UI.ImGuiWindow;
 
-public class DebugWindow(ref Common c) : IImGuiWindow
+public class DebugWindow(Common c) : IImGuiWindow
 {
     private readonly Common _c = c;
 

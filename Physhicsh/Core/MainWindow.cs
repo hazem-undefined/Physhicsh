@@ -33,10 +33,10 @@ public class MainWindow
 
     public void Start()
     {
-        _c = new();
-        _sceneController = new(ref _c);
+        _c = new(_ui);
+        _sceneController = new(_c);
         _sw = Stopwatch.StartNew();
-        _imGuiWindows = [new DebugWindow(ref _c), new PropertiesWindow(ref _c), new SettingsWindow(ref _c)];
+        _imGuiWindows = [new DebugWindow(_c), new PropertiesWindow(_c), new SettingsWindow(_c)];
         _c.World.Init(_sceneSettings.GravityScale);
 
         Raylib.SetConfigFlags(ConfigFlags.VSyncHint | ConfigFlags.Msaa4xHint);

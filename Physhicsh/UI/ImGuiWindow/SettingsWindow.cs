@@ -10,7 +10,7 @@ using System.IO;
 
 namespace Physhicsh.UI.ImGuiWindow;
 
-public class SettingsWindow(ref Common c) : IImGuiWindow
+public class SettingsWindow(Common c) : IImGuiWindow
 {
     private readonly Common _c = c;
 
