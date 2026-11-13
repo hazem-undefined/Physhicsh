@@ -37,7 +37,7 @@ public class ShortcutHandler
         {
             if (IsKey(KeyboardKey.D) && picked is ICloneable c) Spawn.SpawnPhysicsObject((PhysicsObject)c.Clone(), _c.World.CurrentWorld, _c.PhysicsObjects, mousePos);
 
-            if (IsKey(KeyboardKey.X)) _c.DeletePhysicsObject(picked);
+            if (IsKey(KeyboardKey.X)) _c.DeletePhysicsObject(picked, true);
 
             if (Raylib.IsKeyPressed(KeyboardKey.V))
             {

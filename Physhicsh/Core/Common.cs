@@ -34,12 +34,12 @@ public class Common
         LatestDeletedObjects = [];
     }
 
-    public void DeletePhysicsObject(PhysicsObject obj)
+    public void DeletePhysicsObject(PhysicsObject obj, bool storeInStack = false)
     {
         if (obj.Body == null || !PhysicsObjects.Contains(obj))
             return;
 
-        if (obj is ICloneable c)
+        if (obj is ICloneable c && storeInStack)
         {
             Dictionary<PhysicsObject, AethVec2> d = [];
             d.Add((PhysicsObject)c.Clone(), obj.Body.Position);
