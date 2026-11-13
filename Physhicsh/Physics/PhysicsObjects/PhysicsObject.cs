@@ -136,8 +136,9 @@ public class PhysicsObject
         this._bodyType = obj._bodyType;
     }
 
-    public void CaptureForSave()
+    public BodySaveDTO CaptureForSave()
     {
         BodyData = BodySaveDTO.ToData(Body);
+        return BodyData;
     }
 }

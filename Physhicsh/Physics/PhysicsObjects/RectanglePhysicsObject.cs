@@ -17,7 +17,7 @@ namespace Physhicsh.Physics.PhysicsObjects
         private Rectangle rec;
         private AethVec2 origin;
         private float rotationDegrees;
-        private float _outlineThickness = 2;
+        private float _outlineThickness = 1;
 
         public RectanglePhysicsObject(float x, float y, float width, float height, RayColor color, float density = 1f, BodyType bodyType = BodyType.Dynamic)
             : base(x, y, color, bodyType)

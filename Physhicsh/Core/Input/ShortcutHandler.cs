@@ -5,6 +5,8 @@ using Physhicsh.Physics.PhysicsObjects;
 using Physhicsh.Physics.Spawning;
 using Raylib_cs;
 using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace Physhicsh.Core.Input;
 
@@ -25,6 +27,12 @@ public class ShortcutHandler
         if (IsKey(KeyboardKey.F2)) SystemConfig.Reload();
         if (IsKey(KeyboardKey.Tab)) _openQuickSpawn(mousePos);
         if (IsKey(KeyboardKey.F3)) _c.ShowDebugWindow = !_c.ShowDebugWindow;
+
+        if (IsKey(KeyboardKey.Z) && _c.LatestDeletedObjects.Count > 0)
+        {
+            KeyValuePair<PhysicsObject, AethVec2> returned = _c.LatestDeletedObjects.Pop().ElementAt(0);
+            Spawn.SpawnPhysicsObject(returned.Key, _c.World.CurrentWorld, _c.PhysicsObjects, returned.Value);
+        }
 
         if (picked is null) return;
 

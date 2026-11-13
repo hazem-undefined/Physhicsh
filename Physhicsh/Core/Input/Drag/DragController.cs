@@ -15,7 +15,7 @@ public sealed class DragController
 
     public void TryBegin(ref PhysicsObject? picked, AethVec2 target)
     {
-        if (picked is null || picked.Locked) return;
+        if (picked is null || picked.Locked || picked.Body is null) return;
 
         picked.Body.IsBullet = true;
 

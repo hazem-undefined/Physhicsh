@@ -36,7 +36,7 @@ public class CirclePhysicsObject(float x, float y, float radius, Color color, fl
     public override void DrawOutline()
     {
         base.DrawOutline();
-        DrawCircleOutline(2);
+        DrawCircleOutline(1);
     }
 
     public override void Properties(ImGuiUI ui)
