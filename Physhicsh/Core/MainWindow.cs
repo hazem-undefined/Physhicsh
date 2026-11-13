@@ -198,6 +198,10 @@ public class MainWindow
         foreach (PhysicsObject obj in _c.PhysicsObjects)
         {
             obj.Draw();
+            if (obj == _c.PickedObject)
+            {
+                obj.DrawOutline();
+            }
         }
     }
 

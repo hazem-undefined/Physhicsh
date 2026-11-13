@@ -11,6 +11,8 @@ namespace Physhicsh.Physics.PhysicsObjects;
 public class CirclePhysicsObject(float x, float y, float radius, Color color, float density = 0f, BodyType bodyType = BodyType.Dynamic) : PhysicsObject(x, y, color, bodyType), ICloneable
 {
     public float Radius { get { return Fixture.Shape.Radius; } set { Fixture.Shape.Radius = value; } }
+    private float _screenRadius => Radius * SystemConfig.Instance.Screen.PPM;
+
     public override void Start(World world)
     {
         base.Start(world);
@@ -27,9 +29,14 @@ public class CirclePhysicsObject(float x, float y, float radius, Color color, fl
     public override void Draw()
     {
         base.Draw();
-        float screenRadius = Radius * Config.SystemConfig.Instance.Screen.PPM;
 
-        Raylib.DrawCircleV(Body.Position.WorldToScreen().ToNumericsVector2(), screenRadius, Color);
+        Raylib.DrawCircleV(Body.Position.WorldToScreen().ToNumericsVector2(), _screenRadius, Color);
+    }
+
+    public override void DrawOutline()
+    {
+        base.DrawOutline();
+        DrawCircleOutline(2);
     }
 
     public override void Properties(ImGuiUI ui)
@@ -47,6 +54,14 @@ public class CirclePhysicsObject(float x, float y, float radius, Color color, fl
     public object Clone()
     {
         return new CirclePhysicsObject(Body.Position.X, Body.Position.Y, Radius, Color, bodyType: Body.BodyType);
+    }
+
+    private void DrawCircleOutline(int thickness)
+    {
+        for (int i = 0; i < thickness; i++)
+        {
+            Raylib.DrawCircleLinesV(Body.Position.WorldToScreen().ToNumericsVector2(), _screenRadius + i, Color.Red);
+        }
     }
 }
 

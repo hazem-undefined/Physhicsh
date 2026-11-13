@@ -1,6 +1,6 @@
 ﻿namespace Physhicsh.Config;
 
-public class ScreenConfig
+public class GraphicsConfig
 {
     public float PPM { get; set; } = 32f;
     public int ScreenWidth { get; set; } = 1280;

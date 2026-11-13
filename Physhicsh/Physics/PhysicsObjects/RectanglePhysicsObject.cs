@@ -14,6 +14,10 @@ namespace Physhicsh.Physics.PhysicsObjects
         public AethVec2 Size;
         private float _widthPx;
         private float _heightPx;
+        private Rectangle rec;
+        private AethVec2 origin;
+        private float rotationDegrees;
+        private float _outlineThickness = 2;
 
         public RectanglePhysicsObject(float x, float y, float width, float height, RayColor color, float density = 1f, BodyType bodyType = BodyType.Dynamic)
             : base(x, y, color, bodyType)
@@ -35,27 +39,42 @@ namespace Physhicsh.Physics.PhysicsObjects
             (_widthPx, _heightPx) = MeasurePolygon(Fixture.Shape as PolygonShape);
             AethVec2 screenPos = Body.Position.WorldToScreen();
 
-            if (Texture is Texture2D texture)
-            {
-                // Texture rect
-                Rectangle source = new(0, 0, texture.Width, texture.Height);
-                // Drawn rect
-                Rectangle dist = new(screenPos.X, screenPos.Y, _widthPx, _heightPx);
-                AethVec2 origin = new(_widthPx / 2f, _heightPx / 2f);
-                float rotationDegrees = -Body.Rotation * (180f / MathF.PI);
+            rec = new(screenPos.X, screenPos.Y, _widthPx, _heightPx);
+            origin = new(_widthPx / 2f, _heightPx / 2f);
+            rotationDegrees = -Body.Rotation * (180f / MathF.PI);
 
-                Raylib.DrawTexturePro(texture, source, dist, origin.ToNumericsVector2(), rotationDegrees, RayColor.White);
-            }
-            else
-            {
-                Rectangle rec = new(screenPos.X, screenPos.Y, _widthPx, _heightPx);
-                AethVec2 origin = new(_widthPx / 2f, _heightPx / 2f);
-                float rotationDegrees = -Body.Rotation * (180f / MathF.PI);
+            Raylib.DrawRectanglePro(rec, origin.ToNumericsVector2(), rotationDegrees, Color);
 
-                Raylib.DrawRectanglePro(rec, origin.ToNumericsVector2(), rotationDegrees, Color);
-            }
+            //Raylib.DrawRectangleLinesEx(new(rec.Position - origin.ToNumericsVector2(), rec.Size), 2, Color.Red);
+            //Raylib.DrawPolyLinesEx(rec.Position, 4, 25, rotationDegrees + 45, 2, Color.Red);
         }
 
+        // Vibe coded
+        public override void DrawOutline()
+        {
+            AethVec2 center = new(rec.X, rec.Y);
+
+            float rad = rotationDegrees * MathF.PI / 180f;
+            float cos = MathF.Cos(rad);
+            float sin = MathF.Sin(rad);
+
+            float hw = origin.X;
+            float hh = origin.Y;
+
+            Span<float> lx = [-hw, hw, hw, -hw];
+            Span<float> ly = [-hh, -hh, hh, hh];
+            Span<SysVec2> corners = stackalloc SysVec2[4];
+
+            for (int i = 0; i < 4; i++)
+            {
+                float rx = (lx[i] * cos) - ly[i] * sin;
+                float ry = (lx[i] * sin) + ly[i] * cos;
+                corners[i] = new SysVec2(center.X + rx, center.Y + ry);
+            }
+
+            for (int i = 0; i < 4; i++)
+                Raylib.DrawLineEx(corners[i], corners[(i + 1) % 4], _outlineThickness, Color.Red);
+        }
         public void Resize(AethVec2 newSize)
         {
             if (newSize == AethVec2.Zero) return;

@@ -7,7 +7,7 @@ namespace Physhicsh.Config
 {
     public class SystemConfig
     {
-        public ScreenConfig Screen { get; set; } = new();
+        public GraphicsConfig Screen { get; set; } = new();
         public PhysicsConfig Physics { get; set; } = new();
         public ControlsConfig Controls { get; set; } = new();
         public PathConfig Paths { get; set; } = new();

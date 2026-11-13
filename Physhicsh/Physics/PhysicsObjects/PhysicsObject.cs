@@ -51,6 +51,10 @@ public class PhysicsObject
     {
 
     }
+    public virtual void DrawOutline()
+    {
+
+    }
     public virtual void Delete()
     {
         if (Body != null && Fixture != null && Body.FixtureList.Contains(Fixture)) Body.Remove(Fixture);
