@@ -35,12 +35,12 @@ public sealed class InputController
         else
             _shortcuts.Handle(MousePosWorld, _selection.Current);
 
-        _rotation.SetTarget(_selection.Current?.Body);
+        if (_selection.Current?.Body != null)
+            _rotation.SetTarget(_selection.Current?.Body);
+
         _rotation.Tick();
 
         _c.PickedObject = _selection.Current;
-
-
     }
     public void TickMouse()
     {

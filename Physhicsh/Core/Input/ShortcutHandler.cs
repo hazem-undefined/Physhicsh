@@ -33,21 +33,22 @@ public class ShortcutHandler
             Spawn.SpawnPhysicsObject(returned.Key, _c.World.CurrentWorld, _c.PhysicsObjects, returned.Value);
         }
 
-        if (picked is null) return;
-
-        if (IsKey(KeyboardKey.D) && picked is ICloneable c)
-            Spawn.SpawnPhysicsObject((PhysicsObject)c.Clone(), _c.World.CurrentWorld, _c.PhysicsObjects, mousePos);
-
-        if (IsKey(KeyboardKey.X)) _c.DeletePhysicsObject(picked);
-        if (Raylib.IsKeyPressed(KeyboardKey.V))
+        if (picked != null)
         {
-            if (picked?.Body.BodyType == BodyType.Kinematic || picked?.Body.BodyType == BodyType.Static)
+            if (IsKey(KeyboardKey.D) && picked is ICloneable c) Spawn.SpawnPhysicsObject((PhysicsObject)c.Clone(), _c.World.CurrentWorld, _c.PhysicsObjects, mousePos);
+
+            if (IsKey(KeyboardKey.X)) _c.DeletePhysicsObject(picked);
+
+            if (Raylib.IsKeyPressed(KeyboardKey.V))
             {
-                picked?.Body.BodyType = BodyType.Dynamic;
-            }
-            else
-            {
-                picked?.Body.BodyType = BodyType.Static;
+                if (picked?.Body.BodyType == BodyType.Kinematic || picked?.Body.BodyType == BodyType.Static)
+                {
+                    picked?.Body.BodyType = BodyType.Dynamic;
+                }
+                else
+                {
+                    picked?.Body.BodyType = BodyType.Static;
+                }
             }
         }
     }

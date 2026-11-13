@@ -8,6 +8,7 @@ public sealed class RotationController
 {
     private Body? _body;
     private bool _wasResetting;
+    public bool IsRotating { get; private set; }
 
     public void SetTarget(Body? body) => _body = body;
 
@@ -15,9 +16,9 @@ public sealed class RotationController
     {
         if (_body is null) return;
 
-        bool rotating = Raylib.IsKeyDown(KeyboardKey.Q) || Raylib.IsKeyDown(KeyboardKey.E);
+        IsRotating = Raylib.IsKeyDown(KeyboardKey.Q) || Raylib.IsKeyDown(KeyboardKey.E);
 
-        if (rotating)
+        if (IsRotating)
         {
             float speed = Raylib.IsKeyDown(KeyboardKey.LeftShift)
                 ? SystemConfig.Instance.Controls.RotationSpeed / 2f
@@ -29,11 +30,10 @@ public sealed class RotationController
             _body.Awake = true;
             _wasResetting = false;
         }
-        else if (!_wasResetting)
+        else if (!_wasResetting || !IsRotating)
         {
             _body.AngularVelocity = 0f;
             _wasResetting = true;
         }
-
     }
 }
