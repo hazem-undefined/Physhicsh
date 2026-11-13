@@ -11,4 +11,5 @@ public class ControlsConfig
     public bool DismissOnBlank { get; set; } = false;
     public float MaxPull { get; set; } = 15f;
     public float MaxSpeed { get; set; } = 45f;
+    public float MassAdditionOnPick { get; set; } = 50;
 }

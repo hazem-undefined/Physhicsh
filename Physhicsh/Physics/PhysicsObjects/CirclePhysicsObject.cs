@@ -11,7 +11,7 @@ namespace Physhicsh.Physics.PhysicsObjects;
 public class CirclePhysicsObject(float x, float y, float radius, Color color, float density = 1f, BodyType bodyType = BodyType.Dynamic) : PhysicsObject(x, y, color, bodyType), ICloneable
 {
     public float Radius { get { return Fixture.Shape.Radius; } set { Fixture.Shape.Radius = value; } }
-    private float _screenRadius => Radius * SystemConfig.Instance.Screen.PPM;
+    private float _screenRadius => Radius * SystemConfig.Instance.Graphics.PPM;
 
     public override void Start(World world)
     {

@@ -18,17 +18,18 @@ public sealed class JointDragSession : IDragSession
     public Body Body => _joint.BodyA;
 
     public BodyType EffectiveBodyType => Body.BodyType;
-
+    private float _prevMass;
     public JointDragSession(World world, Body body, AethVec2 target)
     {
+        _prevMass = body.Mass;
+        body.Mass += SystemConfig.Instance.Controls.MassAdditionOnPick;
         _world = world;
         _joint = new(body, target)
         {
             MaxForce = SystemConfig.Instance.Controls.JointMaxForcePerKg * body.Mass,
             Frequency = SystemConfig.Instance.Controls.JointFrequency,
-            DampingRatio = 1,
+            //DampingRatio = 1,
         };
-
         world.Add(_joint);
     }
 
@@ -37,6 +38,7 @@ public sealed class JointDragSession : IDragSession
         Body.IsBullet = false;
         _world.Remove(_joint);
         _active = false;
+        Body.Mass = _prevMass;
     }
 
     public void Update(AethVec2 target)

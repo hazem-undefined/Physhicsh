@@ -7,15 +7,15 @@ namespace Physhicsh.Config
 {
     public class SystemConfig
     {
-        public GraphicsConfig Screen { get; set; } = new();
+        public GraphicsConfig Graphics { get; set; } = new();
         public PhysicsConfig Physics { get; set; } = new();
         public ControlsConfig Controls { get; set; } = new();
         public PathConfig Paths { get; set; } = new();
         public LimitsConfig Limits { get; set; } = new();
         public const string PHYSHICSH_SCENE_FILE = ".psf";
         public const string PHYSHICSH_SETTINGS_FILE = ".ptf";
-        public static AethVec2 ScreenCenter => new(Instance.Screen.ScreenWidth / 2,
-                                                  Instance.Screen.ScreenHeight / 2);
+        public static AethVec2 ScreenCenter => new(Instance.Graphics.ScreenWidth / 2,
+                                                  Instance.Graphics.ScreenHeight / 2);
         private static SystemConfig? _instance;
         private static readonly Lock _lock = new();
 

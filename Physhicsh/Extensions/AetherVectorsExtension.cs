@@ -8,12 +8,12 @@ public static class AetherVectorsExtension
     public static AethVec2 ToAetherVector2(this SysVec2 v) => new(v.X, v.Y);
 
     public static AethVec2 WorldToScreen(this AethVec2 world) => new(
-        Config.SystemConfig.ScreenCenter.X + (world.X * Config.SystemConfig.Instance.Screen.PPM),
-        Config.SystemConfig.ScreenCenter.Y - (world.Y * Config.SystemConfig.Instance.Screen.PPM));
+        Config.SystemConfig.ScreenCenter.X + (world.X * Config.SystemConfig.Instance.Graphics.PPM),
+        Config.SystemConfig.ScreenCenter.Y - (world.Y * Config.SystemConfig.Instance.Graphics.PPM));
 
     public static AethVec2 ScreenToWorld(this AethVec2 screen) => new(
-        (screen.X - Config.SystemConfig.ScreenCenter.X) / Config.SystemConfig.Instance.Screen.PPM,
-        (Config.SystemConfig.ScreenCenter.Y - screen.Y) / Config.SystemConfig.Instance.Screen.PPM);
+        (screen.X - Config.SystemConfig.ScreenCenter.X) / Config.SystemConfig.Instance.Graphics.PPM,
+        (Config.SystemConfig.ScreenCenter.Y - screen.Y) / Config.SystemConfig.Instance.Graphics.PPM);
 
     public static AethVec3 ToVector3(this RayColor c) =>
         new(c.R / 255f, c.G / 255f, c.B / 255f);
@@ -47,4 +47,7 @@ public static class AetherVectorsExtension
 
     public static SysVec3 ToNumericsVector3(this AethVec3 v) =>
         new(v.X, v.Y, v.Z);
+
+    public static AethVec2 ToAethVec2(this SysVec2 v) => new(v.X, v.Y);
+    public static SysVec2 ToSysVec2(this AethVec2 v) => new(v.X, v.Y);
 }

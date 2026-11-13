@@ -34,9 +34,9 @@ public class MainWindow
         _c.World.Init(_sceneSettings.GravityScale);
 
         Raylib.SetConfigFlags(ConfigFlags.VSyncHint | ConfigFlags.Msaa4xHint);
-        Raylib.InitWindow(SystemConfig.Instance.Screen.ScreenWidth, SystemConfig.Instance.Screen.ScreenHeight, "Physhicsh");
+        Raylib.InitWindow(SystemConfig.Instance.Graphics.ScreenWidth, SystemConfig.Instance.Graphics.ScreenHeight, "Physhicsh");
         Raylib.SetWindowFocused();
-        Raylib.SetTargetFPS(SystemConfig.Instance.Screen.MaxFPS);
+        Raylib.SetTargetFPS(SystemConfig.Instance.Graphics.MaxFPS);
 
         InitializeImGui();
 
@@ -183,6 +183,11 @@ public class MainWindow
 
         DrawPhysicsObjects();
 
+        if (_input != null && _c.PickedObject != null)
+        {
+            _input.DrawSelectionLine();
+        }
+
         rlImGui.End();
         Raylib.EndDrawing();
     }
@@ -198,7 +203,7 @@ public class MainWindow
         foreach (PhysicsObject obj in _c.PhysicsObjects)
         {
             obj.Draw();
-            if (obj == _c.PickedObject && !obj.Locked)
+            if (obj == _c.PickedObject && !obj.Locked && SystemConfig.Instance.Graphics.ShowOutline)
             {
                 obj.DrawOutline();
             }
