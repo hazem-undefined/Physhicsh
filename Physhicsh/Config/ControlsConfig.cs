@@ -9,4 +9,6 @@ public class ControlsConfig
     public bool AutoSelectSpawnedObject { get; set; } = true;
     public bool SelectOnHover { get; set; } = true;
     public bool DismissOnBlank { get; set; } = false;
+    public float MaxPull { get; set; } = 15f;
+    public float MaxSpeed { get; set; } = 45f;
 }

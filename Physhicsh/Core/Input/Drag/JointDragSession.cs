@@ -26,6 +26,7 @@ public sealed class JointDragSession : IDragSession
         {
             MaxForce = SystemConfig.Instance.Controls.JointMaxForcePerKg * body.Mass,
             Frequency = SystemConfig.Instance.Controls.JointFrequency,
+            DampingRatio = 1,
         };
 
         world.Add(_joint);
@@ -33,9 +34,25 @@ public sealed class JointDragSession : IDragSession
 
     public void End()
     {
+        Body.IsBullet = false;
         _world.Remove(_joint);
         _active = false;
     }
 
-    public void Update(AethVec2 target) => _joint.WorldAnchorB = target;
+    public void Update(AethVec2 target)
+    {
+        AethVec2 delta = target - Body.Position;
+
+        if (delta.Length() > SystemConfig.Instance.Controls.MaxPull)
+        {
+            delta.Normalize();
+            target = Body.Position + (delta * SystemConfig.Instance.Controls.MaxPull);
+        }
+
+        _joint.WorldAnchorB = target;
+
+        float speed = Body.LinearVelocity.Length();
+        if (speed > SystemConfig.Instance.Controls.MaxSpeed)
+            Body.LinearVelocity *= SystemConfig.Instance.Controls.MaxSpeed / speed;
+    }
 }

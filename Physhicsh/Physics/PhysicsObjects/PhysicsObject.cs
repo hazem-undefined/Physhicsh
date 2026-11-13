@@ -29,12 +29,12 @@ public class PhysicsObject
 
         Body.Tag = this;
 
-        if (Fixture?.Shape is { } shape)
-        {
-            Fixture f = Body.CreateFixture(shape);
-            f.Friction = Fixture.Friction;
-            f.Restitution = Fixture.Restitution;
-        }
+        //if (Fixture?.Shape is { } shape)
+        //{
+        //    Fixture f = Body.CreateFixture(shape);
+        //    f.Friction = Fixture.Friction;
+        //    f.Restitution = Fixture.Restitution;
+        //}
 
         Body.Awake = true;
         Body.Enabled = true;
