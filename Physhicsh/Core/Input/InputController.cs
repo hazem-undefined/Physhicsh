@@ -33,7 +33,7 @@ public sealed class InputController
         if (ImGui.GetIO().WantCaptureKeyboard)
             _rotation.SetTarget(null);
         else
-            _shortcuts.Handle(MousePosWorld, _drag.CurrentDrag, _selection.Current);
+            _shortcuts.Handle(MousePosWorld, _selection.Current);
 
         _rotation.SetTarget(_selection.Current?.Body);
         _rotation.Tick();

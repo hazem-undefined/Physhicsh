@@ -1,6 +1,5 @@
 ﻿using nkast.Aether.Physics2D.Dynamics;
 using Physhicsh.Config;
-using Physhicsh.Core.Input.Drag;
 using Physhicsh.Physics.PhysicsObjects;
 using Physhicsh.Physics.Spawning;
 using Raylib_cs;
@@ -21,7 +20,7 @@ public class ShortcutHandler
         _openQuickSpawn = openQuickSpawn;
     }
 
-    public void Handle(AethVec2 mousePos, IDragSession currentSession, PhysicsObject? picked)
+    public void Handle(AethVec2 mousePos, PhysicsObject? picked)
     {
         SpawnShortcuts(mousePos);
         if (IsKey(KeyboardKey.F2)) SystemConfig.Reload();
@@ -42,13 +41,13 @@ public class ShortcutHandler
         if (IsKey(KeyboardKey.X)) _c.DeletePhysicsObject(picked);
         if (Raylib.IsKeyPressed(KeyboardKey.V))
         {
-            if (currentSession?.Body.BodyType == BodyType.Kinematic || currentSession?.Body.BodyType == BodyType.Static)
+            if (picked?.Body.BodyType == BodyType.Kinematic || picked?.Body.BodyType == BodyType.Static)
             {
-                currentSession?.Body.BodyType = BodyType.Dynamic;
+                picked?.Body.BodyType = BodyType.Dynamic;
             }
             else
             {
-                currentSession?.Body.BodyType = BodyType.Static;
+                picked?.Body.BodyType = BodyType.Static;
             }
         }
     }
