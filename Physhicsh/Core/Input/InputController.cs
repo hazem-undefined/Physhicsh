@@ -73,7 +73,7 @@ public sealed class InputController
             if (_drag.IsActive)
             {
                 BeginDragPosition = pressPos;
-                Body? body = _c.PickedObject?.Body;
+                Body? body = _drag.CurrentDrag?.Body;
                 _beingDraggedLocalPosition = body?.GetLocalPoint(pressPos) ?? pressPos;
             }
         }
@@ -90,7 +90,7 @@ public sealed class InputController
 
     private void UpdateDragAnchor()
     {
-        Body? body = _c.PickedObject?.Body;
+        Body? body = _drag.CurrentDrag?.Body;
         if (body != null)
             BeginDragPosition = body.GetWorldPoint(_beingDraggedLocalPosition);
     }

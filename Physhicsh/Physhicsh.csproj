@@ -12,7 +12,7 @@
     <PublishAot>false</PublishAot>
 	<PublishReadyToRun>false</PublishReadyToRun>
 	<TieredCompilation>false</TieredCompilation>
-	<PublishTrimmed>true</PublishTrimmed>
+	<PublishTrimmed>false</PublishTrimmed>
   </PropertyGroup>
 
   <ItemGroup>
