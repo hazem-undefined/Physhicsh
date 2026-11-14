@@ -91,6 +91,7 @@ Lands at: `...\Physhicsh\Physhicsh\bin\Release\net10.0\publish\win-x64`
 
 **F3** : Toggle debug window
 
-## License
+## [LICENSE](LICENSE)
 
-MIT
+GPL-3.0 license
+
