@@ -28,7 +28,7 @@ public sealed class JointDragSession : IDragSession
         {
             MaxForce = SystemConfig.Instance.Controls.JointMaxForcePerKg * body.Mass,
             Frequency = SystemConfig.Instance.Controls.JointFrequency,
-            //DampingRatio = 1,
+            DampingRatio = 1,
         };
         world.Add(_joint);
     }
