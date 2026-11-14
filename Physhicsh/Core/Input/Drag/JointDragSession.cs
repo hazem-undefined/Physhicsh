@@ -47,7 +47,7 @@ public sealed class JointDragSession : IDragSession
 
         if (delta.Length() > SystemConfig.Instance.Controls.MaxPull)
         {
-            delta.Normalize();
+            //delta.Normalize();
             target = Body.Position + (delta * SystemConfig.Instance.Controls.MaxPull);
         }
 

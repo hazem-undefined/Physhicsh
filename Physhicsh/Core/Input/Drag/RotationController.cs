@@ -30,7 +30,7 @@ public sealed class RotationController
             _body.Awake = true;
             _wasResetting = false;
         }
-        else if (!_wasResetting || !IsRotating)
+        else if (!_wasResetting)
         {
             _body.AngularVelocity = 0f;
             _wasResetting = true;
