@@ -91,7 +91,7 @@ Lands at: `...\Physhicsh\Physhicsh\bin\Release\net10.0\publish\win-x64`
 
 **F3** : Toggle debug window
 
-## [License](LICENSE.txt)
+## [LICENSE](LICENSE)
 
-Physhicsh  © 2026 by Hazem (hazem-undefined) is licensed under CC BY-SA 4.0. To view a copy of this license, visit https://creativecommons.org/licenses/by-sa/4.0/
+GPL-3.0 license
 
