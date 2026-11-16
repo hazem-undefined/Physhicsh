@@ -15,35 +15,35 @@ public sealed class InputController
     private readonly DragController _drag;
     private readonly ShortcutHandler _shortcuts;
     private readonly RotationController _rotation;
-    public AethVec2 MousePosWorld { get; private set; }
     private readonly Common _c;
-    public AethVec2 BeginDragPosition { get; private set; }
     private AethVec2 _beingDraggedLocalPosition;
+
+    public AethVec2 MousePosWorld { get; private set; }
+    public AethVec2 BeginDragPosition { get; private set; }
+
     public InputController(Common c)
     {
         _c = c;
         _selection = new();
         _rotation = new();
         _drag = new(c.World.CurrentWorld);
-        _shortcuts = new(_c, pos => OpenQuickSpawnMenu(pos));
+        _shortcuts = new(_c, OpenQuickSpawnMenu);
     }
 
     public void Tick()
     {
         MousePosWorld = Raylib.GetMousePosition().ToAetherVector2().ScreenToWorld();
 
-        if (ImGui.GetIO().WantCaptureKeyboard)
-            _rotation.SetTarget(null);
-        else
+        bool uiWantsKeyboard = ImGui.GetIO().WantCaptureKeyboard;
+        if (!uiWantsKeyboard)
             _shortcuts.Handle(MousePosWorld, _selection.Current);
 
-        if (_selection.Current?.Body != null)
-            _rotation.SetTarget(_selection.Current?.Body);
-
+        _rotation.SetTarget(uiWantsKeyboard ? null : _selection.Current?.Body);
         _rotation.Tick();
 
         _c.PickedObject = _selection.Current;
     }
+
     public void TickMouse()
     {
         if (_c.UI.AnyPopupsOpen() || ImGui.GetIO().WantCaptureMouse)
@@ -52,20 +52,23 @@ public sealed class InputController
             return;
         }
 
-        if (SystemConfig.Instance.Controls.SelectOnHover || Raylib.IsMouseButtonPressed(MouseButton.Left) || Raylib.IsMouseButtonPressed(MouseButton.Right))
+        bool leftPressed = Raylib.IsMouseButtonPressed(MouseButton.Left);
+        bool rightPressed = Raylib.IsMouseButtonPressed(MouseButton.Right);
+
+        if (!_drag.IsActive && (SystemConfig.Instance.Controls.SelectOnHover || leftPressed || rightPressed))
         {
             Fixture? pick = AetherUtils.PickFixture(_c.World.CurrentWorld, MousePosWorld);
             if (pick != null)
             {
                 AetherUtils.ApplyFixtureToPicked(ref _selection.Current, pick);
             }
-            else if (pick == null && SystemConfig.Instance.Controls.DismissOnBlank)
+            else if (SystemConfig.Instance.Controls.DismissOnBlank)
             {
                 _selection.Pick(_c.World.CurrentWorld, MousePosWorld);
             }
         }
 
-        if (Raylib.IsMouseButtonPressed(MouseButton.Left))
+        if (leftPressed)
         {
             AethVec2 pressPos = MousePosWorld;
             _drag.TryBegin(ref _selection.Current, pressPos);
@@ -77,14 +80,17 @@ public sealed class InputController
                 _beingDraggedLocalPosition = body?.GetLocalPoint(pressPos) ?? pressPos;
             }
         }
-        else if (_drag.IsActive && Raylib.IsMouseButtonDown(MouseButton.Left))
+        else if (_drag.IsActive)
         {
-            _drag.Update(MousePosWorld);
-            UpdateDragAnchor();
-        }
-        else if (_drag.IsActive && Raylib.IsMouseButtonReleased(MouseButton.Left))
-        {
-            _drag.End();
+            if (Raylib.IsMouseButtonDown(MouseButton.Left))
+            {
+                _drag.Update(MousePosWorld);
+                UpdateDragAnchor();
+            }
+            else
+            {
+                _drag.End();
+            }
         }
     }
 
@@ -99,9 +105,13 @@ public sealed class InputController
     {
         if (!_drag.IsActive || _drag.CurrentDrag is not JointDragSession) return;
 
-        Raylib.DrawLineEx(BeginDragPosition.WorldToScreen().ToSysVec2(), MousePosWorld.WorldToScreen().ToSysVec2(), 5, Color.Green);
-
+        Raylib.DrawLineEx(
+            BeginDragPosition.WorldToScreen().ToSysVec2(),
+            MousePosWorld.WorldToScreen().ToSysVec2(),
+            5, Color.Green);
     }
 
-    private void OpenQuickSpawnMenu(AethVec2 pos) => _c.UI.ShowPopup("##quick_spawn", Raylib.GetMousePosition(), () => ImGuiStaticPopups.DrawQuickSpawnMenu(_c.World.CurrentWorld, pos, new(), _c.PhysicsObjects));
+    private void OpenQuickSpawnMenu(AethVec2 pos) =>
+        _c.UI.ShowPopup("##quick_spawn", Raylib.GetMousePosition(),
+            () => ImGuiStaticPopups.DrawQuickSpawnMenu(_c.World.CurrentWorld, pos, new(), _c.PhysicsObjects));
 }
