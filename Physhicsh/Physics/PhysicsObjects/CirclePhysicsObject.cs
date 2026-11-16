@@ -36,7 +36,7 @@ public class CirclePhysicsObject(float x, float y, float radius, Color color, fl
     public override void DrawOutline()
     {
         base.DrawOutline();
-        DrawCircleOutline(1);
+        DrawCircleOutline(SystemConfig.Instance.Graphics.OutlineThickness);
     }
 
     public override void Properties(ImGuiUI ui)
@@ -60,7 +60,7 @@ public class CirclePhysicsObject(float x, float y, float radius, Color color, fl
     {
         for (int i = 0; i < thickness; i++)
         {
-            Raylib.DrawCircleLinesV(Body.Position.WorldToScreen().ToNumericsVector2(), _screenRadius + i, Color.Red);
+            Raylib.DrawCircleLinesV(Body.Position.WorldToScreen().ToNumericsVector2(), _screenRadius + i, SystemConfig.Instance.Graphics.OutLineColor);
         }
     }
 }

@@ -103,12 +103,14 @@ public sealed class InputController
 
     public void DrawSelectionLine()
     {
-        if (!_drag.IsActive || _drag.CurrentDrag is not JointDragSession) return;
+        if (!SystemConfig.Instance.Graphics.ShowDragLine || !_drag.IsActive || _drag.CurrentDrag is not JointDragSession) return;
 
-        Raylib.DrawLineEx(
-            BeginDragPosition.WorldToScreen().ToSysVec2(),
+        RayColor color = SystemConfig.Instance.Graphics.DragLineColor;
+
+        Raylib.DrawLineEx(BeginDragPosition.WorldToScreen().ToSysVec2(),
             MousePosWorld.WorldToScreen().ToSysVec2(),
-            5, Color.Green);
+            SystemConfig.Instance.Graphics.DragLineThickness,
+            new(color.R, color.G, color.B, SystemConfig.Instance.Graphics.DragLineTransparency));
     }
 
     private void OpenQuickSpawnMenu(AethVec2 pos) =>

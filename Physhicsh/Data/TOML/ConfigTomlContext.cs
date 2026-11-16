@@ -1,4 +1,5 @@
 ﻿using Physhicsh.Config;
+using Physhicsh.Data.TOML;
 using Tomlyn;
 using Tomlyn.Serialization;
 
@@ -6,5 +7,6 @@ using Tomlyn.Serialization;
 [TomlSourceGenerationOptions(
     WriteIndented = true,
     IndentSize = 2,
-    DefaultIgnoreCondition = TomlIgnoreCondition.WhenWritingNull)]
+    DefaultIgnoreCondition = TomlIgnoreCondition.WhenWritingNull,
+    Converters = [typeof(ColorTomlConverter)])]
 internal sealed partial class ConfigTomlContext : TomlSerializerContext;

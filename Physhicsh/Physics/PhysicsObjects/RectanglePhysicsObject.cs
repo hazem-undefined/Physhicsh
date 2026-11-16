@@ -17,7 +17,6 @@ namespace Physhicsh.Physics.PhysicsObjects
         private Rectangle rec;
         private AethVec2 origin;
         private float rotationDegrees;
-        private float _outlineThickness = 1;
 
         public RectanglePhysicsObject(float x, float y, float width, float height, RayColor color, float density = 1f, BodyType bodyType = BodyType.Dynamic)
             : base(x, y, color, bodyType)
@@ -73,7 +72,7 @@ namespace Physhicsh.Physics.PhysicsObjects
             }
 
             for (int i = 0; i < 4; i++)
-                Raylib.DrawLineEx(corners[i], corners[(i + 1) % 4], _outlineThickness, Color.Red);
+                Raylib.DrawLineEx(corners[i], corners[(i + 1) % 4], SystemConfig.Instance.Graphics.OutlineThickness, SystemConfig.Instance.Graphics.OutLineColor);
         }
         public void Resize(AethVec2 newSize)
         {
