@@ -58,10 +58,22 @@ public class CirclePhysicsObject(float x, float y, float radius, Color color, fl
 
     private void DrawCircleOutline(int thickness)
     {
-        for (int i = 0; i < thickness; i++)
-        {
-            Raylib.DrawCircleLinesV(Body.Position.WorldToScreen().ToNumericsVector2(), _screenRadius + i, SystemConfig.Instance.Graphics.OutLineColor);
-        }
+        if (thickness <= 0) return;
+
+        SysVec2 center = Body.Position.WorldToScreen().ToNumericsVector2();
+        float inner = _screenRadius;
+        float outer = _screenRadius + thickness;
+
+        int segments = Math.Clamp((int)(outer * 1.5f), 24, 256);
+
+        Raylib.DrawRing(
+            center,
+            inner,
+            outer,
+            0f,
+            360f,
+            segments,
+            SystemConfig.Instance.Graphics.OutLineColor);
     }
 }
 

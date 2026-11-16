@@ -60,6 +60,10 @@ namespace Physhicsh.Physics.PhysicsObjects
             float hw = origin.X;
             float hh = origin.Y;
 
+            float thickness = SystemConfig.Instance.Graphics.OutlineThickness;
+            float half = thickness / 2f;
+            RayColor color = SystemConfig.Instance.Graphics.OutLineColor;
+
             Span<float> lx = [-hw, hw, hw, -hw];
             Span<float> ly = [-hh, -hh, hh, hh];
             Span<SysVec2> corners = stackalloc SysVec2[4];
@@ -72,7 +76,15 @@ namespace Physhicsh.Physics.PhysicsObjects
             }
 
             for (int i = 0; i < 4; i++)
-                Raylib.DrawLineEx(corners[i], corners[(i + 1) % 4], SystemConfig.Instance.Graphics.OutlineThickness, SystemConfig.Instance.Graphics.OutLineColor);
+            {
+                SysVec2 a = corners[i];
+                SysVec2 b = corners[(i + 1) % 4];
+
+                SysVec2 dir = SysVec2.Normalize(b - a);
+                SysVec2 ext = dir * half;
+
+                Raylib.DrawLineEx(a - ext, b + ext, thickness, color);
+            }
         }
         public void Resize(AethVec2 newSize)
         {
