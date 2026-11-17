@@ -4,6 +4,7 @@ using Physhicsh.Scenes;
 using Physhicsh.UI;
 using System;
 using System.Collections.Generic;
+using System.IO;
 
 namespace Physhicsh.Core;
 
@@ -19,10 +20,9 @@ public class Common
     public PhysicsObject? PickedObject { get; set; }
     public PhysicsObject? PropertiesObject { get; set; }
     public string SettingsImportExportMsg { get; set; } = string.Empty;
-
     public ImGuiUI UI { get; set; } = null!;
     public bool ShowDebugWindow { get; set; } = false;
-
+    public SceneManager SceneManager = new();
 
     public Common()
     {
@@ -66,5 +66,58 @@ public class Common
         }
 
         PhysicsObjects.Clear();
+    }
+
+    public void LoadScene(string path)
+    {
+        Scene? newScene;
+        try
+        {
+            newScene = SceneManager.LoadSceneFromFile(path);
+        }
+        catch (Exception ex)
+        {
+            SettingsImportExportMsg = $"Couldn't load {Path.GetFileName(path)}, check log.";
+            Log.Error(ex.Message);
+            return;
+        }
+
+        if (newScene is null)
+        {
+            SettingsImportExportMsg = $"Couldn't load {Path.GetFileName(path)}, check log.";
+            return;
+        }
+
+        List<PhysicsObject> started = [];
+        try
+        {
+            foreach (PhysicsObject obj in newScene.Objects)
+            {
+                obj.Start(World.CurrentWorld);
+                started.Add(obj);
+            }
+        }
+        catch (Exception ex)
+        {
+            foreach (PhysicsObject obj in started)
+                try { obj.Delete(); } catch (Exception sx) { Log.Error(sx.Message); }
+
+            SettingsImportExportMsg = $"Couldn't load {Path.GetFileName(path)}, check log.";
+            Log.Error(ex.Message);
+            return;
+        }
+
+        ClearAllPhysObjects();
+        PhysicsObjects.AddRange(started);
+        SceneManager.CurrentScene.Objects = newScene.Objects;
+        SettingsImportExportMsg = $"Loaded {Path.GetFileName(path)}";
+    }
+
+    public void SaveScene(string path)
+    {
+        SceneManager.CurrentScene?.Objects.Clear();
+        SceneManager.CurrentScene?.Objects.AddRange(PhysicsObjects);
+        SceneManager.SaveSceneToFile(path);
+        SettingsImportExportMsg = $"Saved to {path + ".psf"}";
     }
 }

@@ -32,7 +32,7 @@ public class SettingsWindow(Common c) : IImGuiWindow
                 DialogResult savePath = Dialog.FileSave("psf", Path.Combine(AppContext.BaseDirectory, SystemConfig.Instance.Paths.ScenesPath));
                 if (savePath.Path != null)
                 {
-                    //_sceneController.SaveScene(savePath.Path);
+                    _c.SaveScene(savePath.Path);
                 }
             }
             ImGui.SameLine();
@@ -41,7 +41,7 @@ public class SettingsWindow(Common c) : IImGuiWindow
                 DialogResult selected = Dialog.FileOpen("psf", Path.Combine(AppContext.BaseDirectory, SystemConfig.Instance.Paths.ScenesPath));
                 if (selected.Path != null)
                 {
-                    //_sceneController.LoadScene(selected.Path);
+                    _c.LoadScene(selected.Path);
                 }
             }
             ImGui.SameLine();

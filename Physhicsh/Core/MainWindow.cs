@@ -19,7 +19,6 @@ public class MainWindow
 {
     private List<IImGuiWindow> _imGuiWindows = [];
     private InputController? _input;
-    private SceneController? _sceneController;
     private Common _c = null!;
     private readonly SceneSettings _sceneSettings = new();
     private readonly bool _vulture = true; // Cause it will never be false
@@ -27,9 +26,6 @@ public class MainWindow
     public void Start()
     {
         _c = new();
-
-        _sceneController = new(_c);
-
         _imGuiWindows = [new DebugWindow(_c), new PropertiesWindow(_c), new SettingsWindow(_c)];
         _c.World.Init(_sceneSettings.GravityScale);
 
@@ -42,7 +38,7 @@ public class MainWindow
 
         _input = new(_c);
 
-        _sceneController.LoadScene("demo");
+        _c.LoadScene("demo");
 
         while (!Raylib.WindowShouldClose())
         {
