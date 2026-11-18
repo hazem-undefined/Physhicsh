@@ -4,7 +4,9 @@ using nkast.Aether.Physics2D.Dynamics;
 using Physhicsh.Extensions;
 using Physhicsh.Json.DTO;
 using Physhicsh.UI;
+using Physhicsh.Utils;
 using Raylib_cs;
+using System;
 
 namespace Physhicsh.Physics.PhysicsObjects;
 
@@ -65,48 +67,23 @@ public class PhysicsObject
 
     public virtual void Properties(ImGuiUI ui)
     {
-        SysVec3 currentColor = Color.ToSysVector3();
+        SysVec3 color = Color.ToSysVector3();
+        ImGuiUtils.DrawColorEdit3("Color",
+            new ImColor(color.X, color.Y, color.Z),
+            c => Color = new SysVec3(c.X, c.Y, c.Z).ToAetherVector3().ToColor());
 
-        if (ImGui.ColorEdit3("Color", ref currentColor))
+        ImGuiUtils.DrawSliderFloat("Mass", Body.Mass, 0f, 100f, v => Body.Mass = v);
+        ImGuiUtils.DrawSliderFloat("Rotation", Body.Rotation * (-180f / MathF.PI), -360f, 360f, x => Body.Rotation = -x * (MathF.PI / 180f));
+
+        if (Fixture != null)
         {
-            Color = currentColor.ToAetherVector3().ToColor();
+            ImGuiUtils.DrawSliderFloat("Boingness", Fixture.Restitution, 0f, 2f, v => Fixture.Restitution = v);
+            ImGuiUtils.DrawSliderFloat("Slippiness", Fixture.Friction, 0f, 2f, v => Fixture.Friction = v);
         }
 
-        float massRefSlider = Body.Mass;
+        ImGuiUtils.DrawCheckbox("Lock", Locked, v => Locked = v);
 
-        if (ImGui.SliderFloat("Mass", ref massRefSlider, 0f, 100f))
-        {
-            Body.Mass = massRefSlider;
-        }
-
-        float res = Fixture.Restitution;
-        if (ImGui.SliderFloat("Boingness", ref res, 0f, 2f))
-        {
-            Fixture.Restitution = res;
-        }
-
-        float slippy = Fixture.Friction;
-        if (ImGui.SliderFloat("Slippiness", ref slippy, 0f, 2f))
-        {
-            Fixture.Friction = slippy;
-        }
-
-        bool lockedRef = Locked;
-        if (ImGui.Checkbox("Lock", ref lockedRef))
-        {
-            Locked = lockedRef;
-        }
-
-        //if (ImGui.Button("Set texture"))
-        //{
-        //    byte[] buff = [];
-        //    if (ImGui.InputText("Path", buff, 1024))
-        //    {
-
-        //    }
-        //}
         ImGui.Separator();
-        //ImGui.Text($"{Texture}");
     }
 
     [JsonConstructor]
