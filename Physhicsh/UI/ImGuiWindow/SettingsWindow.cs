@@ -1,7 +1,7 @@
 ﻿using ImGuiNET;
 using NativeFileDialogSharp;
+using Physhicsh.Common;
 using Physhicsh.Config;
-using Physhicsh.Core;
 using Physhicsh.Extensions;
 using Physhicsh.Physics.Spawning;
 using Raylib_cs;
@@ -10,57 +10,33 @@ using System.IO;
 
 namespace Physhicsh.UI.ImGuiWindow;
 
-public class SettingsWindow(Common c) : IImGuiWindow
+public class SettingsWindow(CoreContext c, ImGuiContext imgContx, SceneIO sc) : IImGuiWindow
 {
-    private readonly Common _c = c;
+    private readonly CoreContext _c = c;
+    private readonly ImGuiContext _img = imgContx;
+    private readonly SceneIO _sc = sc;
     private bool _graphicsNeedsRestart;
 
     public void Draw()
     {
-        if (!_c.ImgVault.IsOpen(ImGuiWindowState.Settings)) return;
+        if (!_img.ImgVault.IsOpen(ImGuiWindowState.Settings)) return;
 
-        _c.UI.BeginWindow("Settings", ImGuiWindowFlags.NoCollapse, () =>
+        _img.UI.BeginWindow("Settings", ImGuiWindowFlags.NoCollapse | ImGuiWindowFlags.Modal, () =>
         {
             if (ImGui.SmallButton("X"))
             {
-                _c.ImgVault.Close(ImGuiWindowState.Settings);
+                _img.ImgVault.Close(ImGuiWindowState.Settings);
                 return;
             }
-
-            if (ImGui.Button("Save Scene"))
-            {
-                DialogResult savePath = Dialog.FileSave("psf", Path.Combine(AppContext.BaseDirectory, SystemConfig.Instance.Paths.ScenesPath));
-                if (savePath.Path != null)
-                {
-                    _c.SaveScene(savePath.Path);
-                }
-            }
             ImGui.SameLine();
-            if (ImGui.Button("Select Scene"))
+            ImGui.SmallButton("?");
+            if (ImGui.IsItemHovered(ImGuiHoveredFlags.DelayNone))
             {
-                DialogResult selected = Dialog.FileOpen("psf", Path.Combine(AppContext.BaseDirectory, SystemConfig.Instance.Paths.ScenesPath));
-                if (selected.Path != null)
-                {
-                    _c.LoadScene(selected.Path);
-                }
-            }
-            ImGui.SameLine();
-            ImGui.TextColored(Color.Green.ToVector4(), $"{_c.SettingsImportExportMsg}");
-
-            ImColor currentBgColor = _c.SceneSettings.CurrentBgColor.ToSysVector3();
-            if (ImGui.ColorEdit3("Background Color", ref currentBgColor))
-            {
-                _c.SceneSettings.CurrentBgColor = currentBgColor.ToColor();
+                ImGui.SetTooltip("Ctrl + Left Click a slider to type an exact value.");
             }
 
-            int gravityRefSlider = (int)_c.SceneSettings.GravityScale;
-            if (ImGui.SliderInt("Gravity scale", ref gravityRefSlider, -SystemConfig.Instance.Limits.GravityScaleLimit, SystemConfig.Instance.Limits.GravityScaleLimit))
-            {
-                _c.SceneSettings.GravityScale = gravityRefSlider;
-                _c.World.CurrentWorld.Gravity = new(0, -9.81f * _c.SceneSettings.GravityScale);
-            }
-
-            DrawSpawnSettings();
+            DrawConfigSection("Scene", DrawSceneConfig);
+            DrawConfigSection("Spawn", DrawSpawnSettings);
             DrawConfigSection("Graphics", SystemConfig.Instance.Graphics, DrawGraphicsConfig);
             DrawConfigSection("Controls", SystemConfig.Instance.Controls, DrawControlsConfig);
             DrawConfigSection("Limits", SystemConfig.Instance.Limits, DrawLimitsConfig);
@@ -70,43 +46,50 @@ public class SettingsWindow(Common c) : IImGuiWindow
                 ImGui.TextColored(new(255, 0, 0, 255), "All buttons here doesn't have confirmation.");
                 if (ImGui.Button("Clear All"))
                 {
-                    _c.ClearAllPhysObjects();
+                    _sc.ClearAllPhysObjects();
                 }
             }
         });
     }
 
-    private static void DrawSpawnSettings()
+    private void DrawSceneConfig()
     {
-        if (ImGui.CollapsingHeader("Spawn"))
+        if (ImGui.Button("Save Scene"))
         {
-            SysVec2 circlesRadiusRefSlider = SpawnRules.Instance.CirclesRadius;
-            SysVec2 rectanglesSizeRefSlider = SpawnRules.Instance.RectSize;
-            bool useRandomColorsRefBool = SpawnRules.Instance.UseRandomColors;
-            ImColor spawnColorRefColor = SpawnRules.Instance.SpawnColor.ToSysVector3();
-            SysVec2 circleLimit = SystemConfig.Instance.Limits.CircleSpawnRadiusLimit;
-            SysVec2 rectLimit = SystemConfig.Instance.Limits.RectangleSpawnSizeLimit;
-
-            if (ImGui.SliderFloat2("Circles radius", ref circlesRadiusRefSlider, circleLimit.X, circleLimit.Y))
+            DialogResult savePath = Dialog.FileSave("psf", Path.Combine(AppContext.BaseDirectory, SystemConfig.Instance.Paths.ScenesPath));
+            if (savePath.Path != null)
             {
-                SpawnRules.Instance.CirclesRadius = circlesRadiusRefSlider;
-            }
-
-            if (ImGui.SliderFloat2("Rectangles size", ref rectanglesSizeRefSlider, rectLimit.X, rectLimit.Y))
-            {
-                SpawnRules.Instance.RectSize = rectanglesSizeRefSlider;
-            }
-
-            if (ImGui.Checkbox("Random Colors", ref useRandomColorsRefBool))
-            {
-                SpawnRules.Instance.UseRandomColors = useRandomColorsRefBool;
-            }
-
-            if (!SpawnRules.Instance.UseRandomColors && ImGui.ColorEdit3("Spawn Color", ref spawnColorRefColor))
-            {
-                SpawnRules.Instance.SpawnColor = spawnColorRefColor.ToAetherVector3().ToColor();
+                _sc.SaveScene(savePath.Path);
             }
         }
+        ImGui.SameLine();
+        if (ImGui.Button("Select Scene"))
+        {
+            DialogResult selected = Dialog.FileOpen("psf", Path.Combine(AppContext.BaseDirectory, SystemConfig.Instance.Paths.ScenesPath));
+            if (selected.Path != null)
+            {
+                _sc.LoadScene(selected.Path);
+            }
+        }
+        ImGui.SameLine();
+        ImGui.TextColored(Color.Green.ToVector4(), $"{_sc.SettingsImportExportMsg}");
+
+        DrawColorEdit3("Background Color", _c.SceneSettings.CurrentBgColor.ToSysVector3(), (x) => _c.SceneSettings.CurrentBgColor = x.ToColor());
+        DrawSliderInt("Gravity scale", (int)_c.SceneSettings.GravityScale, -SystemConfig.Instance.Limits.GravityScaleLimit, SystemConfig.Instance.Limits.GravityScaleLimit, (x) =>
+        {
+            _c.SceneSettings.GravityScale = x;
+            _c.World.CurrentWorld.Gravity = new(0, -9.81f * _c.SceneSettings.GravityScale);
+        });
+    }
+
+    private static void DrawSpawnSettings()
+    {
+        SysVec2 circleLimit = SpawnRules.Instance.CirclesRadius;
+        SysVec2 rectLimit = SpawnRules.Instance.RectSize;
+        DrawSliderFloat2("Circle radius", SpawnRules.Instance.CirclesRadius, circleLimit.X, circleLimit.Y, (x) => SpawnRules.Instance.CirclesRadius = x);
+        DrawSliderFloat2("Rectangles size", SpawnRules.Instance.RectSize, rectLimit.X, rectLimit.Y, (x) => SpawnRules.Instance.RectSize = x);
+        DrawCheckbox("Random Colors", SpawnRules.Instance.UseRandomColors, (x) => SpawnRules.Instance.UseRandomColors = x);
+        if (!SpawnRules.Instance.UseRandomColors) DrawColorEdit3("Spawn Color", SpawnRules.Instance.SpawnColor.ToSysVector3(), (x) => SpawnRules.Instance.SpawnColor = x.ToAetherVector3().ToColor());
     }
 
     // ---------- Config sections ----------
@@ -120,14 +103,23 @@ public class SettingsWindow(Common c) : IImGuiWindow
             ImGui.Unindent();
         }
     }
+    private static void DrawConfigSection(string name, Action drawFields)
+    {
+        if (ImGui.CollapsingHeader(name))
+        {
+            ImGui.Indent();
+            drawFields();
+            ImGui.Unindent();
+        }
+    }
 
     private void DrawLimitsConfig(LimitsConfig l)
     {
         ImGui.Text("Controls the limits of the sliders (eg. Gravity scale).");
         ImGui.Spacing();
-        DrawSliderFloat2("Circle Spawn Radius Limit", l.CircleSpawnRadiusLimit, 0f, 10f, v => l.CircleSpawnRadiusLimit = v);
-        DrawSliderFloat2("Rectangle Spawn Size Limit", l.RectangleSpawnSizeLimit, 0f, 10f, v => l.RectangleSpawnSizeLimit = v);
-        DrawSliderFloat2("Bounds Limit", l.BoundsLimit, 10f, 500f, v => l.BoundsLimit = v);
+        DrawSliderFloat2("Circle Spawn Radius Limit", l.CircleSpawnRadiusLimit, 0f, 1000f, v => l.CircleSpawnRadiusLimit = v);
+        DrawSliderFloat2("Rectangle Spawn Size Limit", l.RectangleSpawnSizeLimit, 0f, 1000f, v => l.RectangleSpawnSizeLimit = v);
+        DrawSliderFloat2("Bounds Limit", l.BoundsLimit, 10f, 5000f, v => l.BoundsLimit = v);
         DrawSliderInt("Gravity Scale Limit", l.GravityScaleLimit, 1, 100, v => l.GravityScaleLimit = v);
     }
 
@@ -140,7 +132,6 @@ public class SettingsWindow(Common c) : IImGuiWindow
         changed |= DrawSliderInt("Max FPS", g.MaxFPS, 30, 360, v => g.MaxFPS = v);
         changed |= DrawSliderFloat("Pixels Per Meter", g.PPM, 8f, 128f, v => g.PPM = v);
 
-        // Show Outline does NOT require restart
         DrawCheckbox("Show Outline", g.ShowOutline, v => g.ShowOutline = v);
 
         if (changed) _graphicsNeedsRestart = true;
@@ -190,6 +181,13 @@ public class SettingsWindow(Common c) : IImGuiWindow
     {
         bool v = value;
         if (ImGui.Checkbox(label, ref v)) { setter(v); return true; }
+        return false;
+    }
+
+    private static bool DrawColorEdit3(string label, ImColor value, Action<ImColor> setter)
+    {
+        ImColor v = value;
+        if (ImGui.ColorEdit3(label, ref v)) { setter(v); return true; }
         return false;
     }
 }

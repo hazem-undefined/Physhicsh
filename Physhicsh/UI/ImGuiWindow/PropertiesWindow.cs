@@ -1,27 +1,28 @@
 ﻿using ImGuiNET;
-using Physhicsh.Core;
+using Physhicsh.Common;
 
 namespace Physhicsh.UI.ImGuiWindow;
 
-public class PropertiesWindow(Common c) : IImGuiWindow
+public class PropertiesWindow(ImGuiContext imgContx, EditorState ed) : IImGuiWindow
 {
-    private readonly Common _c = c;
+    private readonly ImGuiContext _img = imgContx;
+    private readonly EditorState _ed = ed;
 
     public void Draw()
     {
-        if (!_c.ImgVault.IsOpen(ImGuiWindowState.Properties)) return;
+        if (!_img.ImgVault.IsOpen(ImGuiWindowState.Properties)) return;
 
-        _c.UI.BeginWindow("Properties", ImGuiWindowFlags.NoCollapse | ImGuiWindowFlags.NoTitleBar, () =>
+        _img.UI.BeginWindow("Properties", ImGuiWindowFlags.NoCollapse | ImGuiWindowFlags.NoTitleBar, () =>
         {
             if (ImGui.SmallButton("X"))
             {
-                _c.ImgVault.Close(ImGuiWindowState.Properties);
-                _c.PropertiesObject = null;
+                _img.ImgVault.Close(ImGuiWindowState.Properties);
+                _ed.PropertiesObject = null;
                 return;
             }
-            if (_c.PropertiesObject is not null)
+            if (_ed.PropertiesObject is not null)
             {
-                _c.PropertiesObject.Properties(_c.UI);
+                _ed.PropertiesObject.Properties(_img.UI);
             }
             else
             {

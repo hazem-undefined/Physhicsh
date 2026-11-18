@@ -1,4 +1,5 @@
 ﻿using nkast.Aether.Physics2D.Dynamics;
+using Physhicsh.Common;
 using Physhicsh.Config;
 using Physhicsh.Physics.PhysicsObjects;
 using Physhicsh.Physics.Spawning;
@@ -9,35 +10,33 @@ using System.Linq;
 
 namespace Physhicsh.Core.Input;
 
-public class ShortcutHandler
+public class ShortcutHandler(CoreContext c, ImGuiContext imgContx, ObjectRegistry reg, EditorState ed, SceneIO sc, Action<AethVec2> openQuickSpawn)
 {
-    private readonly Action<AethVec2> _openQuickSpawn;
-    private Common _c;
-
-    public ShortcutHandler(Common c, Action<AethVec2> openQuickSpawn)
-    {
-        _c = c;
-        _openQuickSpawn = openQuickSpawn;
-    }
+    private readonly Action<AethVec2> _openQuickSpawn = openQuickSpawn;
+    private readonly CoreContext _c = c;
+    private readonly ImGuiContext _img = imgContx;
+    private readonly ObjectRegistry _reg = reg;
+    private readonly EditorState _ed = ed;
+    private readonly SceneIO _sc = sc;
 
     public void Handle(AethVec2 mousePos, PhysicsObject? picked)
     {
         SpawnShortcuts(mousePos);
         if (IsKey(KeyboardKey.F2)) SystemConfig.Reload();
         if (IsKey(KeyboardKey.Tab)) _openQuickSpawn(mousePos);
-        if (IsKey(KeyboardKey.F3)) _c.ShowDebugWindow = !_c.ShowDebugWindow;
+        if (IsKey(KeyboardKey.F3)) _img.ShowDebugWindow = !_img.ShowDebugWindow;
 
-        if (IsKey(KeyboardKey.Z) && _c.LatestDeletedObjects.Count > 0)
+        if (IsKey(KeyboardKey.Z) && _reg.LatestDeletedObjects.Count > 0)
         {
-            KeyValuePair<PhysicsObject, AethVec2> returned = _c.LatestDeletedObjects.Pop().ElementAt(0);
-            Spawn.SpawnPhysicsObject(returned.Key, _c.World.CurrentWorld, _c.PhysicsObjects, returned.Value);
+            KeyValuePair<PhysicsObject, AethVec2> returned = _reg.LatestDeletedObjects.Pop().ElementAt(0);
+            Spawn.SpawnPhysicsObject(returned.Key, _c.World.CurrentWorld, _reg.PhysicsObjects, returned.Value);
         }
 
         if (picked != null)
         {
-            if (IsKey(KeyboardKey.D) && picked is ICloneable c) Spawn.SpawnPhysicsObject((PhysicsObject)c.Clone(), _c.World.CurrentWorld, _c.PhysicsObjects, mousePos);
+            if (IsKey(KeyboardKey.D) && picked is ICloneable c) Spawn.SpawnPhysicsObject((PhysicsObject)c.Clone(), _c.World.CurrentWorld, _reg.PhysicsObjects, mousePos);
 
-            if (IsKey(KeyboardKey.X)) _c.DeletePhysicsObject(picked, true);
+            if (IsKey(KeyboardKey.X)) _sc.DeletePhysicsObject(picked, true);
 
             if (Raylib.IsKeyPressed(KeyboardKey.V))
             {
@@ -57,9 +56,9 @@ public class ShortcutHandler
     {
         if (IsKey(KeyboardKey.R))
         {
-            Spawn.SpawnRectangle(_c.World.CurrentWorld, mouse, _c.PhysicsObjects);
+            Spawn.SpawnRectangle(_c.World.CurrentWorld, mouse, _reg.PhysicsObjects);
         }
-        if (IsKey(KeyboardKey.C)) Spawn.SpawnCircle(_c.World.CurrentWorld, mouse, _c.PhysicsObjects);
+        if (IsKey(KeyboardKey.C)) Spawn.SpawnCircle(_c.World.CurrentWorld, mouse, _reg.PhysicsObjects);
     }
 
     private static bool IsKey(KeyboardKey k) =>

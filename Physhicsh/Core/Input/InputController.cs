@@ -1,5 +1,6 @@
 ﻿using ImGuiNET;
 using nkast.Aether.Physics2D.Dynamics;
+using Physhicsh.Common;
 using Physhicsh.Config;
 using Physhicsh.Core.Input.Drag;
 using Physhicsh.Extensions;
@@ -15,19 +16,25 @@ public sealed class InputController
     private readonly DragController _drag;
     private readonly ShortcutHandler _shortcuts;
     private readonly RotationController _rotation;
-    private readonly Common _c;
     private AethVec2 _beingDraggedLocalPosition;
 
     public AethVec2 MousePosWorld { get; private set; }
     public AethVec2 BeginDragPosition { get; private set; }
+    private readonly CoreContext _c;
+    private readonly ImGuiContext _img;
+    private readonly ObjectRegistry _reg;
+    private readonly EditorState _ed;
 
-    public InputController(Common c)
+    public InputController(EditorState ed, CoreContext c, ObjectRegistry reg, ImGuiContext img, SceneIO sc)
     {
         _c = c;
+        _ed = ed;
+        _reg = reg;
+        _img = img;
         _selection = new();
         _rotation = new();
         _drag = new(c.World.CurrentWorld);
-        _shortcuts = new(_c, OpenQuickSpawnMenu);
+        _shortcuts = new(c, img, reg, ed, sc, OpenQuickSpawnMenu);
     }
 
     public void Tick()
@@ -41,12 +48,12 @@ public sealed class InputController
         _rotation.SetTarget(uiWantsKeyboard ? null : _selection.Current?.Body);
         _rotation.Tick();
 
-        _c.PickedObject = _selection.Current;
+        _ed.PickedObject = _selection.Current;
     }
 
     public void TickMouse()
     {
-        if (_c.UI.AnyPopupsOpen() || ImGui.GetIO().WantCaptureMouse)
+        if (_img.UI.AnyPopupsOpen() || ImGui.GetIO().WantCaptureMouse)
         {
             _drag.End();
             return;
@@ -114,6 +121,6 @@ public sealed class InputController
     }
 
     private void OpenQuickSpawnMenu(AethVec2 pos) =>
-        _c.UI.ShowPopup("##quick_spawn", Raylib.GetMousePosition(),
-            () => ImGuiStaticPopups.DrawQuickSpawnMenu(_c.World.CurrentWorld, pos, new(), _c.PhysicsObjects));
+        _img.UI.ShowPopup("##quick_spawn", Raylib.GetMousePosition(),
+            () => ImGuiStaticPopups.DrawQuickSpawnMenu(_c.World.CurrentWorld, pos, new(), _reg.PhysicsObjects));
 }

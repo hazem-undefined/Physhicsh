@@ -1,39 +1,42 @@
 ﻿using ImGuiNET;
-using Physhicsh.Core;
+using Physhicsh.Common;
 using Raylib_cs;
 
 namespace Physhicsh.UI.ImGuiWindow;
 
-public class DebugWindow(Common c) : IImGuiWindow
+public class DebugWindow(CoreContext c, ImGuiContext imgContx, ObjectRegistry reg, EditorState ed) : IImGuiWindow
 {
-    private readonly Common _c = c;
+    private readonly CoreContext _c = c;
+    private readonly ImGuiContext _img = imgContx;
+    private readonly ObjectRegistry _reg = reg;
+    private readonly EditorState _ed = ed;
 
     public void Draw()
     {
-        if (!_c.ImgVault.IsOpen(ImGuiWindowState.Debug)) return;
+        if (!_img.ImgVault.IsOpen(ImGuiWindowState.Debug)) return;
 
-        _c.UI.BeginWindow("##debug", ImGuiWindowFlags.NoTitleBar, () =>
+        _img.UI.BeginWindow("##debug", ImGuiWindowFlags.NoTitleBar, () =>
         {
             ImGui.Text($"FPS: {Raylib.GetFPS().ToString()}");
             ImGui.Text($"Frametime: {Raylib.GetFrameTime().ToString()}");
-            ImGui.Text($"Count: {_c.PhysicsObjects.Count}");
+            ImGui.Text($"Count: {_reg.PhysicsObjects.Count}");
             ImGui.Text($"Physics: {_c.Profiler["PHYSICS"]}ms, Update: {_c.Profiler["UPDATE"]}ms");
-            ImGui.Text($"Picked: {_c.PickedObject}");
-            ImGui.Text($"Properties: {_c.PropertiesObject}");
+            ImGui.Text($"Picked: {_ed.PickedObject}");
+            ImGui.Text($"Properties: {_ed.PropertiesObject}");
 
             ImGui.Separator();
 
-            if (_c.PickedObject is not null && _c.PickedObject.Body is not null)
+            if (_ed.PickedObject?.Body is not null)
             {
-                ImGui.Text($"Picked: {_c.PickedObject}");
-                ImGui.Text($"Holding Position: {_c.PickedObject.Body.Position}");
-                ImGui.Text($"BodyType: {_c.PickedObject.Body.BodyType}");
-                ImGui.Text($"IsBullet: {_c.PickedObject.Body.IsBullet}");
+                ImGui.Text($"Picked: {_ed.PickedObject}");
+                ImGui.Text($"Holding Position: {_ed.PickedObject.Body.Position}");
+                ImGui.Text($"BodyType: {_ed.PickedObject.Body.BodyType}");
+                ImGui.Text($"IsBullet: {_ed.PickedObject.Body.IsBullet}");
             }
 
-            if (_c.PropertiesObject is not null)
+            if (_ed.PropertiesObject is not null)
             {
-                ImGui.Text($"Properties object: {_c.PropertiesObject}");
+                ImGui.Text($"Properties object: {_ed.PropertiesObject}");
             }
         });
     }
