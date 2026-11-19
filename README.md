@@ -1,4 +1,4 @@
-# <sub>![icon](/docs/ico.bmp)</sub> Physhicsh | ڤيچيكش
+# <sub>![icon](https://raw.githubusercontent.com/hazem-undefined/physhicsh-docs/master/ico.bmp)</sub> Physhicsh | ڤيچيكش
 
 // Simple Physics sandbox.
 
@@ -10,10 +10,10 @@
 <details>
 <summary>Screenshots</summary>
 
-![sc1](/docs/screenshot4.jpg)
-![sc2](/docs/screenshot6.jpg)
-![sc3](/docs/screenshot5.jpg)
-![sc4](/docs/screenshot1.jpg)
+![sc1](https://raw.githubusercontent.com/hazem-undefined/physhicsh-docs/master/screenshot4.jpg)
+![sc2](https://raw.githubusercontent.com/hazem-undefined/physhicsh-docs/master/screenshot6.jpg)
+![sc3](https://raw.githubusercontent.com/hazem-undefined/physhicsh-docs/master/screenshot5.jpg)
+![sc4](https://raw.githubusercontent.com/hazem-undefined/physhicsh-docs/master/screenshot1.jpg)
 
 </details>
 
@@ -59,7 +59,7 @@ dotnet publish /p:PublishProfile=FolderProfile
 
 Lands at: `...\Physhicsh\Physhicsh\bin\Release\net10.0\publish\win-x64`
 
-# <sub>![icon](/docs/ico4.bmp)</sub> Controls
+# <sub>![icon](https://raw.githubusercontent.com/hazem-undefined/physhicsh-docs/master/ico4.bmp)</sub> Controls
 
 ### Main:
 
@@ -94,4 +94,3 @@ Lands at: `...\Physhicsh\Physhicsh\bin\Release\net10.0\publish\win-x64`
 ## [LICENSE](LICENSE)
 
 GPL-3.0 license
-
