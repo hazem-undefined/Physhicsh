@@ -6,7 +6,7 @@ using Physhicsh.Core.Input;
 using Physhicsh.Physics.PhysicsObjects;
 using Physhicsh.Scenes;
 using Physhicsh.UI;
-using Physhicsh.UI.ImGuiWindow;
+using Physhicsh.UI.ImGuiWindows;
 using Raylib_cs;
 using rlImGui_cs;
 using System;
@@ -28,19 +28,24 @@ public class MainWindow
     private SceneIO _sceneIO;
 
     private readonly SceneSettings _sceneSettings = new();
-    private readonly bool _vulture = true; // Cause it will never be false
-
     public void Start()
     {
         _coreContext.World.Init(_sceneSettings.GravityScale);
+
         _sceneIO = new(_coreContext.World.CurrentWorld, _editorState, _objectReg);
+
         _imGuiWindows = [
             new DebugWindow(_coreContext, _imGuiContext, _objectReg, _editorState),
             new PropertiesWindow(_imGuiContext, _editorState),
             new SettingsWindow(_coreContext, _imGuiContext, _sceneIO)];
+
         Raylib.SetConfigFlags(ConfigFlags.VSyncHint | ConfigFlags.Msaa4xHint);
+
         Raylib.InitWindow(SystemConfig.Instance.Graphics.ScreenWidth, SystemConfig.Instance.Graphics.ScreenHeight, "Physhicsh");
+        SystemConfig.Instance.Graphics.LockDimensions();
+
         Raylib.SetWindowFocused();
+
         Raylib.SetTargetFPS(SystemConfig.Instance.Graphics.MaxFPS);
 
         InitializeImGui();

@@ -36,7 +36,7 @@ namespace Physhicsh.Config
         {
             lock (_lock)
             {
-                _instance ??= LoadFromFile(CONFIG_FILE_PATH);
+                _instance = LoadFromFile(CONFIG_FILE_PATH);
             }
         }
 

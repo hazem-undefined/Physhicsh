@@ -1,4 +1,4 @@
-﻿namespace Physhicsh.UI.ImGuiWindow;
+﻿namespace Physhicsh.UI.ImGuiWindows;
 
 public interface IImGuiWindow
 {

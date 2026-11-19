@@ -8,7 +8,7 @@ using Physhicsh.Utils;
 using Raylib_cs;
 using System;
 using System.IO;
-namespace Physhicsh.UI.ImGuiWindow;
+namespace Physhicsh.UI.ImGuiWindows;
 
 public class SettingsWindow(CoreContext c, ImGuiContext imgContx, SceneIO sc) : IImGuiWindow
 {

@@ -1,7 +1,7 @@
 ﻿using ImGuiNET;
 using Physhicsh.Common;
 
-namespace Physhicsh.UI.ImGuiWindow;
+namespace Physhicsh.UI.ImGuiWindows;
 
 public class PropertiesWindow(ImGuiContext imgContx, EditorState ed) : IImGuiWindow
 {

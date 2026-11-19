@@ -2,8 +2,11 @@
 
 public class GraphicsConfig
 {
-    public int ScreenWidth { get; set; } = 1280;
-    public int ScreenHeight { get; set; } = 640;
+
+    private int _screenWidth = 1280;
+    private int _screenHeight = 640;
+    public int ScreenWidth { get => _screenWidth; set { if (!_dimensionsLocked) _screenWidth = value; } }
+    public int ScreenHeight { get => _screenHeight; set { if (!_dimensionsLocked) _screenHeight = value; } }
     public bool UseVsync { get; set; } = true;
     public int MaxFPS { get; set; } = 60;
     public bool ShowOutline { get; set; } = true;
@@ -16,4 +19,8 @@ public class GraphicsConfig
     public bool Gay { get; set; } = false;
     public float GaySpeed { get; set; } = 0.01f;
     public float PPM { get; set; } = 32f;
+
+    private bool _dimensionsLocked = false;
+
+    public void LockDimensions() => _dimensionsLocked = true;
 }

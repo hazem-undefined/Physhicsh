@@ -2,7 +2,7 @@
 using Physhicsh.Common;
 using Raylib_cs;
 
-namespace Physhicsh.UI.ImGuiWindow;
+namespace Physhicsh.UI.ImGuiWindows;
 
 public class DebugWindow(CoreContext c, ImGuiContext imgContx, ObjectRegistry reg, EditorState ed) : IImGuiWindow
 {
