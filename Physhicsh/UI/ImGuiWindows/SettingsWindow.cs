@@ -7,6 +7,7 @@ using Physhicsh.Physics.Spawning;
 using Physhicsh.Utils;
 using Raylib_cs;
 using System;
+using System.Collections.Generic;
 using System.IO;
 namespace Physhicsh.UI.ImGuiWindows;
 
@@ -16,12 +17,13 @@ public class SettingsWindow(CoreContext c, ImGuiContext imgContx, SceneIO sc) : 
     private readonly ImGuiContext _img = imgContx;
     private readonly SceneIO _sc = sc;
     private bool _graphicsNeedsRestart;
+    private int _selectedResIndex;
 
     public void Draw()
     {
         if (!_img.ImgVault.IsOpen(ImGuiWindowState.Settings)) return;
 
-        _img.UI.BeginWindow("Settings", ImGuiWindowFlags.NoCollapse | ImGuiWindowFlags.Modal, () =>
+        _img.UI.BeginWindow("Settings", ImGuiWindowFlags.None, () =>
         {
             if (ImGui.SmallButton("X"))
             {
@@ -46,7 +48,7 @@ public class SettingsWindow(CoreContext c, ImGuiContext imgContx, SceneIO sc) : 
             ImGui.SameLine();
             if (ImGui.Button("Reload Config"))
             {
-                SystemConfig.LoadFromFile(SystemConfig.CONFIG_FILE_PATH);
+                SystemConfig.Reload();
             }
             if (ImGui.IsItemHovered(ImGuiHoveredFlags.DelayNone))
             {
@@ -197,6 +199,14 @@ public class SettingsWindow(CoreContext c, ImGuiContext imgContx, SceneIO sc) : 
     private void DrawGraphicsConfig(GraphicsConfig g)
     {
         bool changed = false;
+
+        string[] resStrings = Display.GetAvailableResolutionsStrings();
+        List<(int Width, int Height)> res = Display.GetAvailableResolutions();
+
+        if (ImGui.Combo("Resolution", ref _selectedResIndex, resStrings, resStrings.Length))
+        {
+            SystemConfig.Instance.Graphics.Resolution = new(res[_selectedResIndex].Width, res[_selectedResIndex].Height);
+        }
 
         changed |= ImGuiUtils.DrawSliderInt("Screen Width", g.ScreenWidth, 320, 3840, v => g.ScreenWidth = v,
             "Window width in pixels. Changes apply after restarting the application.");

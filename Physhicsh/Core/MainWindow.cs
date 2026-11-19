@@ -30,12 +30,13 @@ public class MainWindow
     private readonly SceneSettings _sceneSettings = new();
     public void Start()
     {
+        _coreContext.InitCamera();
         _coreContext.World.Init(_sceneSettings.GravityScale);
 
         _sceneIO = new(_coreContext.World.CurrentWorld, _editorState, _objectReg);
 
         _imGuiWindows = [
-            new DebugWindow(_coreContext, _imGuiContext, _objectReg, _editorState),
+                new DebugWindow(_coreContext, _imGuiContext, _objectReg, _editorState),
             new PropertiesWindow(_imGuiContext, _editorState),
             new SettingsWindow(_coreContext, _imGuiContext, _sceneIO)];
 
@@ -171,6 +172,16 @@ public class MainWindow
         Raylib.BeginDrawing();
         Raylib.ClearBackground(_coreContext.SceneSettings.CurrentBgColor);
 
+        Raylib.BeginMode2D(_coreContext.Camera);
+
+        DrawPhysicsObjects();
+        if (_input != null && _editorState.PickedObject != null)
+        {
+            _input.DrawSelectionLine();
+        }
+
+        Raylib.EndMode2D();
+
         rlImGui.Begin();
 
         _imGuiContext.UI.BeginFrame();
@@ -191,12 +202,8 @@ public class MainWindow
 
         _imGuiContext.UI.EndFrame();
 
-        DrawPhysicsObjects();
-
-        if (_input != null && _editorState.PickedObject != null)
-        {
-            _input.DrawSelectionLine();
-        }
+        if (Raylib.IsKeyDown(KeyboardKey.Minus)) _coreContext.SetCameraZoom(_coreContext.Camera.Zoom - .01f);
+        if (Raylib.IsKeyDown(KeyboardKey.Equal)) _coreContext.SetCameraZoom(_coreContext.Camera.Zoom + .01f);
 
         rlImGui.End();
         Raylib.EndDrawing();

@@ -18,7 +18,15 @@ public sealed class InputController
     private readonly RotationController _rotation;
     private AethVec2 _beingDraggedLocalPosition;
 
-    public AethVec2 MousePosWorld { get; private set; }
+    public AethVec2 MousePosWorld
+    {
+        get
+        {
+            SysVec2 pixelWorld = Raylib.GetScreenToWorld2D(Raylib.GetMousePosition(), _c.Camera);
+            return pixelWorld.ToAethVec2().ScreenToWorld();
+        }
+        private set;
+    }
     public AethVec2 BeginDragPosition { get; private set; }
     private readonly CoreContext _c;
     private readonly ImGuiContext _img;
@@ -39,7 +47,8 @@ public sealed class InputController
 
     public void Tick()
     {
-        MousePosWorld = Raylib.GetMousePosition().ToAetherVector2().ScreenToWorld();
+        _c.Profiler.AddDebugText("Mouse Pos World", MousePosWorld);
+        //_c.Profiler.AddDebugText("mPos", mPos);
 
         bool uiWantsKeyboard = ImGui.GetIO().WantCaptureKeyboard;
         if (!uiWantsKeyboard)

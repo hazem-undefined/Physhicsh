@@ -1,6 +1,7 @@
 ﻿using ImGuiNET;
 using Physhicsh.Common;
 using Raylib_cs;
+using System.Collections.Generic;
 
 namespace Physhicsh.UI.ImGuiWindows;
 
@@ -21,6 +22,10 @@ public class DebugWindow(CoreContext c, ImGuiContext imgContx, ObjectRegistry re
             ImGui.Text($"Frametime: {Raylib.GetFrameTime().ToString()}");
             ImGui.Text($"Count: {_reg.PhysicsObjects.Count}");
             ImGui.Text($"Physics: {_c.Profiler["PHYSICS"]}ms, Update: {_c.Profiler["UPDATE"]}ms");
+            foreach (KeyValuePair<string, object> dtext in _c.Profiler.DebugTexts)
+            {
+                ImGui.Text($"{dtext.Key}: {dtext.Value}");
+            }
             ImGui.Text($"Picked: {_ed.PickedObject}");
             ImGui.Text($"Properties: {_ed.PropertiesObject}");
 

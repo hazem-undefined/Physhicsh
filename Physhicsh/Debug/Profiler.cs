@@ -6,9 +6,10 @@ namespace Physhicsh.Debug;
 
 public class Profiler
 {
-    private readonly Stopwatch _sw;
     private readonly Dictionary<string, double> _samples = [];
+    private readonly Dictionary<string, object> _debugTexts = [];
     public IReadOnlyDictionary<string, double> Samples => _samples;
+    public IReadOnlyDictionary<string, object> DebugTexts => _debugTexts;
     /// <summary>
     /// Returns 0 if not measured.
     /// </summary>
@@ -20,6 +21,9 @@ public class Profiler
         try { action(); }
         finally { _samples[name] = Stopwatch.GetElapsedTime(start).TotalMilliseconds; }
     }
+    public void AddDebugText(string key, object value) => _debugTexts[key] = value;
+    public object GetDebugText(string key) => _debugTexts[key];
+
     public T Measure<T>(string name, Func<T> func)
     {
         long start = Stopwatch.GetTimestamp();

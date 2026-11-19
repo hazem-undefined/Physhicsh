@@ -43,9 +43,6 @@ namespace Physhicsh.Physics.PhysicsObjects
             rotationDegrees = -Body.Rotation * (180f / MathF.PI);
 
             Raylib.DrawRectanglePro(rec, origin.ToNumericsVector2(), rotationDegrees, Color);
-
-            //Raylib.DrawRectangleLinesEx(new(rec.Position - origin.ToNumericsVector2(), rec.Size), 2, Color.Red);
-            //Raylib.DrawPolyLinesEx(rec.Position, 4, 25, rotationDegrees + 45, 2, Color.Red);
         }
 
         // Vibe coded
