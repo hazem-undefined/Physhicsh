@@ -13,6 +13,7 @@ public class CirclePhysicsObject(float x, float y, float radius, Color color, fl
     public float Radius { get { return Fixture.Shape.Radius; } set { Fixture.Shape.Radius = value; } }
     private float _screenRadius => Radius * SystemConfig.Instance.Graphics.PPM;
 
+
     public override void Start(World world)
     {
         base.Start(world);
@@ -24,14 +25,16 @@ public class CirclePhysicsObject(float x, float y, float radius, Color color, fl
         Fixture.Tag = this;
 
     }
-
-
     public override void Draw()
     {
         base.Draw();
 
-        Raylib.DrawCircleV(Body.Position.WorldToScreen().ToNumericsVector2(), _screenRadius, Color);
+
+
+        Raylib.DrawCircleV(Body.Position.WorldToScreen().ToNumericsVector2(),
+                           _screenRadius, Color);
     }
+
 
     public override void DrawOutline()
     {

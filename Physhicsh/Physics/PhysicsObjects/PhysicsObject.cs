@@ -1,6 +1,7 @@
 ﻿using ImGuiNET;
 using Newtonsoft.Json;
 using nkast.Aether.Physics2D.Dynamics;
+using Physhicsh.Config;
 using Physhicsh.Extensions;
 using Physhicsh.Json.DTO;
 using Physhicsh.UI;
@@ -15,13 +16,19 @@ public class PhysicsObject
     [JsonIgnore]
     public Body Body = null!;
     public BodySaveDTO BodyData { get; set; } = null!;
+    public bool Gay { get; set; }
     public RayColor Color = Color.White;
+    private RayColor _ogColorBeforeGay;
     public Fixture? Fixture { get; set; }
     public Texture2D? Texture;
     public bool Locked = false;
     private readonly TextureLoader _texLoader = new();
     private AethVec2 _startPosition = new();
     private BodyType _bodyType;
+    private RayColor _randomColor;
+    private float _t;
+    private const float ChangeInterval = 0.3f;
+    private bool _seeded;
     public virtual void Start(World world)
     {
         if (BodyData != null)
@@ -51,7 +58,31 @@ public class PhysicsObject
 
     public virtual void Draw()
     {
+        if (Gay)
+        {
+            if (!_seeded)
+            {
+                _ogColorBeforeGay = Color;
+                _randomColor = RandomColorOnBlack();
+                Color = _randomColor;
+                _seeded = true;
+            }
 
+            _t += Raylib.GetFrameTime();
+            float interval = SystemConfig.Instance.Graphics.GaySpeed;
+            if (_t >= interval)
+            {
+                _t = 0f;
+                _randomColor = RandomColorOnBlack();
+            }
+
+            Color = Color.Lerp(Color, _randomColor, 1f - MathF.Pow(0.001f, Raylib.GetFrameTime()));
+            Color.A = 255;
+        }
+        else if (_seeded && !Gay)
+        {
+            Color = _ogColorBeforeGay;
+        }
     }
     public virtual void DrawOutline()
     {
@@ -64,7 +95,12 @@ public class PhysicsObject
         Body.Tag = null;
         Body = null!;
     }
-
+    private static Color RandomColorOnBlack()
+    {
+        RayColor c = Raylib.ColorFromHSV(Random.Shared.NextSingle() * 360f, 0.9f, 0.9f);
+        c.A = 255;
+        return c;
+    }
     public virtual void Properties(ImGuiUI ui)
     {
         SysVec3 color = Color.ToSysVector3();

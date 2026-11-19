@@ -200,7 +200,10 @@ public class MainWindow
     private void UpdatePhysicsObjects()
     {
         foreach (PhysicsObject item in _objectReg.PhysicsObjects)
+        {
             item.PhysicsUpdate(_coreContext.World.CurrentWorld);
+            item.Gay = SystemConfig.Instance.Graphics.Gay;
+        }
     }
 
     private void DrawPhysicsObjects()

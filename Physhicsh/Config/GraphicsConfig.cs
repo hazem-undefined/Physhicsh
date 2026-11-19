@@ -13,5 +13,7 @@ public class GraphicsConfig
     public int DragLineTransparency { get; set; } = 100;
     public int OutlineThickness { get; set; } = 3;
     public int DragLineThickness { get; set; } = 3;
+    public bool Gay { get; set; } = false;
+    public float GaySpeed { get; set; } = 0.01f;
     public float PPM { get; set; } = 32f;
 }

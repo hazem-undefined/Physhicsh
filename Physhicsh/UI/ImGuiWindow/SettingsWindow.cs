@@ -96,12 +96,17 @@ public class SettingsWindow(CoreContext c, ImGuiContext imgContx, SceneIO sc) : 
             _c.SceneSettings.GravityScale = x;
             _c.World.CurrentWorld.Gravity = new(0, -9.81f * _c.SceneSettings.GravityScale);
         });
+        ImGuiUtils.DrawCheckbox("GAY", SystemConfig.Instance.Graphics.Gay, (x) => SystemConfig.Instance.Graphics.Gay = x);
+        if (SystemConfig.Instance.Graphics.Gay)
+        {
+            ImGuiUtils.DrawSliderFloat("Gay Speed", SystemConfig.Instance.Graphics.GaySpeed, 0.02f, 5f, v => SystemConfig.Instance.Graphics.GaySpeed = v);
+        }
     }
 
     private static void DrawSpawnSettings()
     {
-        SysVec2 circleLimit = SpawnRules.Instance.CirclesRadius;
-        SysVec2 rectLimit = SpawnRules.Instance.RectSize;
+        SysVec2 circleLimit = SystemConfig.Instance.Limits.CircleSpawnRadiusLimit;
+        SysVec2 rectLimit = SystemConfig.Instance.Limits.RectangleSpawnSizeLimit;
         ImGuiUtils.DrawSliderFloat2("Circle radius", SpawnRules.Instance.CirclesRadius, circleLimit.X, circleLimit.Y, (x) => SpawnRules.Instance.CirclesRadius = x);
         ImGuiUtils.DrawSliderFloat2("Rectangles size", SpawnRules.Instance.RectSize, rectLimit.X, rectLimit.Y, (x) => SpawnRules.Instance.RectSize = x);
         ImGuiUtils.DrawCheckbox("Random Colors", SpawnRules.Instance.UseRandomColors, (x) => SpawnRules.Instance.UseRandomColors = x);
