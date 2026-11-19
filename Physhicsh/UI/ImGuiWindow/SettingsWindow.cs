@@ -8,7 +8,6 @@ using Physhicsh.Utils;
 using Raylib_cs;
 using System;
 using System.IO;
-
 namespace Physhicsh.UI.ImGuiWindow;
 
 public class SettingsWindow(CoreContext c, ImGuiContext imgContx, SceneIO sc) : IImGuiWindow
@@ -239,7 +238,7 @@ public class SettingsWindow(CoreContext c, ImGuiContext imgContx, SceneIO sc) : 
         ImGuiUtils.DrawSliderFloat("Rotation Speed", c.RotationSpeed, 0f, 50f, v => c.RotationSpeed = v,
             "How fast objects rotate when you apply rotation input.");
 
-        ImGuiUtils.DrawSliderFloat("Kinematic Stiffness", c.KinematicStiffness, 0f, 100f, v => c.KinematicStiffness = v,);
+        ImGuiUtils.DrawSliderFloat("Kinematic Stiffness", c.KinematicStiffness, 0f, 100f, v => c.KinematicStiffness = v);
 
         ImGuiUtils.DrawSliderFloat("Joint Max Force / kg", c.JointMaxForcePerKg, 0f, 5000f, v => c.JointMaxForcePerKg = v,
             "Maximum force the drag joint can apply per kilogram of object mass.\nHigher = heavier objects get pulled more firmly; lower = springier, easier to break.");

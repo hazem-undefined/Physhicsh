@@ -3,6 +3,7 @@ using Physhicsh.Common;
 using Physhicsh.Config;
 using Physhicsh.Physics.PhysicsObjects;
 using Physhicsh.Physics.Spawning;
+using Physhicsh.UI;
 using Raylib_cs;
 using System;
 using System.Collections.Generic;
@@ -10,13 +11,12 @@ using System.Linq;
 
 namespace Physhicsh.Core.Input;
 
-public class ShortcutHandler(CoreContext c, ImGuiContext imgContx, ObjectRegistry reg, EditorState ed, SceneIO sc, Action<AethVec2> openQuickSpawn)
+public class ShortcutHandler(CoreContext c, ImGuiContext imgContx, ObjectRegistry reg, SceneIO sc, Action<AethVec2> openQuickSpawn)
 {
     private readonly Action<AethVec2> _openQuickSpawn = openQuickSpawn;
     private readonly CoreContext _c = c;
     private readonly ImGuiContext _img = imgContx;
     private readonly ObjectRegistry _reg = reg;
-    private readonly EditorState _ed = ed;
     private readonly SceneIO _sc = sc;
 
     public void Handle(AethVec2 mousePos, PhysicsObject? picked)
@@ -25,6 +25,7 @@ public class ShortcutHandler(CoreContext c, ImGuiContext imgContx, ObjectRegistr
         if (IsKey(KeyboardKey.F2)) SystemConfig.Reload();
         if (IsKey(KeyboardKey.Tab)) _openQuickSpawn(mousePos);
         if (IsKey(KeyboardKey.F3)) _img.ShowDebugWindow = !_img.ShowDebugWindow;
+        if (IsKey(KeyboardKey.F4)) _img.ImgVault.Toggle(ImGuiWindowState.Settings);
 
         if (IsKey(KeyboardKey.Z) && _reg.LatestDeletedObjects.Count > 0)
         {

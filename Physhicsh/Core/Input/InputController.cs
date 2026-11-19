@@ -34,7 +34,7 @@ public sealed class InputController
         _selection = new();
         _rotation = new();
         _drag = new(c.World.CurrentWorld);
-        _shortcuts = new(c, img, reg, ed, sc, OpenQuickSpawnMenu);
+        _shortcuts = new(c, img, reg, sc, OpenQuickSpawnMenu);
     }
 
     public void Tick()
