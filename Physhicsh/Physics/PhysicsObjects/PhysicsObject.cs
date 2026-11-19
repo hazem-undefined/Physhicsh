@@ -78,7 +78,7 @@ public class PhysicsObject
         if (Fixture != null)
         {
             ImGuiUtils.DrawSliderFloat("Boingness", Fixture.Restitution, 0f, 2f, v => Fixture.Restitution = v);
-            ImGuiUtils.DrawSliderFloat("Slippiness", Fixture.Friction, 0f, 2f, v => Fixture.Friction = v);
+            ImGuiUtils.DrawSliderFloat("Friction", Fixture.Friction, 0f, 2f, v => Fixture.Friction = v);
         }
 
         ImGuiUtils.DrawCheckbox("Lock", Locked, v => Locked = v);

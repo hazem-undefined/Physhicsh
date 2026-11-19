@@ -38,7 +38,6 @@ public class MainWindow
             new DebugWindow(_coreContext, _imGuiContext, _objectReg, _editorState),
             new PropertiesWindow(_imGuiContext, _editorState),
             new SettingsWindow(_coreContext, _imGuiContext, _sceneIO)];
-
         Raylib.SetConfigFlags(ConfigFlags.VSyncHint | ConfigFlags.Msaa4xHint);
         Raylib.InitWindow(SystemConfig.Instance.Graphics.ScreenWidth, SystemConfig.Instance.Graphics.ScreenHeight, "Physhicsh");
         Raylib.SetWindowFocused();

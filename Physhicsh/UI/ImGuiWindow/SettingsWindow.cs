@@ -36,6 +36,16 @@ public class SettingsWindow(CoreContext c, ImGuiContext imgContx, SceneIO sc) : 
                 ImGui.SetTooltip("Ctrl + Left Click a slider to type an exact value.");
             }
 
+            if (ImGui.Button("Save Config"))
+            {
+                SystemConfig.SerializeSystemConfig(SystemConfig.CONFIG_FILE_PATH, SystemConfig.Instance);
+            }
+            ImGui.SameLine();
+            if (ImGui.Button("Reload Config"))
+            {
+                SystemConfig.LoadFromFile(SystemConfig.CONFIG_FILE_PATH);
+            }
+
             DrawConfigSection("Scene", DrawSceneConfig);
             DrawConfigSection("Spawn", DrawSpawnSettings);
             DrawConfigSection("Graphics", SystemConfig.Instance.Graphics, DrawGraphicsConfig);
@@ -49,6 +59,11 @@ public class SettingsWindow(CoreContext c, ImGuiContext imgContx, SceneIO sc) : 
                 {
                     _sc.ClearAllPhysObjects();
                 }
+            }
+
+            if (ImGui.Button("Restore default"))
+            {
+                SystemConfig.RestoreToDefault();
             }
         });
     }
@@ -93,9 +108,9 @@ public class SettingsWindow(CoreContext c, ImGuiContext imgContx, SceneIO sc) : 
         if (!SpawnRules.Instance.UseRandomColors) ImGuiUtils.DrawColorEdit3("Spawn Color", SpawnRules.Instance.SpawnColor.ToSysVector3(), (x) => SpawnRules.Instance.SpawnColor = x.ToAetherVector3().ToColor());
     }
 
-    // ---------- Config sections ----------
+    // ---------- Beware: Junk underneath ----------
 
-    private static void DrawConfigSection<T>(string name, T config, Action<T> drawFields)
+    private static void DrawConfigSection<T>(string name, T config, Action<T> drawFields, string? tooltip = null)
     {
         if (ImGui.CollapsingHeader(name))
         {
@@ -104,7 +119,7 @@ public class SettingsWindow(CoreContext c, ImGuiContext imgContx, SceneIO sc) : 
             ImGui.Unindent();
         }
     }
-    private static void DrawConfigSection(string name, Action drawFields)
+    private static void DrawConfigSection(string name, Action drawFields, string? tooltip = null)
     {
         if (ImGui.CollapsingHeader(name))
         {
@@ -112,6 +127,8 @@ public class SettingsWindow(CoreContext c, ImGuiContext imgContx, SceneIO sc) : 
             drawFields();
             ImGui.Unindent();
         }
+
+        ImGuiUtils.Tooltip(tooltip);
     }
 
     private void DrawLimitsConfig(LimitsConfig l)

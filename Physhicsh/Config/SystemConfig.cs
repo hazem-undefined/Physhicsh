@@ -14,6 +14,7 @@ namespace Physhicsh.Config
         public LimitsConfig Limits { get; set; } = new();
         public const string PHYSHICSH_SCENE_FILE = ".psf";
         public const string PHYSHICSH_SETTINGS_FILE = ".ptf";
+        public const string CONFIG_FILE_PATH = "config.toml";
         public static AethVec2 ScreenCenter => new(Instance.Graphics.ScreenWidth / 2,
                                                   Instance.Graphics.ScreenHeight / 2);
         private static SystemConfig? _instance;
@@ -35,19 +36,18 @@ namespace Physhicsh.Config
         {
             lock (_lock)
             {
-                _instance ??= LoadFromFile("config.toml");
+                _instance ??= LoadFromFile(CONFIG_FILE_PATH);
             }
         }
 
-        private static SystemConfig LoadFromFile(string path)
+        public static SystemConfig LoadFromFile(string path)
         {
             if (!File.Exists(path))
             {
                 SystemConfig defaults = new SystemConfig();
                 try
                 {
-                    string toml = TomlSerializer.Serialize(defaults, ConfigTomlContext.Default.SystemConfig);
-                    File.WriteAllText(path, toml);
+                    SerializeSystemConfig(path, defaults);
                 }
                 catch (Exception ex) when (ex is IOException or UnauthorizedAccessException)
                 {
@@ -71,6 +71,16 @@ namespace Physhicsh.Config
                 throw new InvalidOperationException(
                     $"Error parsing configuration file '{path}': {ex.Message}", ex);
             }
+        }
+
+        public static void SerializeSystemConfig(string path, SystemConfig current)
+        {
+            string toml = TomlSerializer.Serialize(current, ConfigTomlContext.Default.SystemConfig);
+            File.WriteAllText(path, toml);
+        }
+        public static void RestoreToDefault()
+        {
+            _instance = new();
         }
     }
 }

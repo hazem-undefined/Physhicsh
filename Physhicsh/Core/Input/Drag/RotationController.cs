@@ -27,6 +27,7 @@ public sealed class RotationController
 
             _body.IsBullet = true;
             _body.AngularVelocity = dir * speed;
+
             _body.Awake = true;
             _wasResetting = false;
         }
