@@ -22,6 +22,8 @@ public class ShortcutHandler(CoreContext c, ImGuiContext imgContx, ObjectRegistr
     public void Handle(AethVec2 mousePos, PhysicsObject? picked)
     {
         SpawnShortcuts(mousePos);
+        CameraMovement();
+
         if (IsKey(KeyboardKey.F2)) SystemConfig.Reload();
         if (IsKey(KeyboardKey.Tab)) _openQuickSpawn(mousePos);
         if (IsKey(KeyboardKey.F3)) _img.ShowDebugWindow = !_img.ShowDebugWindow;
@@ -35,7 +37,7 @@ public class ShortcutHandler(CoreContext c, ImGuiContext imgContx, ObjectRegistr
 
         if (picked != null)
         {
-            if (IsKey(KeyboardKey.D) && picked is ICloneable c) Spawn.SpawnPhysicsObject((PhysicsObject)c.Clone(), _c.World.CurrentWorld, _reg.PhysicsObjects, mousePos);
+            if (IsKey(KeyboardKey.H) && picked is ICloneable c) Spawn.SpawnPhysicsObject((PhysicsObject)c.Clone(), _c.World.CurrentWorld, _reg.PhysicsObjects, mousePos);
 
             if (IsKey(KeyboardKey.X)) _sc.DeletePhysicsObject(picked, true);
 
@@ -50,6 +52,25 @@ public class ShortcutHandler(CoreContext c, ImGuiContext imgContx, ObjectRegistr
                     picked?.Body.BodyType = BodyType.Static;
                 }
             }
+        }
+    }
+
+    private void CameraMovement()
+    {
+        SysVec2 offset = _c.Camera.Offset;
+        const float cameraSpeed = 2;
+
+        float dx = 0;
+        float dy = 0;
+
+        if (Raylib.IsKeyDown(KeyboardKey.W)) dy += cameraSpeed;
+        if (Raylib.IsKeyDown(KeyboardKey.S)) dy -= cameraSpeed;
+        if (Raylib.IsKeyDown(KeyboardKey.A)) dx += cameraSpeed;
+        if (Raylib.IsKeyDown(KeyboardKey.D)) dx -= cameraSpeed;
+
+        if (dx != 0 || dy != 0)
+        {
+            _c.SetCameraOffset(new(offset.X + dx, offset.Y + dy));
         }
     }
 
