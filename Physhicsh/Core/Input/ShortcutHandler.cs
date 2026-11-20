@@ -30,16 +30,16 @@ public class ShortcutHandler(CoreContext c, ImGuiContext imgContx, ObjectRegistr
         if (IsKey(KeyboardKey.F4)) _img.ImgVault.Toggle(ImGuiWindowState.Settings);
         if (Raylib.IsKeyDown(KeyboardKey.Minus))
         {
-            _c.SetCameraZoom(_c.Camera.Zoom - .01f);
+            _c.SetCameraZoom(_c.Camera.Zoom - SystemConfig.Instance.Controls.ZoomSpeed);
         }
         if (Raylib.IsKeyDown(KeyboardKey.Equal))
         {
-            _c.SetCameraZoom(_c.Camera.Zoom + .01f);
+            _c.SetCameraZoom(_c.Camera.Zoom + SystemConfig.Instance.Controls.ZoomSpeed);
         }
         if (Raylib.GetMouseWheelMove() != 0)
         {
             float mWheel = Raylib.GetMouseWheelMove();
-            _c.SetCameraZoom(_c.Camera.Zoom + (mWheel * 0.01f));
+            _c.SetCameraZoom(_c.Camera.Zoom + (mWheel * SystemConfig.Instance.Controls.ZoomSpeed));
         }
 
         if (IsKey(KeyboardKey.Z) && _reg.LatestDeletedObjects.Count > 0)
