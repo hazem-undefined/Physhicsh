@@ -26,10 +26,9 @@ public class CoreContext()
     {
         Camera = new(Camera.Offset, Camera.Target, Camera.Rotation, newZoom);
     }
-    public void MoveCamera(SysVec2 newOffset)
+    public void MoveCamera(SysVec2 moveDirection)
     {
-        MovedDistance = newOffset - Camera.Offset;
-        Camera = new(Camera.Offset, Camera.Target - (newOffset / Camera.Zoom), Camera.Rotation, Camera.Zoom);
+        Camera = new(Camera.Offset, Camera.Target - (moveDirection / Camera.Zoom), Camera.Rotation, Camera.Zoom);
     }
     public void SetCameraTarget(SysVec2 newTarget) => Camera = new(Camera.Offset, newTarget, Camera.Rotation, Camera.Zoom);
 

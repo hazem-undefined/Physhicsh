@@ -174,9 +174,12 @@ public class MainWindow
         _input.TickMouse();
     }
 
-    private static bool IsOutOfBounds(PhysicsObject item)
+    private bool IsOutOfBounds(PhysicsObject item)
     {
-        return MathF.Abs(item.Body.Position.X) > SystemConfig.Instance.Limits.BoundsLimit.X || MathF.Abs(item.Body.Position.Y) > SystemConfig.Instance.Limits.BoundsLimit.Y;
+        float boundsX = SystemConfig.Instance.Limits.BoundsLimit.X;
+        float boundsY = SystemConfig.Instance.Limits.BoundsLimit.Y;
+
+        return MathF.Abs(item.Body.Position.X) > boundsX || MathF.Abs(item.Body.Position.Y) > boundsY;
     }
 
     private void GraphicsUpdate()
