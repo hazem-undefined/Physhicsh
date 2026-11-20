@@ -22,7 +22,7 @@ public sealed class InputController
     {
         get
         {
-            SysVec2 pixelWorld = Raylib.GetScreenToWorld2D(Raylib.GetMousePosition(), _c.Camera);
+            SysVec2 pixelWorld = Raylib.GetScreenToWorld2D(Raylib.GetMousePosition(), _c.GetRenderCamera());
             return pixelWorld.ToAethVec2().ScreenToWorld();
         }
         private set;

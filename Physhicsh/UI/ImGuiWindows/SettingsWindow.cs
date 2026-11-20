@@ -102,7 +102,7 @@ public class SettingsWindow(CoreContext c, ImGuiContext imgContx, SceneIO sc) : 
         }
         if (ImGui.IsItemHovered(ImGuiHoveredFlags.DelayNone))
         {
-            ImGui.SetTooltip("Export the current scene (objects, positions, joints) to a .psf file.");
+            ImGui.SetTooltip("Export the current scene to a .psf file.");
         }
         ImGui.SameLine();
         if (ImGui.Button("Select Scene"))
@@ -220,7 +220,6 @@ public class SettingsWindow(CoreContext c, ImGuiContext imgContx, SceneIO sc) : 
             SystemConfig.Instance.Graphics.ScreenWidth = width;
             SystemConfig.Instance.Graphics.ScreenHeight = height;
 
-            _c.InitCamera();
             changed |= true;
         }
 
@@ -228,10 +227,9 @@ public class SettingsWindow(CoreContext c, ImGuiContext imgContx, SceneIO sc) : 
             "Synchronize frame rendering with your monitor's refresh rate.\nPrevents screen tearing but caps FPS to the display's refresh rate.");
 
         changed |= ImGuiUtils.DrawSliderInt("Max FPS", g.MaxFPS, 30, 360, v => g.MaxFPS = v,
-            "Upper frame rate limit (only effective when Vsync is off).\nLower = less GPU load; higher = smoother motion.");
+            "Upper frame rate limit (only effective when Vsync is off).");
 
-        changed |= ImGuiUtils.DrawSliderFloat("Pixels Per Meter", g.PPM, 8f, 128f, v => g.PPM = v,
-            "Zoom level: how many screen pixels represent one world meter.\nHigher = zoomed in, lower = zoomed out.");
+        changed |= ImGuiUtils.DrawSliderFloat("Pixels Per Meter", g.PPM, 8f, 128f, v => g.PPM = v);
 
         ImGuiUtils.DrawCheckbox("Show Outline", g.ShowOutline, v => g.ShowOutline = v,
             "Draw an outline around each physics object.\nMakes shapes easier to distinguish against similar-colored backgrounds.");

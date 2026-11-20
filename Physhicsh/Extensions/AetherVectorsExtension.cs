@@ -9,7 +9,6 @@ public static class AetherVectorsExtension
     public static AethVec2 ToAetherVector2(this SysVec2 v) => new(v.X, v.Y);
 
     public static AethVec2 WorldToScreen(this AethVec2 world) => new(world.X * SystemConfig.Instance.Graphics.PPM, -world.Y * SystemConfig.Instance.Graphics.PPM);
-
     public static AethVec2 ScreenToWorld(this AethVec2 screen) => new(screen.X / SystemConfig.Instance.Graphics.PPM, -screen.Y / SystemConfig.Instance.Graphics.PPM);
     public static AethVec3 ToVector3(this RayColor c) =>
         new(c.R / 255f, c.G / 255f, c.B / 255f);

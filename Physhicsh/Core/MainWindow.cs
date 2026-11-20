@@ -126,6 +126,15 @@ public class MainWindow
         _coreContext.Profiler.Measure("PHYSICS", () => _coreContext.World.StepPhysics(Raylib.GetFrameTime()));
         _coreContext.Profiler.Measure("UPDATE", () => UpdatePhysicsObjects());
 
+        if (Raylib.IsWindowResized())
+        {
+            int w = Raylib.GetScreenWidth();
+            int h = Raylib.GetScreenHeight();
+
+            _screenWidth = w;
+            _screenHeight = h;
+        }
+
         if (Raylib.IsMouseButtonPressed(MouseButton.Right))
         {
             AethVec2 worldPos = _input.MousePosWorld;
@@ -175,7 +184,7 @@ public class MainWindow
         Raylib.BeginDrawing();
         Raylib.ClearBackground(_coreContext.SceneSettings.CurrentBgColor);
 
-        Raylib.BeginMode2D(_coreContext.Camera);
+        Raylib.BeginMode2D(_coreContext.GetRenderCamera());
 
         DrawPhysicsObjects();
         if (_input != null && _editorState.PickedObject != null)
