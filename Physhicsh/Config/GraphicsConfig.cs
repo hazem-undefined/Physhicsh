@@ -1,4 +1,7 @@
-﻿namespace Physhicsh.Config;
+﻿using Raylib_cs;
+using Tomlyn.Serialization;
+
+namespace Physhicsh.Config;
 
 public class GraphicsConfig
 {
@@ -12,21 +15,33 @@ public class GraphicsConfig
         {
             _screenWidth = value?.Width ?? 0;
             _screenHeight = value?.Height ?? 0;
+            Raylib.SetWindowSize(_screenWidth, _screenHeight);
         }
     }
-
+    [TomlIgnore]
     public int ScreenWidth
     {
         get => _screenWidth;
-        set => _screenWidth = value;
+        set
+        {
+            _screenWidth = value;
+            Raylib.SetWindowSize(_screenWidth, Raylib.GetScreenHeight());
+        }
     }
+    [TomlIgnore]
 
     public int ScreenHeight
     {
         get => _screenHeight;
-        set => _screenHeight = value;
+        set
+        {
+            _screenHeight = value;
+            Raylib.SetWindowSize(Raylib.GetScreenWidth(), _screenHeight);
+        }
     }
     public bool UseVsync { get; set; } = true;
+    public bool MSAA { get; set; } = true;
+    public bool Fullscreen { get; set; } = false;
     public int MaxFPS { get; set; } = 60;
     public bool ShowOutline { get; set; } = true;
     public bool ShowDragLine { get; set; } = true;

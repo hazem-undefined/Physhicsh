@@ -28,6 +28,8 @@ public class ShortcutHandler(CoreContext c, ImGuiContext imgContx, ObjectRegistr
         if (IsKey(KeyboardKey.Tab)) _openQuickSpawn(mousePos);
         if (IsKey(KeyboardKey.F3)) _img.ShowDebugWindow = !_img.ShowDebugWindow;
         if (IsKey(KeyboardKey.F4)) _img.ImgVault.Toggle(ImGuiWindowState.Settings);
+        if (Raylib.IsKeyDown(KeyboardKey.Minus)) _c.SetCameraZoom(_c.Camera.Zoom - .01f);
+        if (Raylib.IsKeyDown(KeyboardKey.Equal)) _c.SetCameraZoom(_c.Camera.Zoom + .01f);
 
         if (IsKey(KeyboardKey.Z) && _reg.LatestDeletedObjects.Count > 0)
         {
@@ -58,15 +60,16 @@ public class ShortcutHandler(CoreContext c, ImGuiContext imgContx, ObjectRegistr
     private void CameraMovement()
     {
         SysVec2 offset = _c.Camera.Offset;
-        const float cameraSpeed = 2;
+
+        float speed = Raylib.IsKeyDown(KeyboardKey.LeftShift) ? SystemConfig.Instance.Controls.CameraSpeed / 2 : SystemConfig.Instance.Controls.CameraSpeed;
 
         float dx = 0;
         float dy = 0;
 
-        if (Raylib.IsKeyDown(KeyboardKey.W)) dy += cameraSpeed;
-        if (Raylib.IsKeyDown(KeyboardKey.S)) dy -= cameraSpeed;
-        if (Raylib.IsKeyDown(KeyboardKey.A)) dx += cameraSpeed;
-        if (Raylib.IsKeyDown(KeyboardKey.D)) dx -= cameraSpeed;
+        if (Raylib.IsKeyDown(KeyboardKey.W)) dy += speed;
+        if (Raylib.IsKeyDown(KeyboardKey.S)) dy -= speed;
+        if (Raylib.IsKeyDown(KeyboardKey.A)) dx += speed;
+        if (Raylib.IsKeyDown(KeyboardKey.D)) dx -= speed;
 
         if (dx != 0 || dy != 0)
         {

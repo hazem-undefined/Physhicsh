@@ -48,7 +48,6 @@ public sealed class InputController
     public void Tick()
     {
         _c.Profiler.AddDebugText("Mouse Pos World", MousePosWorld);
-        //_c.Profiler.AddDebugText("mPos", mPos);
 
         bool uiWantsKeyboard = ImGui.GetIO().WantCaptureKeyboard;
         if (!uiWantsKeyboard)

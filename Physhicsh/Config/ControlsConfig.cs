@@ -3,6 +3,7 @@
 public class ControlsConfig
 {
     public float RotationSpeed { get; set; } = 10f;
+    public float CameraSpeed { get; set; } = 10;
     public float KinematicStiffness { get; set; } = 25f;
     public float JointMaxForcePerKg { get; set; } = 1000f;
     public float JointFrequency { get; set; } = 5f;

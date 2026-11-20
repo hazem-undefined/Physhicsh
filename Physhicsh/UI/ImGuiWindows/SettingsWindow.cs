@@ -87,13 +87,18 @@ public class SettingsWindow(CoreContext c, ImGuiContext imgContx, SceneIO sc) : 
 
     private void DrawSceneConfig()
     {
+        bool isUsingFullscreen = SystemConfig.Instance.Graphics.Fullscreen;
+
         if (ImGui.Button("Save Scene"))
         {
+            if (isUsingFullscreen) Raylib.ToggleFullscreen();
             DialogResult savePath = Dialog.FileSave("psf", Path.Combine(AppContext.BaseDirectory, SystemConfig.Instance.Paths.ScenesPath));
             if (savePath.Path != null)
             {
                 _sc.SaveScene(savePath.Path);
             }
+            if (isUsingFullscreen) Raylib.ToggleFullscreen();
+
         }
         if (ImGui.IsItemHovered(ImGuiHoveredFlags.DelayNone))
         {
@@ -102,11 +107,15 @@ public class SettingsWindow(CoreContext c, ImGuiContext imgContx, SceneIO sc) : 
         ImGui.SameLine();
         if (ImGui.Button("Select Scene"))
         {
+            if (isUsingFullscreen) Raylib.ToggleFullscreen();
+
             DialogResult selected = Dialog.FileOpen("psf", Path.Combine(AppContext.BaseDirectory, SystemConfig.Instance.Paths.ScenesPath));
             if (selected.Path != null)
             {
                 _sc.LoadScene(selected.Path);
             }
+            if (isUsingFullscreen) Raylib.ToggleFullscreen();
+
         }
         if (ImGui.IsItemHovered(ImGuiHoveredFlags.DelayNone))
         {
@@ -205,14 +214,15 @@ public class SettingsWindow(CoreContext c, ImGuiContext imgContx, SceneIO sc) : 
 
         if (ImGui.Combo("Resolution", ref _selectedResIndex, resStrings, resStrings.Length))
         {
-            SystemConfig.Instance.Graphics.Resolution = new(res[_selectedResIndex].Width, res[_selectedResIndex].Height);
+            int width = res[_selectedResIndex].Width;
+            int height = res[_selectedResIndex].Height;
+
+            SystemConfig.Instance.Graphics.ScreenWidth = width;
+            SystemConfig.Instance.Graphics.ScreenHeight = height;
+
+            _c.InitCamera();
+            changed |= true;
         }
-
-        changed |= ImGuiUtils.DrawSliderInt("Screen Width", g.ScreenWidth, 320, 3840, v => g.ScreenWidth = v,
-            "Window width in pixels. Changes apply after restarting the application.");
-
-        changed |= ImGuiUtils.DrawSliderInt("Screen Height", g.ScreenHeight, 240, 2160, v => g.ScreenHeight = v,
-            "Window height in pixels. Changes apply after restarting the application.");
 
         changed |= ImGuiUtils.DrawCheckbox("Use Vsync", g.UseVsync, v => g.UseVsync = v,
             "Synchronize frame rendering with your monitor's refresh rate.\nPrevents screen tearing but caps FPS to the display's refresh rate.");

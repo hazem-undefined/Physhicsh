@@ -11,6 +11,7 @@ public class CoreContext()
     public SceneSettings SceneSettings { get; } = new();
     public PhysicsWorld World { get; } = new();
     public Profiler Profiler { get; } = new();
+    public SysVec2 MovedDistance { get; private set; }
     public Camera2D Camera { get; set; } = new();
     public void InitCamera()
     {
@@ -21,6 +22,10 @@ public class CoreContext()
     {
         Camera = new(Camera.Offset, Camera.Target, Camera.Rotation, newZoom);
     }
-    public void SetCameraOffset(SysVec2 newOffset) => Camera = new(newOffset, Camera.Target, Camera.Rotation, Camera.Zoom);
+    public void SetCameraOffset(SysVec2 newOffset)
+    {
+        MovedDistance = newOffset - Camera.Offset;
+        Camera = new(newOffset, Camera.Target, Camera.Rotation, Camera.Zoom);
+    }
     public void SetCameraTarget(SysVec2 newTarget) => Camera = new(Camera.Offset, newTarget, Camera.Rotation, Camera.Zoom);
 }

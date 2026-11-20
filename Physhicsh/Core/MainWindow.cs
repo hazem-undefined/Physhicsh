@@ -26,7 +26,9 @@ public class MainWindow
     private readonly ImGuiContext _imGuiContext = new();
     private readonly ObjectRegistry _objectReg = new();
     private SceneIO _sceneIO;
-
+    private bool _screenSet = false;
+    private int _screenWidth;
+    private int _screenHeight;
     private readonly SceneSettings _sceneSettings = new();
     public void Start()
     {
@@ -36,14 +38,15 @@ public class MainWindow
         _sceneIO = new(_coreContext.World.CurrentWorld, _editorState, _objectReg);
 
         _imGuiWindows = [
-                new DebugWindow(_coreContext, _imGuiContext, _objectReg, _editorState),
+            new DebugWindow(_coreContext, _imGuiContext, _objectReg, _editorState),
             new PropertiesWindow(_imGuiContext, _editorState),
             new SettingsWindow(_coreContext, _imGuiContext, _sceneIO)];
 
-        Raylib.SetConfigFlags(ConfigFlags.VSyncHint | ConfigFlags.Msaa4xHint);
+        Raylib.SetConfigFlags(SystemConfig.Instance.WindowFlags);
 
-        Raylib.InitWindow(SystemConfig.Instance.Graphics.ScreenWidth, SystemConfig.Instance.Graphics.ScreenHeight, "Physhicsh");
-        SystemConfig.Instance.Graphics.LockDimensions();
+        _screenWidth = SystemConfig.Instance.Graphics.ScreenWidth;
+        _screenHeight = SystemConfig.Instance.Graphics.ScreenHeight;
+        Raylib.InitWindow(_screenWidth, _screenHeight, "Physhicsh");
 
         Raylib.SetWindowFocused();
 
@@ -201,9 +204,6 @@ public class MainWindow
         }
 
         _imGuiContext.UI.EndFrame();
-
-        if (Raylib.IsKeyDown(KeyboardKey.Minus)) _coreContext.SetCameraZoom(_coreContext.Camera.Zoom - .01f);
-        if (Raylib.IsKeyDown(KeyboardKey.Equal)) _coreContext.SetCameraZoom(_coreContext.Camera.Zoom + .01f);
 
         rlImGui.End();
         Raylib.EndDrawing();
