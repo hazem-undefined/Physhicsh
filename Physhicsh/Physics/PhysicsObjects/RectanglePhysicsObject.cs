@@ -9,7 +9,7 @@ using System;
 
 namespace Physhicsh.Physics.PhysicsObjects
 {
-    public class RectanglePhysicsObject : PhysicsObject, ICloneable
+    public class RectanglePhysicsObject : PhysicsObject, ICloneable, ISafeClone<RectanglePhysicsObject>
     {
         public AethVec2 Size;
         private float _widthPx;
@@ -144,6 +144,11 @@ namespace Physhicsh.Physics.PhysicsObjects
         {
             RectanglePhysicsObject clone = new(Body.Position.X, Body.Position.Y, Size.X, Size.Y, Color, bodyType: Body.BodyType);
             return clone;
+        }
+
+        public RectanglePhysicsObject SafeClone()
+        {
+            return new(0, 0, Size.X, Size.Y, Color, bodyType: Body.BodyType);
         }
     }
 }

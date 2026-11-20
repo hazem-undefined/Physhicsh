@@ -29,8 +29,11 @@ public class PhysicsObject
     private float _t;
     private const float ChangeInterval = 0.3f;
     private bool _seeded;
+    private bool _started;
     public virtual void Start(World world)
     {
+        if (_started) return;
+
         if (BodyData != null)
             Body = BodyData.Create(world);
         else
@@ -48,6 +51,8 @@ public class PhysicsObject
         Body.Awake = true;
         Body.Enabled = true;
         Body.ResetDynamics();
+
+        _started = true;
     }
 
 

@@ -19,15 +19,57 @@ public class ShortcutHandler(CoreContext c, ImGuiContext imgContx, ObjectRegistr
     private readonly ObjectRegistry _reg = reg;
     private readonly SceneIO _sc = sc;
 
+    private PhysicsObject _clonedObject;
+    private float _clonedObjectRotation;
     public void Handle(AethVec2 mousePos, PhysicsObject? picked)
     {
         SpawnShortcuts(mousePos);
         CameraMovement();
+        DebugFs();
 
-        if (IsKey(KeyboardKey.F2)) SystemConfig.Reload();
         if (IsKey(KeyboardKey.Tab)) _openQuickSpawn(mousePos);
-        if (IsKey(KeyboardKey.F3)) _img.ShowDebugWindow = !_img.ShowDebugWindow;
-        if (IsKey(KeyboardKey.F4)) _img.ImgVault.Toggle(ImGuiWindowState.Settings);
+
+        CameraZoomControls();
+
+        if (IsKey(KeyboardKey.Z) && _reg.LatestDeletedObjects.Count > 0)
+        {
+            KeyValuePair<PhysicsObject, AethVec2> returned = _reg.LatestDeletedObjects.Pop().ElementAt(0);
+            Spawn.SpawnPhysicsObject(returned.Key, _c.World.CurrentWorld, _reg.PhysicsObjects, returned.Value);
+        }
+
+        if ((Raylib.IsKeyDown(KeyboardKey.LeftControl) && IsKey(KeyboardKey.V)) && _clonedObject != null)
+        {
+            Spawn.SpawnClonedPhysicsObject(_clonedObject, _c.World.CurrentWorld, _reg.PhysicsObjects, mousePos, _clonedObjectRotation);
+        }
+
+        if (picked != null)
+        {
+            if ((Raylib.IsKeyDown(KeyboardKey.LeftControl) && IsKey(KeyboardKey.C)) && picked is ICloneable c)
+            {
+                _clonedObject = (PhysicsObject)c.Clone();
+                _clonedObject.Start(_c.World.CurrentWorld);
+                _clonedObjectRotation = picked.Body.Rotation;
+                _c.Profiler.AddDebugText("Cloned", _clonedObject);
+            }
+
+            if (IsKey(KeyboardKey.X)) _sc.DeletePhysicsObject(picked, true);
+
+            if (Raylib.IsKeyPressed(KeyboardKey.F))
+            {
+                if (picked?.Body.BodyType == BodyType.Kinematic || picked?.Body.BodyType == BodyType.Static)
+                {
+                    picked?.Body.BodyType = BodyType.Dynamic;
+                }
+                else
+                {
+                    picked?.Body.BodyType = BodyType.Static;
+                }
+            }
+        }
+    }
+
+    private void CameraZoomControls()
+    {
         if (Raylib.IsKeyDown(KeyboardKey.Minus))
         {
             _c.SetCameraZoom(_c.Camera.Zoom - SystemConfig.Instance.Controls.ZoomSpeed);
@@ -41,34 +83,13 @@ public class ShortcutHandler(CoreContext c, ImGuiContext imgContx, ObjectRegistr
             float mWheel = Raylib.GetMouseWheelMove();
             _c.SetCameraZoom(_c.Camera.Zoom + (mWheel * SystemConfig.Instance.Controls.ZoomSpeed));
         }
+    }
 
-        if (IsKey(KeyboardKey.Z) && _reg.LatestDeletedObjects.Count > 0)
-        {
-            KeyValuePair<PhysicsObject, AethVec2> returned = _reg.LatestDeletedObjects.Pop().ElementAt(0);
-            Spawn.SpawnPhysicsObject(returned.Key, _c.World.CurrentWorld, _reg.PhysicsObjects, returned.Value);
-        }
-
-        if (picked != null)
-        {
-            if (IsKey(KeyboardKey.H) && picked is ICloneable c)
-            {
-                Spawn.SpawnPhysicsObject((PhysicsObject)c.Clone(), _c.World.CurrentWorld, _reg.PhysicsObjects, mousePos, picked.Body.Rotation);
-            }
-
-            if (IsKey(KeyboardKey.X)) _sc.DeletePhysicsObject(picked, true);
-
-            if (Raylib.IsKeyPressed(KeyboardKey.V))
-            {
-                if (picked?.Body.BodyType == BodyType.Kinematic || picked?.Body.BodyType == BodyType.Static)
-                {
-                    picked?.Body.BodyType = BodyType.Dynamic;
-                }
-                else
-                {
-                    picked?.Body.BodyType = BodyType.Static;
-                }
-            }
-        }
+    private void DebugFs()
+    {
+        if (IsKey(KeyboardKey.F2)) SystemConfig.Reload();
+        if (IsKey(KeyboardKey.F3)) _img.ShowDebugWindow = !_img.ShowDebugWindow;
+        if (IsKey(KeyboardKey.F4)) _img.ImgVault.Toggle(ImGuiWindowState.Settings);
     }
 
     private void CameraMovement()
@@ -91,10 +112,9 @@ public class ShortcutHandler(CoreContext c, ImGuiContext imgContx, ObjectRegistr
 
     private void SpawnShortcuts(AethVec2 mouse)
     {
-        if (IsKey(KeyboardKey.R))
-        {
-            Spawn.SpawnRectangle(_c.World.CurrentWorld, mouse, _reg.PhysicsObjects);
-        }
+        if (Raylib.IsKeyDown(KeyboardKey.LeftControl)) return;
+
+        if (IsKey(KeyboardKey.R)) Spawn.SpawnRectangle(_c.World.CurrentWorld, mouse, _reg.PhysicsObjects);
         if (IsKey(KeyboardKey.C)) Spawn.SpawnCircle(_c.World.CurrentWorld, mouse, _reg.PhysicsObjects);
     }
 
