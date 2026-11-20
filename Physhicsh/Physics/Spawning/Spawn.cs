@@ -27,12 +27,11 @@ public static class Spawn
         return SpawnPhysicsObject(newBall, world, list);
     }
 
-    public static T SpawnPhysicsObject<T>(T obj, World world, List<PhysicsObject>? list = null, AethVec2? customSpawnPosition = null) where T : PhysicsObject
+    public static T SpawnPhysicsObject<T>(T obj, World world, List<PhysicsObject>? list = null, AethVec2? customSpawnPosition = null, float? customRotation = null) where T : PhysicsObject
     {
-
         list?.Add(obj);
         obj.Start(world);
-
+        if (customRotation != null) obj.Body.Rotation = customRotation.Value;
         if (customSpawnPosition != null) obj.Body.Position = customSpawnPosition.Value;
 
         return obj;

@@ -142,7 +142,8 @@ namespace Physhicsh.Physics.PhysicsObjects
 
         object ICloneable.Clone()
         {
-            return new RectanglePhysicsObject(Body.Position.X, Body.Position.Y, Size.X, Size.Y, Color, bodyType: Body.BodyType);
+            RectanglePhysicsObject clone = new(Body.Position.X, Body.Position.Y, Size.X, Size.Y, Color, bodyType: Body.BodyType);
+            return clone;
         }
     }
 }

@@ -50,7 +50,10 @@ public class ShortcutHandler(CoreContext c, ImGuiContext imgContx, ObjectRegistr
 
         if (picked != null)
         {
-            if (IsKey(KeyboardKey.H) && picked is ICloneable c) Spawn.SpawnPhysicsObject((PhysicsObject)c.Clone(), _c.World.CurrentWorld, _reg.PhysicsObjects, mousePos);
+            if (IsKey(KeyboardKey.H) && picked is ICloneable c)
+            {
+                Spawn.SpawnPhysicsObject((PhysicsObject)c.Clone(), _c.World.CurrentWorld, _reg.PhysicsObjects, mousePos, picked.Body.Rotation);
+            }
 
             if (IsKey(KeyboardKey.X)) _sc.DeletePhysicsObject(picked, true);
 
