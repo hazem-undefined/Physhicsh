@@ -13,7 +13,6 @@ public class CirclePhysicsObject(float x, float y, float radius, Color color, fl
     public float Radius { get { return Fixture.Shape.Radius; } set { Fixture.Shape.Radius = value; } }
     private float _screenRadius => Radius * SystemConfig.Instance.Graphics.PPM;
 
-
     public override void Start(World world)
     {
         base.Start(world);

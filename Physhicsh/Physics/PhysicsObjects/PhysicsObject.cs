@@ -1,7 +1,9 @@
 ﻿using ImGuiNET;
 using Newtonsoft.Json;
+using nkast.Aether.Physics2D.Collision.Shapes;
 using nkast.Aether.Physics2D.Dynamics;
 using Physhicsh.Config;
+using Physhicsh.Data.DTO;
 using Physhicsh.Extensions;
 using Physhicsh.Json.DTO;
 using Physhicsh.UI;
@@ -26,8 +28,8 @@ public class PhysicsObject
     private AethVec2 _startPosition = new();
     private BodyType _bodyType;
     private RayColor _randomColor;
+    private Shape _kossomk;
     private float _t;
-    private const float ChangeInterval = 0.3f;
     private bool _seeded;
     private bool _started;
     public virtual void Start(World world)
@@ -38,6 +40,9 @@ public class PhysicsObject
             Body = BodyData.Create(world);
         else
             Body = world.CreateBody(_startPosition, 0, _bodyType);
+
+        if (_kossomk != null)
+            Fixture = Body.CreateFixture(_kossomk);
 
         Body.Tag = this;
 
@@ -100,6 +105,7 @@ public class PhysicsObject
         Body.Tag = null;
         Body = null!;
     }
+
     private static Color RandomColorOnBlack()
     {
         RayColor c = Raylib.ColorFromHSV(Random.Shared.NextSingle() * 360f, 0.9f, 0.9f);
@@ -152,6 +158,11 @@ public class PhysicsObject
         this.Locked = obj.Locked;
         this._startPosition = obj.Body.Position;
         this._bodyType = obj._bodyType;
+    }
+    public PhysicsObject(PhysicsObjectDTO dto)
+    {
+        this.BodyData = dto.BodyDTO;
+        this._kossomk = ShapeSaveDTO.FromData(dto.ShapeDTO);
     }
 
     public BodySaveDTO CaptureForSave()

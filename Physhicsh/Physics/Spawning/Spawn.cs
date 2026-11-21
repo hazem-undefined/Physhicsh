@@ -38,22 +38,4 @@ public static class Spawn
 
         return obj;
     }
-    public static T SpawnClonedPhysicsObject<T>(T obj, World world, List<PhysicsObject>? list = null, AethVec2? customSpawnPosition = null, float? customRotation = null) where T : PhysicsObject
-    {
-        if (obj is ISafeClone<T> safe)
-        {
-            SpawnPhysicsObject(safe.SafeClone(), world, list, customSpawnPosition, customRotation);
-        }
-        else if (obj is ISafeClone<RectanglePhysicsObject> rsafe)
-        {
-            SpawnPhysicsObject(rsafe.SafeClone(), world, list, customSpawnPosition, customRotation);
-        }
-        else if (obj is ICloneable clone)
-        {
-            obj.Start(world);
-            SpawnPhysicsObject((PhysicsObject)clone.Clone(), world, list, customSpawnPosition, customRotation);
-        }
-
-        return obj;
-    }
 }

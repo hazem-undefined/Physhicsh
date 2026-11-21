@@ -1,7 +1,7 @@
 ﻿using nkast.Aether.Physics2D.Collision.Shapes;
 using System.Collections.Generic;
 
-namespace Physhicsh.Json.DTO;
+namespace Physhicsh.Data.DTO;
 
 public sealed class ShapeSaveDTO
 {

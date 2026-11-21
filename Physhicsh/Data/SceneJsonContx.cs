@@ -1,5 +1,5 @@
 ﻿using nkast.Aether.Physics2D.Collision.Shapes;
-using Physhicsh.Json.DTO;
+using Physhicsh.Data.DTO;
 using Physhicsh.Physics.PhysicsObjects;
 using Physhicsh.Scenes;
 using System.Collections.Generic;
