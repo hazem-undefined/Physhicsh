@@ -18,9 +18,7 @@ public class ShortcutHandler(CoreContext c, ImGuiContext imgContx, ObjectRegistr
     private readonly ImGuiContext _img = imgContx;
     private readonly ObjectRegistry _reg = reg;
     private readonly SceneIO _sc = sc;
-
-    private object _clonedBody;
-    private float _clonedObjectRotation;
+    private PhysicsObject? _clipboard;
     public void Handle(AethVec2 mousePos, PhysicsObject? picked)
     {
         SpawnShortcuts(mousePos);
@@ -37,18 +35,17 @@ public class ShortcutHandler(CoreContext c, ImGuiContext imgContx, ObjectRegistr
             Spawn.SpawnPhysicsObject(returned.Key, _c.World.CurrentWorld, _reg.PhysicsObjects, returned.Value);
         }
 
-        if (Raylib.IsKeyDown(KeyboardKey.LeftControl) && IsKey(KeyboardKey.V) && _clonedBody != null)
+        if (Raylib.IsKeyDown(KeyboardKey.LeftControl) && IsKey(KeyboardKey.V) && _clipboard != null)
         {
-            // This is the worst line of code I've ever written in my entire life, but it won't work in any other way.
-            _clonedBody = ((ICloneable)(Spawn.SpawnPhysicsObject((PhysicsObject)_clonedBody, _c.World.CurrentWorld, _reg.PhysicsObjects, mousePos, _clonedObjectRotation))).Clone();
+            PhysicsObject copy = _clipboard.Clone();
+            Spawn.SpawnPhysicsObject(copy, _c.World.CurrentWorld, _reg.PhysicsObjects, mousePos, copy.SpawnRotation);
         }
 
         if (picked != null)
         {
-            if ((Raylib.IsKeyDown(KeyboardKey.LeftControl) && IsKey(KeyboardKey.C)) && picked is ICloneable cloneable)
+            if (Raylib.IsKeyDown(KeyboardKey.LeftControl) && IsKey(KeyboardKey.C))
             {
-                _clonedBody = cloneable.Clone();
-                _clonedObjectRotation = picked.Body.Rotation;
+                _clipboard = picked.Clone();
             }
 
             if (IsKey(KeyboardKey.X)) _sc.DeletePhysicsObject(picked, true);

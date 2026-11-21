@@ -1,4 +1,5 @@
 ﻿using ImGuiNET;
+using Newtonsoft.Json;
 using nkast.Aether.Physics2D.Collision.Shapes;
 using nkast.Aether.Physics2D.Dynamics;
 using Physhicsh.Config;
@@ -9,15 +10,15 @@ using System;
 
 namespace Physhicsh.Physics.PhysicsObjects
 {
-    public class RectanglePhysicsObject : PhysicsObject, ICloneable
+    public class RectanglePhysicsObject : PhysicsObject
     {
         public AethVec2 Size;
         private float _widthPx;
         private float _heightPx;
-        private Rectangle rec;
-        private AethVec2 origin;
-        private float rotationDegrees;
-
+        private Rectangle _rec;
+        private AethVec2 _origin;
+        private float _rotationDegrees;
+        [JsonConstructor]
         public RectanglePhysicsObject(float x, float y, float width, float height, RayColor color, float density = 1f, BodyType bodyType = BodyType.Dynamic)
             : base(x, y, color, bodyType)
         {
@@ -25,10 +26,18 @@ namespace Physhicsh.Physics.PhysicsObjects
         }
 
 
+        private RectanglePhysicsObject(RectanglePhysicsObject source) : base(source)
+        {
+            Size = source.Size;
+        }
+
+        protected override PhysicsObject CreateCopy() => new RectanglePhysicsObject(this);
+
         public override void Start(World world)
         {
             base.Start(world);
             BuildFixture();
+            ApplyInitialState();
         }
 
         public override void Draw()
@@ -38,24 +47,24 @@ namespace Physhicsh.Physics.PhysicsObjects
             (_widthPx, _heightPx) = MeasurePolygon(Fixture.Shape as PolygonShape);
             AethVec2 screenPos = Body.Position.WorldToScreen();
 
-            rec = new(screenPos.X, screenPos.Y, _widthPx, _heightPx);
-            origin = new(_widthPx / 2f, _heightPx / 2f);
-            rotationDegrees = -Body.Rotation * (180f / MathF.PI);
+            _rec = new(screenPos.X, screenPos.Y, _widthPx, _heightPx);
+            _origin = new(_widthPx / 2f, _heightPx / 2f);
+            _rotationDegrees = -Body.Rotation * (180f / MathF.PI);
 
-            Raylib.DrawRectanglePro(rec, origin.ToNumericsVector2(), rotationDegrees, Color);
+            Raylib.DrawRectanglePro(_rec, _origin.ToNumericsVector2(), _rotationDegrees, Color);
         }
 
         // Vibe coded
         public override void DrawOutline()
         {
-            AethVec2 center = new(rec.X, rec.Y);
+            AethVec2 center = new(_rec.X, _rec.Y);
 
-            float rad = rotationDegrees * MathF.PI / 180f;
+            float rad = _rotationDegrees * MathF.PI / 180f;
             float cos = MathF.Cos(rad);
             float sin = MathF.Sin(rad);
 
-            float hw = origin.X;
-            float hh = origin.Y;
+            float hw = _origin.X;
+            float hh = _origin.Y;
 
             float thickness = SystemConfig.Instance.Graphics.OutlineThickness;
             float half = thickness / 2f;
@@ -109,7 +118,9 @@ namespace Physhicsh.Physics.PhysicsObjects
             Fixture = Body.CreateRectangle(Size.X, Size.Y, 10f, AethVec2.Zero);
             Fixture.Restitution = 0.3f;
             Fixture.Friction = 0.5f;
+
             Fixture.Tag = this;
+
         }
 
         // Vibe coded
@@ -138,11 +149,6 @@ namespace Physhicsh.Physics.PhysicsObjects
             {
                 Resize(sizeRefSlider.ToAetherVector2());
             }
-        }
-
-        public object Clone()
-        {
-            return new RectanglePhysicsObject(Body.Position.X, Body.Position.Y, Size.X, Size.Y, Color, 1, Body.BodyType);
         }
     }
 }

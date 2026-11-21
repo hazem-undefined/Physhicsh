@@ -1,9 +1,7 @@
 ﻿using ImGuiNET;
 using Newtonsoft.Json;
-using nkast.Aether.Physics2D.Collision.Shapes;
 using nkast.Aether.Physics2D.Dynamics;
 using Physhicsh.Config;
-using Physhicsh.Data.DTO;
 using Physhicsh.Extensions;
 using Physhicsh.Json.DTO;
 using Physhicsh.UI;
@@ -12,6 +10,10 @@ using Raylib_cs;
 using System;
 
 namespace Physhicsh.Physics.PhysicsObjects;
+
+public sealed record PhysicsState(
+    RayColor Color, bool Gay, bool Locked, BodyType BodyType,
+    float Rotation, float Mass, float Friction, float Restitution);
 
 public class PhysicsObject
 {
@@ -28,10 +30,11 @@ public class PhysicsObject
     private AethVec2 _startPosition = new();
     private BodyType _bodyType;
     private RayColor _randomColor;
-    private Shape _kossomk;
     private float _t;
     private bool _seeded;
     private bool _started;
+    private PhysicsState? _initState;
+    public float SpawnRotation => GetState().Rotation;
     public virtual void Start(World world)
     {
         if (_started) return;
@@ -39,19 +42,9 @@ public class PhysicsObject
         if (BodyData != null)
             Body = BodyData.Create(world);
         else
-            Body = world.CreateBody(_startPosition, 0, _bodyType);
-
-        if (_kossomk != null)
-            Fixture = Body.CreateFixture(_kossomk);
+            Body = world.CreateBody(_startPosition, _initState?.Rotation ?? 0f, _initState?.BodyType ?? _bodyType);
 
         Body.Tag = this;
-
-        //if (Fixture?.Shape is { } shape)
-        //{
-        //    Fixture f = Body.CreateFixture(shape);
-        //    f.Friction = Fixture.Friction;
-        //    f.Restitution = Fixture.Restitution;
-        //}
 
         Body.Awake = true;
         Body.Enabled = true;
@@ -63,7 +56,7 @@ public class PhysicsObject
 
     public virtual void PhysicsUpdate(World world)
     {
-
+        _bodyType = Body.BodyType;
     }
 
     public virtual void Draw()
@@ -105,7 +98,14 @@ public class PhysicsObject
         Body.Tag = null;
         Body = null!;
     }
+    protected PhysicsState GetState()
+    {
+        if (Body == null) return _initState ?? new PhysicsState(Color, Gay, Locked, _bodyType, 0f, 15f, 0.5f, 0.3f);
 
+        return new PhysicsState(_seeded ? _ogColorBeforeGay : Color, Gay,
+            Locked, _bodyType, Body.Rotation, Body.Mass,
+            Fixture?.Friction ?? 0.5f, Fixture?.Restitution ?? 0.3f);
+    }
     private static Color RandomColorOnBlack()
     {
         RayColor c = Raylib.ColorFromHSV(Random.Shared.NextSingle() * 360f, 0.9f, 0.9f);
@@ -152,17 +152,36 @@ public class PhysicsObject
         this._bodyType = bodyType;
     }
 
-    public PhysicsObject(PhysicsObject obj)
+    protected PhysicsObject(PhysicsObject source)
     {
-        this.Color = obj.Color;
-        this.Locked = obj.Locked;
-        this._startPosition = obj.Body.Position;
-        this._bodyType = obj._bodyType;
+        PhysicsState state = source.GetState();
+
+        _initState = state;
+        Color = state.Color;
+        Gay = state.Gay;
+        Locked = state.Locked;
+        _bodyType = state.BodyType;
+        _startPosition = source.Body?.Position ?? source._startPosition;
     }
-    public PhysicsObject(PhysicsObjectDTO dto)
+
+    public PhysicsObject Clone() => CreateCopy();
+
+    protected virtual PhysicsObject CreateCopy() => new(this);
+
+    /// <summary>
+    /// This should be called at the end of every subclass Start(), after the fixture is built.
+    /// </summary>
+    protected void ApplyInitialState()
     {
-        this.BodyData = dto.BodyDTO;
-        this._kossomk = ShapeSaveDTO.FromData(dto.ShapeDTO);
+        if (_initState is not { } s) return;
+
+        if (Fixture != null)
+        {
+            Fixture.Friction = s.Friction;
+            Fixture.Restitution = s.Restitution;
+        }
+
+        if (s.Mass > 0f && Body.BodyType == BodyType.Dynamic) Body.Mass = s.Mass;
     }
 
     public BodySaveDTO CaptureForSave()
