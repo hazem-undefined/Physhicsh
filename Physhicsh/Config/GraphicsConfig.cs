@@ -5,41 +5,49 @@ namespace Physhicsh.Config;
 
 public class GraphicsConfig
 {
-    private int _screenWidth;
-    private int _screenHeight;
+    private const int DefaultWidth = 1280;
+    private const int DefaultHeight = 720;
+
+    private int _screenWidth = DefaultWidth;
+    private int _screenHeight = DefaultHeight;
 
     public Resolution Resolution
     {
         get => new(_screenWidth, _screenHeight);
         set
         {
-            _screenWidth = value?.Width ?? 0;
-            _screenHeight = value?.Height ?? 0;
-            Raylib.SetWindowSize(_screenWidth, _screenHeight);
+            _screenWidth = value is { Width: > 0 } ? value.Width : DefaultWidth;
+            _screenHeight = value is { Height: > 0 } ? value.Height : DefaultHeight;
+            ApplyResolution();
         }
     }
+
     [TomlIgnore]
     public int ScreenWidth
     {
         get => _screenWidth;
-        set
-        {
-            _screenWidth = value;
-            Raylib.SetWindowSize(_screenWidth, Raylib.GetScreenHeight());
-        }
+        set { _screenWidth = value > 0 ? value : DefaultWidth; ApplyResolution(); }
     }
-    [TomlIgnore]
 
+    [TomlIgnore]
     public int ScreenHeight
     {
         get => _screenHeight;
+        set { _screenHeight = value > 0 ? value : DefaultHeight; ApplyResolution(); }
+    }
+    public bool UseVsync
+    {
+        get { return _useVsync; }
         set
         {
-            _screenHeight = value;
-            Raylib.SetWindowSize(Raylib.GetScreenWidth(), _screenHeight);
+            _useVsync = value;
+            if (value)
+                WindowFlags |= ConfigFlags.VSyncHint;
+            else
+                WindowFlags &= ~ConfigFlags.VSyncHint;
         }
     }
-    public bool UseVsync { get; set; } = true;
+    private bool _useVsync = true;
     public bool MSAA { get; set; } = true;
     public bool Fullscreen
     {
@@ -47,10 +55,12 @@ public class GraphicsConfig
         set
         {
             _fullScreen = value;
-            Raylib.ToggleFullscreen();
+
+            if (Raylib.IsWindowFullscreen() != value)
+                Raylib.ToggleFullscreen();
         }
     }
-    private bool _fullScreen = true;
+    private bool _fullScreen = false;
     public int MaxFPS
     {
         get { return _maxFPS; }
@@ -74,7 +84,23 @@ public class GraphicsConfig
 
     private bool _dimensionsLocked = false;
 
+    [TomlIgnore]
+    public ConfigFlags WindowFlags { get; set; }
+
     public void LockDimensions() => _dimensionsLocked = true;
+
+    public void SetResolution(int width, int height)
+    {
+        _screenWidth = width > 0 ? width : DefaultWidth;
+        _screenHeight = height > 0 ? height : DefaultHeight;
+        ApplyResolution();
+    }
+
+    private void ApplyResolution()
+    {
+        if (Raylib.IsWindowReady())
+            Raylib.SetWindowSize(_screenWidth, _screenHeight);
+    }
 }
 
 public class Resolution(int width, int height)

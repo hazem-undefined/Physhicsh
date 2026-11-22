@@ -42,7 +42,7 @@ public class MainWindow
             new PropertiesWindow(_imGuiContext, _editorState),
             new SettingsWindow(_coreContext, _imGuiContext, _sceneIO)];
 
-        Raylib.SetConfigFlags(SystemConfig.Instance.WindowFlags);
+        Raylib.SetConfigFlags(SystemConfig.Instance.Graphics.WindowFlags);
 
         _screenWidth = SystemConfig.Instance.Graphics.ScreenWidth;
         _screenHeight = SystemConfig.Instance.Graphics.ScreenHeight;

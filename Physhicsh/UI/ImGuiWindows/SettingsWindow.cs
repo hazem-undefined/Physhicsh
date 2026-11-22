@@ -211,11 +211,8 @@ public class SettingsWindow(CoreContext c, ImGuiContext imgContx, SceneIO sc) : 
 
         if (ImGui.Combo("Resolution", ref _selectedResIndex, resStrings, resStrings.Length))
         {
-            int width = res[_selectedResIndex].Width;
-            int height = res[_selectedResIndex].Height;
-
-            SystemConfig.Instance.Graphics.ScreenWidth = width;
-            SystemConfig.Instance.Graphics.ScreenHeight = height;
+            (int w, int h) = res[_selectedResIndex];
+            SystemConfig.Instance.Graphics.SetResolution(w, h);
         }
 
         ImGuiUtils.DrawCheckbox("Fullscreen", g.Fullscreen, v => g.Fullscreen = v);

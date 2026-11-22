@@ -3,7 +3,6 @@ using System;
 using System.IO;
 using System.Threading;
 using Tomlyn;
-using Tomlyn.Serialization;
 
 namespace Physhicsh.Config
 {
@@ -21,8 +20,6 @@ namespace Physhicsh.Config
                                                   Instance.Graphics.ScreenHeight / 2);
         private static SystemConfig? _instance;
         private static readonly Lock _lock = new();
-        [TomlIgnore]
-        public ConfigFlags WindowFlags { get; private set; }
 
         public static SystemConfig Instance
         {
@@ -42,9 +39,9 @@ namespace Physhicsh.Config
             {
                 _instance = LoadFromFile(CONFIG_FILE_PATH);
 
-                if (_instance.Graphics.Fullscreen) _instance.WindowFlags |= ConfigFlags.FullscreenMode;
-                if (_instance.Graphics.MSAA) _instance.WindowFlags |= ConfigFlags.Msaa4xHint;
-                if (_instance.Graphics.UseVsync) _instance.WindowFlags |= ConfigFlags.VSyncHint;
+                if (_instance.Graphics.Fullscreen) _instance.Graphics.WindowFlags |= ConfigFlags.FullscreenMode;
+                if (_instance.Graphics.MSAA) _instance.Graphics.WindowFlags |= ConfigFlags.Msaa4xHint;
+                if (_instance.Graphics.UseVsync) _instance.Graphics.WindowFlags |= ConfigFlags.VSyncHint;
             }
         }
 
