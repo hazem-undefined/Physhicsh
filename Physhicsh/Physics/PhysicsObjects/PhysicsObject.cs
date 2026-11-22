@@ -57,8 +57,8 @@ public class PhysicsObject
 
     public virtual void PhysicsUpdate(World world)
     {
-        if (!_appliedInitialState) throw new Exception($"{this} didn't apply initial state.");
         if (!_started) throw new Exception($"{this} didn't start.");
+        if (!_appliedInitialState) throw new Exception($"{this} didn't apply initial state.");
         _bodyType = Body.BodyType;
     }
 
@@ -176,6 +176,8 @@ public class PhysicsObject
     /// </summary>
     protected void ApplyInitialState()
     {
+        _appliedInitialState = true;
+
         if (_initState is not { } s) return;
 
         if (Fixture != null)
@@ -185,8 +187,6 @@ public class PhysicsObject
         }
 
         if (s.Mass > 0f && Body.BodyType == BodyType.Dynamic) Body.Mass = s.Mass;
-
-        _appliedInitialState = true;
     }
 
     public BodySaveDTO CaptureForSave()
