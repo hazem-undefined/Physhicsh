@@ -182,6 +182,7 @@ public class PhysicsObject
 
         if (Fixture != null)
         {
+
             Fixture.Friction = s.Friction;
             Fixture.Restitution = s.Restitution;
         }
