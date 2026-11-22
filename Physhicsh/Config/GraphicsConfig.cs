@@ -41,8 +41,26 @@ public class GraphicsConfig
     }
     public bool UseVsync { get; set; } = true;
     public bool MSAA { get; set; } = true;
-    public bool Fullscreen { get; set; } = false;
-    public int MaxFPS { get; set; } = 60;
+    public bool Fullscreen
+    {
+        get { return _fullScreen; }
+        set
+        {
+            _fullScreen = value;
+            Raylib.ToggleFullscreen();
+        }
+    }
+    private bool _fullScreen = true;
+    public int MaxFPS
+    {
+        get { return _maxFPS; }
+        set
+        {
+            _maxFPS = value;
+            Raylib.SetTargetFPS(value);
+        }
+    }
+    private int _maxFPS = 60;
     public bool ShowOutline { get; set; } = true;
     public bool ShowDragLine { get; set; } = true;
     public RayColor OutLineColor { get; set; } = RayColor.Red;

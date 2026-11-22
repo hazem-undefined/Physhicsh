@@ -35,6 +35,7 @@ public class PhysicsObject
     private bool _started;
     private PhysicsState? _initState;
     public float SpawnRotation => GetState().Rotation;
+    private bool _appliedInitialState = false;
     public virtual void Start(World world)
     {
         if (_started) return;
@@ -56,6 +57,8 @@ public class PhysicsObject
 
     public virtual void PhysicsUpdate(World world)
     {
+        if (!_appliedInitialState) throw new Exception($"{this} didn't apply initial state.");
+        if (!_started) throw new Exception($"{this} didn't start.");
         _bodyType = Body.BodyType;
     }
 
@@ -182,6 +185,8 @@ public class PhysicsObject
         }
 
         if (s.Mass > 0f && Body.BodyType == BodyType.Dynamic) Body.Mass = s.Mass;
+
+        _appliedInitialState = true;
     }
 
     public BodySaveDTO CaptureForSave()

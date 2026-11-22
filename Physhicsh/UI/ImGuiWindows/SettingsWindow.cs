@@ -16,7 +16,6 @@ public class SettingsWindow(CoreContext c, ImGuiContext imgContx, SceneIO sc) : 
     private readonly CoreContext _c = c;
     private readonly ImGuiContext _img = imgContx;
     private readonly SceneIO _sc = sc;
-    private bool _graphicsNeedsRestart;
     private int _selectedResIndex;
 
     public void Draw()
@@ -207,8 +206,6 @@ public class SettingsWindow(CoreContext c, ImGuiContext imgContx, SceneIO sc) : 
 
     private void DrawGraphicsConfig(GraphicsConfig g)
     {
-        bool changed = false;
-
         string[] resStrings = Display.GetAvailableResolutionsStrings();
         List<(int Width, int Height)> res = Display.GetAvailableResolutions();
 
@@ -219,27 +216,30 @@ public class SettingsWindow(CoreContext c, ImGuiContext imgContx, SceneIO sc) : 
 
             SystemConfig.Instance.Graphics.ScreenWidth = width;
             SystemConfig.Instance.Graphics.ScreenHeight = height;
-
-            changed |= true;
         }
 
-        changed |= ImGuiUtils.DrawCheckbox("Use Vsync", g.UseVsync, v => g.UseVsync = v,
-            "Synchronize frame rendering with your monitor's refresh rate.\nPrevents screen tearing but caps FPS to the display's refresh rate.");
+        ImGuiUtils.DrawCheckbox("Fullscreen", g.Fullscreen, v => g.Fullscreen = v);
 
-        changed |= ImGuiUtils.DrawSliderInt("Max FPS", g.MaxFPS, 30, 360, v => g.MaxFPS = v,
-            "Upper frame rate limit (only effective when Vsync is off).");
+        ImGuiUtils.DrawCheckbox("Use Vsync", g.UseVsync, v => g.UseVsync = v);
 
-        changed |= ImGuiUtils.DrawSliderFloat("Pixels Per Meter", g.PPM, 8f, 128f, v => g.PPM = v);
+        ImGuiUtils.DrawSliderInt("Max FPS", g.MaxFPS, 30, 360, v => g.MaxFPS = v, "only effective when Vsync is off.");
 
-        ImGuiUtils.DrawCheckbox("Show Outline", g.ShowOutline, v => g.ShowOutline = v,
-            "Draw an outline around each physics object.\nMakes shapes easier to distinguish against similar-colored backgrounds.");
+        ImGuiUtils.DrawSliderFloat("Pixels Per Meter", g.PPM, 8f, 128f, v => g.PPM = v);
 
-        if (changed) _graphicsNeedsRestart = true;
+        ImGuiUtils.DrawCheckbox("Show Outline", g.ShowOutline, v => g.ShowOutline = v, "Draw an outline around each physics object.");
 
-        if (_graphicsNeedsRestart)
+        if (g.ShowOutline)
         {
-            ImGui.TextColored(new(1f, 0.78f, 0.2f, 1f), "Requires restart");
+            ImGuiUtils.DrawColorEdit3("Outline Color", g.OutLineColor.ToSysVector3(), (x) => g.OutLineColor = x.ToColor());
         }
+
+        ImGuiUtils.DrawCheckbox("Show Dragline", g.ShowDragLine, v => g.ShowDragLine = v, "Draw a line that shows       .");
+
+        if (g.ShowOutline)
+        {
+            ImGuiUtils.DrawColorEdit3("Dragline Color", g.DragLineColor.ToSysVector3(), (x) => g.DragLineColor = x.ToColor());
+        }
+
     }
 
     private void DrawControlsConfig(ControlsConfig c)
